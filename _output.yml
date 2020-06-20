@@ -1,0 +1,3 @@
+bookdown::gitbook: default
+bookdown::epub_book: default
+bookdown::html_book: default  

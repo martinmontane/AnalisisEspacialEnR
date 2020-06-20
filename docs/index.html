@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Herramientas de análisis espacial en R</title>
+  <meta name="description" content="Usando R para analizar datos espaciales" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Herramientas de análisis espacial en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Usando R para analizar datos espaciales" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Herramientas de análisis espacial en R" />
+  
+  <meta name="twitter:description" content="Usando R para analizar datos espaciales" />
+  
+
+<meta name="author" content="Martin Montane" />
+
+
+<meta name="date" content="2020-06-20" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="datos-espaciales-en-r.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3.9000/leaflet-providers-plugin.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-necesitamos-para-arrancar"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html"><i class="fa fa-check"></i><b>1</b> Datos espaciales en R</a><ul>
+<li class="chapter" data-level="1.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#qué-es-un-dato-espacial"><i class="fa fa-check"></i><b>1.1</b> ¿Qué es un dato espacial?</a></li>
+<li class="chapter" data-level="1.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#dónde-estamos-en-la-tierra"><i class="fa fa-check"></i><b>1.2</b> ¿Dónde estamos en la Tierra?</a></li>
+<li class="chapter" data-level="1.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#coordinate-reference-systems"><i class="fa fa-check"></i><b>1.3</b> Coordinate Reference Systems</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#elipsoides-sistemas-de-coordenadas-y-datums"><i class="fa fa-check"></i><b>1.3.1</b> Elipsoides, sistemas de coordenadas y datums</a></li>
+<li class="chapter" data-level="1.3.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#proyecciones"><i class="fa fa-check"></i><b>1.3.2</b> Proyecciones</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud"><i class="fa fa-check"></i><b>1.4</b> Manos a la obra ¿Dónde construir el próximo centro de salud?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#cargando-los-datos-espaciales"><i class="fa fa-check"></i><b>1.4.1</b> Cargando los datos espaciales</a></li>
+<li class="chapter" data-level="1.4.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#detectando-la-cobertura-actual."><i class="fa fa-check"></i><b>1.4.2</b> Detectando la cobertura actual.</a></li>
+<li class="chapter" data-level="1.4.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#distancia-contra-la-avenida-más-cercana"><i class="fa fa-check"></i><b>1.4.3</b> Distancia contra la avenida más cercana</a></li>
+<li class="chapter" data-level="1.4.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#incorporando-el-resto-de-las-variables"><i class="fa fa-check"></i><b>1.4.4</b> Incorporando el resto de las variables</a></li>
+<li class="chapter" data-level="1.4.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#creando-nuestro-índice-de-demanda-de-salud"><i class="fa fa-check"></i><b>1.4.5</b> Creando nuestro índice de demanda de salud</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#ejercicio"><i class="fa fa-check"></i><b>1.5</b> Ejercicio</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><i class="fa fa-check"></i><b>2</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="2.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#qué-es-la-geocodificación-o-geocoding"><i class="fa fa-check"></i><b>2.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="2.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#api-interfaz-de-programación-de-aplicaciones"><i class="fa fa-check"></i><b>2.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="2.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#servicio-de-normalización-de-datos-geográficos-de-argentina"><i class="fa fa-check"></i><b>2.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="2.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#google-geocode-api"><i class="fa fa-check"></i><b>2.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="2.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#diferencias-entre-las-dos-apis"><i class="fa fa-check"></i><b>2.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="2.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#una-tercera-alternativa-geocode_osm"><i class="fa fa-check"></i><b>2.6</b> Una tercera alternativa: geocode_OSM()</a></li>
+<li class="chapter" data-level="2.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#ejercicios"><i class="fa fa-check"></i><b>2.7</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><i class="fa fa-check"></i><b>3</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="3.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#la-distancia-espacial-y-la-distancia-de-viaje"><i class="fa fa-check"></i><b>3.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="3.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-paquetes-que-vamos-a-utilizar"><i class="fa fa-check"></i><b>3.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cómo-usar-los-servicios-de-here"><i class="fa fa-check"></i><b>3.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-datos-repositorio-de-datos-del-gcba"><i class="fa fa-check"></i><b>3.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="3.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#transformando-nuestros-datos"><i class="fa fa-check"></i><b>3.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="3.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cuánto-tardo-en-llegar-al-monumental"><i class="fa fa-check"></i><b>3.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="3.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#midiendo-la-cobertura-de-los-parques"><i class="fa fa-check"></i><b>3.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="3.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba"><i class="fa fa-check"></i><b>3.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="3.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#ejercicios-1"><i class="fa fa-check"></i><b>3.8</b> Ejercicios</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Herramientas de análisis espacial en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Herramientas de análisis espacial en R</h1>
+<p class="author"><em>Martin Montane</em></p>
+<p class="date"><em>2020-06-20</em></p>
+</div>
+<div id="herramientas-de-análisis-espacial-en-r" class="section level1 unnumbered">
+<h1>Herramientas de análisis espacial en R</h1>
+<p>Los datos espaciales requieren un tratamiento particular tanto en su representación, su almacenamiento, sus transformaciones, sus visualizaciones y su análisis. En este compendio de notas de clase se introducen las herramientas necesarias para comenzar a aprovechar todas las oportunidades que los datos espaciales nos brindan.</p>
+<div id="qué-necesitamos-para-arrancar" class="section level2 unnumbered">
+<h2>¿Qué necesitamos para arrancar?</h2>
+<p>En estas notas de clase se usa el lenguaje de programación R. Recomiendo utilizar RStudio para que nos ayude con los proyectos y la edición de los códigos en R Descargar instalar estos dos softwares es muy simple ya que son gratuitos. R de hecho es un lenguaje de programación <em>open source</em>, o de código abierto, lo que significa que cualquiera puede colaborar. <a href="https://cran.r-project.org/">Haciendo click aquí</a> van a poder descargar la última versión de R para Windows, Mac o Linux. Una vez que lo hayan descargado solo tienen que instalarlo.</p>
+<p>Ahora <a href="https://www.rstudio.com/products/rstudio/download/">descarguen RStudio</a>, también van a poder elegir la versión que corresponde según su sistema operativo. RStudio va a identificar automáticamente la versión de R que ya tienen instalada, <strong>por lo que es importante que instalen RStudio luego de haber instalado R</strong>. Una vez que tienen todo esto instalado pueden pasar al primer capítulo de este libro</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="datos-espaciales-en-r.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

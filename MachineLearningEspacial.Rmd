@@ -1,0 +1,308 @@
+# El ritual del aprendizaje automático
+
+En las notas de clases de [Ciencia de Datos para Curiosos](https://martinmontane.github.io/CienciaDeDatosBook/) van a poder encontrar un capítulo dedicado a la introducción a las herramientas de Machine Learning, en particular los **árboles de decisión**, los **árboles de regresión** y sus implementciones en R. 
+
+El objetivo de este capítulo es mostrar cómo pueden aplicarse estos conocimientos para una tarea de **predicción** asociada a un problema clásico: el precio de los inmuebles. Pero lo haremos de una manera secuencial, con el propósito de mostrar cuáles son los pasos más comunes y necesarios al momento de elegir el modelo, optimizar sus parámetros y comprender su capacidad predictiva.
+
+## Paso 1: Carga de los datos
+
+Puede sonar obvio y repetitivo, pero todo lo que hagan ustedes en análisis cuantitativos comienza con la carga de datos. Es importante que se sientan cómodos y cómodas como para poder leer los datos en R. En esta oportunidad vamos a usar los datos que provee la gente de **Properati**, disponible mediante consultas al servicio de **Big Query** de Google. Vamos a leer un archivo **.RData** que tiene una muestra de más de un millón de anuncios para Argentina.
+
+Los archivos .RData son objetos de R que ya han sido cargados y exportados desde R como este formato específoco. Estos archivos pueden ser útiles cuando queremos compartir algo con gente que sabemos que va a programar en R, ya que los pueden cargar directamente con **load()** y pesan realmente poco. Sin embargo, es importante aclarar que estos .RData "rompen" con la reproducibilidad: no podemos replicar exactamente cómo se llegó a esos datos, ni si hubo algún error en el preprocesamiento. En este caso, lo guardé de esta manera porque es una forma simple de compartir estos datos con ustedes, pero en la [página de Properati](https://www.properati.com.ar/data/) van a encontrar incluso ejemplos sobre consultas en **Big Query** para consultar información en la que ustedes estén interesados y luego la pueden exportar como CSV o json, archivos que pueden leer sin mayores problemas a R.
+
+Carguemos los datos de la Provincia de Córdoba:
+
+```{r}
+load("datosCordoba.RData")
+```
+
+## Paso 2: análisis exploratorio y corrección de errores
+
+Una vez que tenemos nuestro dataset cargado - deberían tener un objeto que se llama **datosCordoba** en la pestaña de "Environment" arriba a la derecha - lo que siempre debemos preguntarnos es qué es lo que realmente tenemos y detectar algunos patrones, que puede servirnos también para eliminar algunos outliers o errores en los datos. Carguemos nuestro aliado para - entre otras cosas - transformaciones de datos: **tidyverse**
+
+```{r}
+library(tidyverse)
+glimpse(datosCordoba)
+```
+
+Nuestro dataset tiene 29 columnas. Quizás piensen que es una buena idea usar **View()** para tener una primera aproximación a esto, puede que no sea la mejor opción cuando trabajamos con muchos datos. Si quieren ir por ese camino, les recomiendo que usen **View(head(100))** para ver las primeras 100 filas, pudiendo cambiar este valor para ajustarlo a sus necesidades.
+
+Otra opción consiste en apoyarnos en la descripción que vemos en enviroment. Podemos tener alguna idea de cuáles son las variables para las cuales querríamos ver los valores que toma, particularmente las variables categóricas. Las variables numéricas merecen otro tratamiento, ya que por su naturaleza pueden tomar distintos valores y es muy importante ver su distribución.
+
+Una opción con las variables categóricas es usar la función **map()**. Ya la hemos usado en capítulos anteriores: lo que hace es repetir una tarea que nosotros le decimos para cada uno de objetos que queremos. Si lo usamos con data.frame(), por default lo que hará **map()** es hacer algo para cada una de las columnas del data.frame. Entonces podemos seleccionar primero las columnas que queremos investigar, y luego pedirle que nos devuelva una tabla, que incluya la cantidad de casos falantes:
+
+```{r}
+datosCordoba %>%
+  select(type,type_i18n,country,place.l2,property.operation,property.operation_i18n,property.type,property.operation_i18n, property.currency, property.price_period) %>% 
+  map(function(x) table(x,useNA = "always")) 
+```
+
+Esto nos da una buena idea - y bastante visual - de qué datos son los que tenemos. Para este ejercicio vamos a hacer un modelo predicitivo sobre el valor venta de los inmuebles para la Ciudad de Córdoba. Además vamos a pedir que los prediga en dólares, por lo que vamos a quedarnos con aquellos que están anunciados en dólares, aunque haya una minoría que se anuncie en pesos. En rigor, todavía no sabemos exactamente cuál es Córdoba capital. Por el momento, vamos a elegir los inmuebles de la Provincia de Córdoba, y luego vamos a quedarnos con los que estén geolocalizados en la Ciudad. Finalmente, queremos quedarnos con anuncios para venta y que sea un departamento o casa.
+
+```{r}
+datosCordoba <- datosCordoba %>% 
+                filter(property.currency == "USD" & property.operation=="Venta" & property.type %in% c("Casa","Departamento"))
+```
+
+Ahora ya tenemos 38.551 observaciones pertenecientes a la provincia de Córdoba, que fueron ofertados en dólares y que tenían como destino de operación una venta.
+
+Otra de la manipulación de datos relevante es el formato de las columnas (vectores). Cada uno de los vectores de nuestro data frame tiene un tipo de datos en particular. Algo que suele ser importante es estar seguros de que los datos que son numéricos están representados de tal manera, caso contrario no podremos hacer ninguna operación matemática, igual que, por ejemplo, lo que sucede en Excel cuando no tienen correctamente definido el tipo de datos.
+
+Para esto podemos aplicar el mismo concepto que usamos anteriorente, pero en este caso primero vamos a preguntar que tipo de vector es a aquellos que consideramos que deberían ser numéricos:
+
+```{r}
+datosCordoba %>%
+  select(property.rooms,
+         property.surface_covered,
+         property.price,
+         property.surface_total,
+         property.bathrooms,
+         property.bedrooms) %>% 
+  map(function(x) class(x))
+```
+
+Las cuatro columnas que deberían ser numéricas, en realidad son de tipo caracter ¿Como podemos hacer para convertir las cuatro columnas a tipo numérico? Usemos **mutate_at()** para evitar tener que hacer un mutate para cada una de las cuatro columnas. Lo que tenemos que pasarse es un vector con el nombre de las columnas a transformar, seguido por una función a realizar en cada una de ellas. En nuestro caso en particular, queremos que todas sean tipo numérico, así que usamos la función **as.numeric()**. Tengan en cuenta que nos pide el nombre de la función, no ejecutar la función, así que no hace falta pasarle los paréntesis: **mutate_at()** lo hará automáticamente de manera interna.
+
+```{r}
+# Primero convertimos nuestro data.frame en tibble(), solo para aprovechar que se ve mejor en la consola
+datosCordoba <- datosCordoba %>% as_tibble()
+datosCordoba <- datosCordoba %>% 
+  mutate_at(.vars = c("property.rooms",
+                      "property.surface_covered",
+                      "property.price",
+                      "property.surface_total",
+                      "property.bedrooms",
+                      "property.bathrooms"),as.numeric)
+```
+
+Podemos chequear nuevamente la clase de las columnas de la misma manera que lo hicimos anteriormente, deberían ser numéricas:
+
+```{r}
+datosCordoba %>%
+    select(property.rooms,
+         property.surface_covered,
+         property.price,
+         property.surface_total,
+         property.bathrooms,
+         property.bedrooms) %>% 
+  map(function(x) class(x))
+```
+
+Perfecto, ahora nos quedan dos tareas adicionales: la primera, es identificar el año de publicación del anuncio y la segunda es seleccionar correctamente cuáles son los inmuebles geolocaliazdos en la Ciudad de Córdoba. La primera parte es muy simple con la ayuda de la función **substr()**. Lo que hace es recortar el texto según las posiciones que nosotros le digamos. En este caso, queremos quedarnos con los primeros 4 caracteres de la columna **created_on**, que es la que tiene la fecha.
+
+```{r}
+datosCordoba <- datosCordoba %>% 
+                mutate(year=substr(created_on,start = 1,stop = 4))
+```
+
+Ahora para elegir aquellos inmuebles que están en Córdoba Capital tenemos dos alternativas. La primera es filtrar los casos que tienen el valor *Córdoba* en**place.l3**, pero no estamos 100% de que ese sea el caso. Aprovechemos de que una gran cantidad de anuncios están geolocalizados y usemos esa información para identificarlos correctamente. El primer paso consiste en eliminar aquellos casos para los cuales no hay información sobre las coordenadas:
+
+```{r}
+datosCordoba <- datosCordoba %>% 
+                filter(!is.na(place.lat) & !is.na(place.lon))
+```
+
+Luego,podemos convertir este objeto no espacial a uno espacial, usando **st_as_sf()**. No se olviden que antes debemos cargar el paquete sf
+
+```{r}
+library(sf)
+cordobaSF <- st_as_sf(datosCordoba,coords = c("place.lon","place.lat"),crs=4326)
+```
+
+Con leaflet veamos si todo va bien, es decir si estos puntos parecen estar en la provincia de Córdoba
+
+```{r}
+library(leaflet)
+leaflet(cordobaSF) %>% 
+  addTiles() %>% 
+  addCircles()
+```
+
+Parece que hay algunos problemas con algunos puntos localizados fuera de la Provincia de Córdoba. No se preocupen, esto suele ser algo normal. Lo que vamos a hacer es buscar el polígono de la Ciudad de Córdoba y buscar la intersección con los anuncios y quedarnos solo con los que estén dentro de ese polígono. Para esto vamos a usar al paquete **osmdata** y la función **getbb()**
+
+```{r}
+library(osmdata)
+polyCordoba <- getbb(place_name = "Córdoba Capital, Argentina",format_out = "sf_polygon")
+```
+
+Veamos qué es lo que levantó:
+
+```{r}
+leaflet(polyCordoba) %>% 
+  addTiles() %>% 
+  addPolygons()
+```
+
+Este límite que nos muestra es el límite administrativo de la Ciudad de Córdoba, vamos a trabajar con él. Para encontrar cuáles puntos tienen una intersección vamos a proyectar a nuestros datos al EPSG 5343, una proyección oficial de Argentina (pueden usar **st_crs()** para encontrar más información sobre esta proyección)
+
+```{r}
+polyCordoba <- st_transform(polyCordoba,5343)
+cordobaSF <- st_transform(cordobaSF,5343)
+```
+
+Y ahora ya podemos crear una columna en nuetro dataset espacial en base a si hay o no intersección. Tengan en cuenta que **st_intersects()** devuelve por default una matriz **sparse**, por eso ponemos **sparse=FALSE** para que nos devuelva una matriz lógica. Sin embargo, esta función esta preparada para que busquemos intersecciones entre más de un polígono, por lo que devuelve es una matriz de una columna, algo muy incómodo para nuestro dataset. Por eso le pedimos que lo convierta a un vector lógico con **as.logical()**, mucho más fácil para trabajar
+
+```{r}
+cordobaSF <-  cordobaSF %>% 
+              mutate(cordobaCapital=as.logical(st_intersects(cordobaSF,polyCordoba,sparse=FALSE)))
+```
+
+Inspeccionemos visualmente que todo ande bien usando leaflet. Recuerden que para usar leaflet debemos tener proyectados nuestros datos en el EPSG 4326, lo vamos a hacer dentro de la función de leaflet, en lugar de modificar nuestros objetos. También vamos a poner dos colores, green y red, en una nueva variable para mostrar correctamente cuál fue el resultado de la intersección.
+
+```{r}
+cordobaSF <-  cordobaSF %>% 
+              mutate(colorCordoba = ifelse(cordobaCapital==TRUE,"green","red"))
+leaflet(cordobaSF %>% st_transform(4326)) %>% 
+  addTiles() %>% 
+  addCircles(color = ~colorCordoba)
+```
+
+Todo parece estar en orden, ahora vamos a hacer una última limpieza de nuestros datos. Para empezar, vamos a quedarnos con aquellos puntos que están dentro de la Ciudad de Córdoba y las que tengan un valor de propiedad total mayor a cero. También vamos a quedarnos con los casos en los cuales la superficie total y la cubierta es mayor a cero, ya que se trata de algún error en los datos
+
+```{r}
+cordobaSF <- cordobaSF %>%
+             filter(cordobaCapital==TRUE & property.price>0 & property.surface_covered>0 & property.surface_total> 0)
+```
+
+Ahora vayamos a un tema muy importante: los **datos faltantes**. Los datos faltantes son siempre un tema que requiere una particular atención. Algunos modelos de aprendizaje automático/estadístico no tienen ningún problema para trabajar con datos faltantes en las variables explicativas, pero otros no. Más allá de esto, precisamos saber cuáles variables tienen datos faltantes, particularmente aquellas variables que son cuantitativas:
+
+```{r}
+cordobaSF %>% 
+  map_dfr(function(x) sum(is.na(x))) %>%
+  pivot_longer(cols = 1:ncol(.)) %>%
+  arrange(desc(value))
+```
+
+Tenemos faltantes en cuatro variables, siendo las más importantes la cantidad de dormitorios, la cantidad de ambientes y de baños. También debería aparecerles **price_period()** entre las variables con datos faltantes, pero no se preocupen, esa variable vamos a descartarla y no vamos a usarla para predecir el precio por metro cuadrado de los inmuebles, para fines de vivienda.
+
+Una opción con los datos faltantes es elegir modelos de aprendizaje automático que sepan trabajar con ellos, como por ejemplo el árbol implementado por el paquete **rpart** en R o quizás **xgboost**, otro modelo derivado de árboles. También puden imputarse mediante distintos procedimientos, y de hecho random forest, el modelo que vamos a usar finalmente, brinda una función para imputar estos datos. Dejemos esto un poco es suspenso y continuemos por el paso 3. Ya vamos a levantarlo más adelante.
+
+## Paso 3: crear nuevas variables (o *feature engineering*)
+
+Una parte relevante para lograr entrenar modelos que predigan con alta precisión es generar nuevas variables en base a las que ya existen en nuestro dataset. En particular, el conjunto de datos con el que trabajamos nos deja crear distintos tipos de variables. En primer lugar, veamos el tema de los datos faltantes en las variables de ambientes, dormitorios y baños.
+
+Hasta ahora no nos fijamos en dos variables potencialmente muy útiles: **propety.title** y **property.description**. Se tratan de dos variables que almacenan tanto el título como la descripción de los anuncios de los inmuebles. Veamos el título y la descripción del primer anuncio:
+
+```{r}
+cordobaSF %>% slice(1) %>% pull(property.description)
+```
+
+```{r}
+cordobaSF %>% slice(1) %>% pull(property.title)
+```
+
+Si sabemos cómo encontrar patrones en estos textos quizás podemos recuperar algo de información. Agreguemos información sobre la existencia - o no - de un gimnasio, cochera o pileta. Para esto, vamos a usar **grepl()**, una función que busca un patrón dentro de un texto y nos responde TRUE si aparece y FALSE si no aparece.
+
+```{r}
+cordobaSF <- cordobaSF %>%
+                mutate(gimnasio = ifelse(grepl(pattern = "gym|gimn",x = property.description) |
+                                         grepl(pattern = "gym|gimn", x = property.title), 1, 0),
+                       cochera = ifelse(grepl(pattern = "coch|garage",x = property.description) |
+                                         grepl(pattern = "coch|garage", x = property.title), 1, 0),
+                       pileta = ifelse(grepl(pattern = "pileta|piscina",x = property.description) |
+                                       grepl(pattern = "pileta|piscina", x = property.title), 1, 0))
+```
+
+
+```{r}
+cordobaSF <- cordobaSF %>%
+             mutate(property.description=str_replace_all(string = property.description,
+                                                         pattern = regex("un|uno",ignore_case = TRUE),
+                                                         "1")) %>% 
+  mutate(property.description=str_replace_all(string = property.description,
+                                              pattern = regex("dos",ignore_case = TRUE),
+                                              "2")) %>% 
+  mutate(ambientes=str_extract(pattern=regex("(\\d)(?= dorm)",ignore_case = TRUE),string = property.description))
+```
+
+
+Además, vamos a quedarnos con las variables que vamos a usar en nuestro modelo
+
+```{r}
+cordobaSF <- cordobaSF %>%
+             select(place.l4,property.rooms,property.surface_covered,property.price,property.surface_total,year,gimnasio,cochera,pileta)
+```
+
+Convertimos el objeto sf a un objeto data.frame, ya no necesitamos la información sobre su ubicación espacial.
+
+```{r}
+datosCordoba <- as_tibble(cordobaSF) %>% select(-geometry)
+# Eliminamos el cordobaSF
+rm(cordobaSF)
+```
+
+Finalmente, vamos a necesitar que las variables que tenemos como character sean factores para que nuestro modelo más adelante pueda entrenarse sin problemas. Usamos la misma lógica que hicimos antes con los datos numéricos. Además, nos quedamos ol
+
+```{r}
+datosCordoba <- datosCordoba %>%
+  filter(!is.na(property.surface_covered)) %>% 
+  mutate_at(.vars = c("place.l4","year"),as.factor) 
+```
+
+
+## Paso 4: criterio de selección y espacio de búsqueda de los parámetros
+
+Una vez que tenemos nuestros datos ya modificados y adaptados para entrenar alguno de los modelos de aprendizaje automático/estadístico, debemos pensar cómo vamos a seleccionar al más "eficiente" entre los que compitan. Existen diversos criterios para elegir a los mejores modelos. En este ejercicio vamos a usar la Raíz del Error Medio Cuadrático (RMSE), aunque es tan solo una de las medidas que existen para medir qué tan bien predice nuestro modelo una variable categórica. La raíz del error cuadrático medio (RMSE, por su sigla en inglés) tiene la siguiente fórmula
+
+$$ \color{#E7298A}{RMSE} = \sqrt{(1/\color{olive}{n})\sum_{i=1}^{\color{olive}{n}}(\color{purple}{y_i} - \color{orange}{\hat{f}(x_i)})^2}=$$
+
+Donde $\color{olive}{n}$ es la cantidad de observaciones, $\color{purple}{y_i}$ es el valor observado para la observación i; y $\color{orange}{\hat{f}(x_i)}$ es el valor predicho dada la aproximación y los valores de las variables para la observación i. En otras palabras, el RMSE es cuanto nos confundimos en promedio al predecir los datos. 
+
+Además de tomar esta decisión, también debemos elegir cómo vamos a evitar caer en el sobreajuste de nuestros datos. Para esto vamos a separar a nuestros datos en 5 grupos de aproximadamente el mismo tamaño y vamos a hacer **crossvalidation** y promediar el MSE de los 5 modelos que se entrenaran en base al diagrama que se muestra abajo. En el podemos ver que entrenamos un modelo basado en 4 grupos, dejando uno afuera, hasta que cada uno de los grupos fue usado como conjunto de validación. Una vez que tenemos estos cinco modelos, simplemente lo promediamos.
+
+```{r}
+knitr::include_graphics("data/kfolds.png")
+```
+
+Para hacer los grupos vamos a usar la ayuda del paquete **caret**, con la función **createFolds()**:
+
+```{r}
+library(caret)
+grupos <- createFolds(datosCordoba %>% pull(property.price), k = 5, list = FALSE)
+table(grupos)
+```
+
+Como podemos ver con **table()**, lo que hizo fue crear un vector que tiene los valores 1 al 5, pero se encuentran repartidos homogéneamente, por lo cual ya tenemos nustros grupos, solo nos queda agregarlos a nuestros datos
+
+```{r}
+datosCordoba <- datosCordoba %>% 
+                mutate(grupoCV = grupos)
+```
+
+Para elegir cuáles parámetros vamos a intentar optimizar, obviamente necesitamos saber cuál modelo vamos a entrenar. Los parámetros son específicos a cada uno de estos modelos y, en el fondo, lo que hacen es modificar los algoritmos. El objetivo es encontrar la combinación de parámetros que minimiza nuestra función de **performance**, que en nuestro caso es el **MSE**.
+
+Vamos a usar un modelo de árboles muy conocido: **random forests**. Se basan en la idea de **bagging**, en las cuales se entrenan muchos árboles que aprenden "demasiado" de nuestros datos, pero que son muy especializados en una sección de nuestros datos. Luego, para predecir un caso nuevo se promedian las predicciones de todos los árboles y ese es el valor final. Para entender más cómo funcionan los árboles, y los modelos de aprendizaje automático/estadístico más en general, pueden [consultar Ciencia de Datos para Curiosos](https://martinmontane.github.io/CienciaDeDatosBook/).
+
+Vamos a optimizar dos parámetros de Random Forest: **mtry** y **ntree**. mtry determina la cantidad de variables que le dejamos elegir en cada nueva apertura de cada árbol, mientras que ntree determina la cantidad de árboles que va a tener nuestro árbol. Vamos a probar todos los valores posibles de mtry (en nuestros casos puede ser solo de 2 a 5), mientras que en ntree vamos a probar desde 100 árboles hasta 1000 árboles, yendo de a 100 árboles
+
+```{r}
+mtryValores <- c(2:5)
+ntreeValores <- seq(100,500,by=100)
+grilla <- expand.grid(mtryValores,ntreeValores)
+colnames(grilla) <- c("mtryValores","ntreeValores")
+```
+
+## Paso 4: buscando la mejor combinación de parámetros
+
+
+```{r}
+library(randomForest)
+datosCordobaFilled <- na.roughfix(datosCordoba)
+salidaArbol <- map(1:nrow(grilla), function(combinacion){
+    cat("mtry: ",grilla %>% slice(combinacion) %>% pull(mtryValores),". ntree: ",grilla %>% slice(combinacion) %>% pull(ntreeValores),"\r")
+  mean(map_dbl(1:5, function(k){
+    # Generamos el grupo de entrenamiento
+    dataTraining <- datosCordobaFilled %>% filter(grupoCV != k)  %>% select(-grupoCV)
+    # Entrenamos el random forest
+    rf <- randomForest(formula= property.price ~.,
+                       data=dataTraining,
+                       mtry=grilla %>% slice(combinacion) %>% pull(mtryValores),
+                       ntree=grilla %>% slice(combinacion) %>% pull(ntreeValores))
+    # Predecimos sobre testing
+    dataTesting <- dataTraining <-datosCordobaFilled %>% filter(grupoCV == k)  %>% select(-grupoCV)
+    pred <- predict(rf,newdata = dataTesting)
+    obs <- dataTesting %>% pull(property.price)
+    mse <- sqrt(sum((obs-pred)^2)/length(obs))
+  }))
+})
+```

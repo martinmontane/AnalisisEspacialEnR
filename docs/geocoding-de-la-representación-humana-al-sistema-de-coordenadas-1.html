@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>4 Geocoding: de la representación humana al sistema de coordenadas | Herramientas de análisis espacial en R</title>
+  <meta name="description" content="Usando R para analizar datos espaciales" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="4 Geocoding: de la representación humana al sistema de coordenadas | Herramientas de análisis espacial en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Usando R para analizar datos espaciales" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="4 Geocoding: de la representación humana al sistema de coordenadas | Herramientas de análisis espacial en R" />
+  
+  <meta name="twitter:description" content="Usando R para analizar datos espaciales" />
+  
+
+<meta name="author" content="Martin Montane" />
+
+
+<meta name="date" content="2020-06-17" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"/>
+<link rel="next" href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3.9000/leaflet-providers-plugin.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-necesitamos-para-arrancar"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-deberían-saber-para-aprovechar-al-máximo-este-libro"><i class="fa fa-check"></i>Qué deberían saber para aprovechar al máximo este libro</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="herramientas-de-análisis-espacial-en-r-1.html"><a href="herramientas-de-análisis-espacial-en-r-1.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="herramientas-de-análisis-espacial-en-r-1.html"><a href="herramientas-de-análisis-espacial-en-r-1.html#qué-necesitamos-para-arrancar-1"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+<li class="chapter" data-level="" data-path="herramientas-de-análisis-espacial-en-r-1.html"><a href="herramientas-de-análisis-espacial-en-r-1.html#qué-deberían-saber-para-aprovechar-al-máximo-este-libro-1"><i class="fa fa-check"></i>Qué deberían saber para aprovechar al máximo este libro</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html"><i class="fa fa-check"></i><b>1</b> Datos espaciales en R</a><ul>
+<li class="chapter" data-level="1.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#qué-es-un-dato-espacial"><i class="fa fa-check"></i><b>1.1</b> ¿Qué es un dato espacial?</a></li>
+<li class="chapter" data-level="1.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#dónde-estamos-en-la-tierra"><i class="fa fa-check"></i><b>1.2</b> ¿Dónde estamos en la Tierra?</a></li>
+<li class="chapter" data-level="1.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#coordinate-reference-systems"><i class="fa fa-check"></i><b>1.3</b> Coordinate Reference Systems</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#elipsoides-sistemas-de-coordenadas-y-datums"><i class="fa fa-check"></i><b>1.3.1</b> Elipsoides, sistemas de coordenadas y datums</a></li>
+<li class="chapter" data-level="1.3.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#proyecciones"><i class="fa fa-check"></i><b>1.3.2</b> Proyecciones</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud"><i class="fa fa-check"></i><b>1.4</b> Manos a la obra ¿Dónde construir el próximo centro de salud?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#cargando-los-datos-espaciales"><i class="fa fa-check"></i><b>1.4.1</b> Cargando los datos espaciales</a></li>
+<li class="chapter" data-level="1.4.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#detectando-la-cobertura-actual."><i class="fa fa-check"></i><b>1.4.2</b> Detectando la cobertura actual.</a></li>
+<li class="chapter" data-level="1.4.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#distancia-contra-la-avenida-más-cercana"><i class="fa fa-check"></i><b>1.4.3</b> Distancia contra la avenida más cercana</a></li>
+<li class="chapter" data-level="1.4.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#incorporando-el-resto-de-las-variables"><i class="fa fa-check"></i><b>1.4.4</b> Incorporando el resto de las variables</a></li>
+<li class="chapter" data-level="1.4.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#creando-nuestro-índice-de-demanda-de-salud"><i class="fa fa-check"></i><b>1.4.5</b> Creando nuestro índice de demanda de salud</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#ejercicio"><i class="fa fa-check"></i><b>1.5</b> Ejercicio</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><i class="fa fa-check"></i><b>2</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="2.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#qué-es-la-geocodificación-o-geocoding"><i class="fa fa-check"></i><b>2.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="2.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#api-interfaz-de-programación-de-aplicaciones"><i class="fa fa-check"></i><b>2.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="2.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#servicio-de-normalización-de-datos-geográficos-de-argentina"><i class="fa fa-check"></i><b>2.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="2.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#google-geocode-api"><i class="fa fa-check"></i><b>2.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="2.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#diferencias-entre-las-dos-apis"><i class="fa fa-check"></i><b>2.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="2.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#una-tercera-alternativa-geocode_osm"><i class="fa fa-check"></i><b>2.6</b> Una tercera alternativa: geocode_OSM()</a></li>
+<li class="chapter" data-level="2.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#ejercicios"><i class="fa fa-check"></i><b>2.7</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><i class="fa fa-check"></i><b>3</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="3.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#la-distancia-espacial-y-la-distancia-de-viaje"><i class="fa fa-check"></i><b>3.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="3.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-paquetes-que-vamos-a-utilizar"><i class="fa fa-check"></i><b>3.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cómo-usar-los-servicios-de-here"><i class="fa fa-check"></i><b>3.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-datos-repositorio-de-datos-del-gcba"><i class="fa fa-check"></i><b>3.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="3.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#transformando-nuestros-datos"><i class="fa fa-check"></i><b>3.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="3.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cuánto-tardo-en-llegar-al-monumental"><i class="fa fa-check"></i><b>3.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="3.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#midiendo-la-cobertura-de-los-parques"><i class="fa fa-check"></i><b>3.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="3.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba"><i class="fa fa-check"></i><b>3.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="3.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#ejercicios-1"><i class="fa fa-check"></i><b>3.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><i class="fa fa-check"></i><b>4</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="4.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#qué-es-la-geocodificación-o-geocoding-1"><i class="fa fa-check"></i><b>4.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="4.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#api-interfaz-de-programación-de-aplicaciones-1"><i class="fa fa-check"></i><b>4.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="4.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#servicio-de-normalización-de-datos-geográficos-de-argentina-1"><i class="fa fa-check"></i><b>4.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="4.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#google-geocode-api-1"><i class="fa fa-check"></i><b>4.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="4.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#diferencias-entre-las-dos-apis-1"><i class="fa fa-check"></i><b>4.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="4.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#una-tercera-alternativa-geocode_osm-1"><i class="fa fa-check"></i><b>4.6</b> Una tercera alternativa: geocode_OSM()</a></li>
+<li class="chapter" data-level="4.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#ejercicios-2"><i class="fa fa-check"></i><b>4.7</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><i class="fa fa-check"></i><b>5</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="5.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#la-distancia-espacial-y-la-distancia-de-viaje-1"><i class="fa fa-check"></i><b>5.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="5.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#los-paquetes-que-vamos-a-utilizar-1"><i class="fa fa-check"></i><b>5.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#cómo-usar-los-servicios-de-here-1"><i class="fa fa-check"></i><b>5.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#los-datos-repositorio-de-datos-del-gcba-1"><i class="fa fa-check"></i><b>5.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="5.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#transformando-nuestros-datos-1"><i class="fa fa-check"></i><b>5.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="5.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#cuánto-tardo-en-llegar-al-monumental-1"><i class="fa fa-check"></i><b>5.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="5.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#midiendo-la-cobertura-de-los-parques-1"><i class="fa fa-check"></i><b>5.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="5.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba-1"><i class="fa fa-check"></i><b>5.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="5.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html#ejercicios-3"><i class="fa fa-check"></i><b>5.8</b> Ejercicios</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Herramientas de análisis espacial en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1" class="section level1">
+<h1><span class="header-section-number">4</span> Geocoding: de la representación humana al sistema de coordenadas</h1>
+<p>En capítulos anteriores ya descubrimos la particularidad de la representación de los datos espaciales: los ubicamos en base a un modelo de la tierra en lo qu se conoce como Coordinate Reference System (CRS). Esta forma de representación es muy distinta a la que tenemos en nuestras cabezas cuando nos dicen que tenemos que ir a cursar a Figueroa Alcorta 7350. En diversas circunstancias vamos a necesitar convertir esta direcciones a puntos espaciales para poder agregar información relevante para nuestros análisis y encontrar nuevos patrones en nuestros datos.
+Veamos cómo podemos hacerlo usando servicios del Estado de Argentina y también de Google.</p>
+<div id="qué-es-la-geocodificación-o-geocoding-1" class="section level2">
+<h2><span class="header-section-number">4.1</span> ¿Qué es la geocodificación o geocoding?</h2>
+<p>Geocoding no es otra cosa que la transformación de una ubicación en el formato que manejamos a diario hacia una coordenada en un sistema de coordenadas de referencia (CRS, en inglés). Esta simple operación es sumamente útil para muchos de nuestros objetivos. Imaginemos que queremos tener alguna medida de la cobertura de atención para la salud en la Ciudad de Buenos Aires. Tenemos la dirección de distintos hospitales y centros de salud, pero no conocemos cómo se distribuyen en el espacio. Carguemos primero estos datos</p>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb106-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb106-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb106-2"></a>salud &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/HospitalesYCentrosSalud.csv&quot;</span>)</span></code></pre></div>
+<p>Y veamos un poco las variables que tenemos</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb107-1"></a><span class="kw">glimpse</span>(salud)</span></code></pre></div>
+<pre><code>## Rows: 115
+## Columns: 4
+## $ Establecimiento &lt;chr&gt; &quot;Hospital General de Agudos Dr. T. Alvarez&quot;, &quot;Hospital General de Agudos Dr. C. Arg...
+## $ Dirección       &lt;chr&gt; &quot;Doctor Juan Felipe Aranguren 2701&quot;, &quot;Pi y Margal 750&quot;, &quot;Diaz Velez 5044&quot;, &quot;Cerviño...
+## $ Barrio          &lt;chr&gt; &quot;Flores&quot;, &quot;La Boca&quot;, &quot;Caballito&quot;, &quot;Palermo&quot;, &quot;Parque Patricios&quot;, &quot;Flores&quot;, &quot;Coghlan...
+## $ Tipo            &lt;chr&gt; &quot;Hospital General de Agudos&quot;, &quot;Hospital General de Agudos&quot;, &quot;Hospital General de Ag...</code></pre>
+<p>Geocodificemos con la ayuda del paquete <strong>wrapar</strong></p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-1"></a><span class="co"># Si no lo tenés insalado</span></span>
+<span id="cb109-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-2"></a><span class="co"># require(devtools)</span></span>
+<span id="cb109-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-3"></a><span class="co"># install_github(&quot;martinmontane/wrapar&quot;)</span></span>
+<span id="cb109-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-4"></a><span class="kw">library</span>(wrapar)</span>
+<span id="cb109-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-5"></a><span class="co"># Agregamos una variable de ID y una columna que indique la provincia</span></span>
+<span id="cb109-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-6"></a>salud &lt;-<span class="st"> </span>salud <span class="op">%&gt;%</span></span>
+<span id="cb109-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-7"></a><span class="st">         </span><span class="kw">mutate</span>(<span class="dt">id=</span><span class="kw">row_number</span>(),</span>
+<span id="cb109-8"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-8"></a>                <span class="dt">provincia=</span><span class="st">&quot;Ciudad de Buenos Aires&quot;</span>)</span>
+<span id="cb109-9"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-9"></a>saludGeoreferenciado &lt;-<span class="st"> </span><span class="kw">geocodeDirecciones</span>(<span class="dt">datos =</span> salud,</span>
+<span id="cb109-10"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-10"></a>                                           <span class="dt">col_id =</span> <span class="st">&quot;id&quot;</span>,</span>
+<span id="cb109-11"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-11"></a>                                           <span class="dt">col_direccion =</span> <span class="st">&quot;Dirección&quot;,</span></span>
+<span id="cb109-12"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-12"></a><span class="st">                                           col_provincia = &quot;</span>provincia<span class="st">&quot;)</span></span>
+<span id="cb109-13"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-13"></a><span class="st"># Seleccionamos las que tuvimos algún match</span></span>
+<span id="cb109-14"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-14"></a><span class="st">saludGeoreferenciado &lt;- saludGeoreferenciado %&gt;% </span></span>
+<span id="cb109-15"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-15"></a><span class="st">                        filter(nMatchAPI %in% 1)</span></span>
+<span id="cb109-16"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-16"></a><span class="st"># Le agregamos información que estaba en el anterior data.frame</span></span>
+<span id="cb109-17"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-17"></a><span class="st">saludGeoreferenciado &lt;- left_join(saludGeoreferenciado,</span></span>
+<span id="cb109-18"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-18"></a><span class="st">                                  salud,</span></span>
+<span id="cb109-19"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-19"></a><span class="st">                                  by=c(&quot;</span>id<span class="st">&quot;))</span></span>
+<span id="cb109-20"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-20"></a><span class="st">library(sf)</span></span>
+<span id="cb109-21"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-21"></a><span class="st"># Convertimos a objeto sf</span></span>
+<span id="cb109-22"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-22"></a><span class="st">saludSf &lt;- st_as_sf(saludGeoreferenciado,</span></span>
+<span id="cb109-23"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-23"></a><span class="st">                    coords=c(&quot;</span>ubicacion.lon<span class="st">&quot;,&quot;</span>ubicacion.lat<span class="st">&quot;),</span></span>
+<span id="cb109-24"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb109-24"></a><span class="st">                    crs=4326)</span></span></code></pre></div>
+<p>Con la ayuda de leaflet hagamos un simple mapa interactivo</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb110-1"></a><span class="kw">library</span>(leaflet)</span>
+<span id="cb110-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb110-2"></a><span class="kw">leaflet</span>(saludSf) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb110-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb110-3"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb110-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb110-4"></a><span class="st">  </span><span class="kw">addMarkers</span>(<span class="dt">label =</span> <span class="op">~</span><span class="st"> </span>Establecimiento,</span>
+<span id="cb110-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb110-5"></a>             <span class="dt">popup =</span> <span class="op">~</span><span class="st"> </span>Tipo)</span></code></pre></div>
+<div id="htmlwidget-e3a44ff95da2f6af90ef" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e3a44ff95da2f6af90ef">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[[-34.627781447398,-34.6087962957088,-34.5809703579465,-34.6428955952609,-34.6433448995771,-34.5651923068198,-34.617629206156,-34.5846387995194,-34.6493645275217,-34.5872239065894,-34.5998406045071,-34.6290573823268,-34.5947430683685,-34.5970202826001,-34.6392416165478,-34.634461557486,-34.6343601482784,-34.6421366864003,-34.6144579721186,-34.5841651930105,-34.6228950790955,-34.6055994640973,-34.6343546530817,-34.6303705697442,-34.6373570902175,-34.6087437506663,-34.5540465190586,-34.6256732599863,-34.6184325581653,-34.6348306388505,-34.6737548155641,-34.5988768063997,-34.6492806136339,-34.6559979379474,-34.6520442554078,-34.6498939750591,-34.656398672508,-34.6427650789809,-34.6466780362595,-34.6447565981173,-34.6219108645169,-34.6401406402164,-34.6312206225582,-34.6658446969653,-34.6543447996064,-34.5927774576562,-34.5871346120949,-34.5865037359837,-34.6438578061482,-34.6333566521811,-34.5477447266555,-34.6252573810526,-34.6207064879528,-34.6783309438563,-34.6602215266517,-34.6736664013562,-34.6769572827192,-34.6605713224086,-34.6841683662419,-34.6730551827838,-34.5765136081744,-34.5697672924483,-34.6458319492214,-34.6221480020622,-34.6346531341448,-34.6354870311447,-34.6108561881938,-34.6195118894707,-34.641769623104,-34.6411182896169,-34.6699157997208,-34.6316370435422,-34.5780324316533,-34.6193567867327,-34.6119815505353,-34.6527424923603,-34.618092604856,-34.6298840483439,-34.6329788786227,-34.6470490060175,-34.5517943333323,-34.6051488594159,-34.6123278484207,-34.6336311680692,-34.6394975100233,-34.6278425978534,-34.5447327022643,-34.6190200122634,-34.591148540795,-34.5852438543702,-34.6463217519688,-34.6518129220957,-34.6607993522622,-34.5469255409967,-34.5980735425874,-34.6658446969653,-34.6333566521811],[-58.3661002142755,-58.4379659236264,-58.4068239713883,-58.410562614424,-58.4544174334378,-58.4709540123087,-58.4093947446311,-58.4003631089285,-58.5157973095184,-58.4709397622518,-58.5111922323097,-58.3776579916709,-58.4107828974292,-58.474781172706,-58.3852841412444,-58.3824619751048,-58.3825382927692,-58.3812568118949,-58.4275802477602,-58.4025687523577,-58.3940811824106,-58.4600924139439,-58.391362842587,-58.3757367562138,-58.3937840345965,-58.435017339527,-58.4408638086469,-58.4323861658566,-58.5018918133729,-58.4025301983196,-58.4590020434456,-58.4104753596938,-58.3891603374436,-58.3956883458029,-58.3749637579297,-58.4049871089325,-58.3994469464971,-58.4423390681458,-58.4345008118914,-58.4457353453968,-58.4919068434948,-58.3661257446722,-58.3578122972908,-58.5041364072987,-58.4310790313854,-58.4206065056806,-58.4258072997096,-58.4418180336075,-58.4829085791805,-58.3836997549056,-58.4866204613446,-58.4021246931747,-58.3723897227094,-58.4915202821843,-58.474425448069,-58.4680725598334,-58.4675168066464,-58.4674436026888,-58.4644501507668,-58.4859106488762,-58.5092694456602,-58.4743266088546,-58.4244162469261,-58.4827897747654,-58.5265049533067,-58.4524150029675,-58.5052799919432,-58.3936720758343,-58.5193871763838,-58.4320455471318,-58.471454537222,-58.3727361372274,-58.4555210457177,-58.4651295949294,-58.4797956665773,-58.4226839293749,-58.5221476159581,-58.4297191430707,-58.4040539788998,-58.468181323948,-58.4632002391685,-58.4450285255881,-58.403238571202,-58.3703437260965,-58.4460060827871,-58.5040291323899,-58.4765159358809,-58.4380674425707,-58.4989247531954,-58.4859063398,-58.3719069623236,-58.4777087613048,-58.4330079296485,-58.4577006214695,-58.4106141769962,-58.5041364072987,-58.3836997549056],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospital General de Agudos","Hospitales Generales de Niños","Hospitales Generales de Niños","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Hospitales Especializados","Centro Asistencial","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centros de Salud Nivel 1","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centro Médico Barrial","Centros de Salud Mental","Centros de Salud Mental","Centro Odontológico Infantil","Centro Odontológico Infantil"],null,null,null,["Hospital General de Agudos Dr. C. Argerich","Hospital General de Agudos Dr. C. Durand","Hospital General de Agudos Dr. J. A. Fernandez","Hospital General de Agudos J. M. Penna","Hospital General de Agudos P. Piñero","Hospital General de Agudos Dr. I. Pirovano","Hospital General de Agudos J. M. Ramos Mejía","Hospital General de Agudos B. Rivadavia","Hospital General de Agudos Donación F. Santojanni","Hospital General de Agudos Dr. E. Tornu","Hospital General de Agudos A. Zubizarreta","Hospital General de Niños Pedro de Elizalde","Hospital General de Niños Ricardo Gutierrez","Hospital de Emergencias Psiquiátricas Torcuato de Alvear","Hospital de Salud Mental Braulio Moyano","Hospital de Salud Mental J. T. Borda","Hospital Infanto Juvenil C. Tobar Garcia","Talleres de rehabilitación en salud mental","Hospital de Odontología José Dueñas","Hospital de Odontología Dr. Ramón Carrillo (ex nacional)","Hospital de Oftalmología Santa Lucía","Hospital Oftalmológico Dr. Pedro Lagleyze","Hospital de Gastroenterología B. Udaondo","Hospital de Rehabilitación Respiratoria M. Ferrer","Hospital de Infecciosas F. Muñiz","Instituto de Zoonosis L. Pasteur","Instituto de Rehabilitación Psicofísica ( I.R.E.P. )","Hospital de Quemados Dr. Arturo Umberto Illia","Hospital de Rehabilitación M. Rocca","Hospital Materno Infantil R. Sarda","Centro Asistencial Dra. Cecilia Gierson","Balvanera (CeSAC Nº 11)","Barracas 1 (CeSAC Nº 1)","Barracas 2 (CeSAC Nº 8)","Barracas 3 (CeSAC Nº 16)","Barracas 4 (CeSAC Nº 30)","Barracas 6 (CeSAC Nº 35)","Flores 1 (CeSAC Nº 19)","Flores 3 (CeSAC Nº 31)","Flores 4 (CeSAC Nº 40)","Floresta (CeSAC N° 36)","La Boca 1 (CeSAC Nº 9)","La Boca 2 (CeSAC Nº 41)","Mataderos 2 (CeSAC Nº 37)","Nueva Pompeya (CeSAC Nº 32)","Palermo 1 (CeSAC Nº 17)","Palermo 2 (CeSAC Nº 26)","Palermo 3 (CeSAC Nº 33)","Parque Avellaneda (CeSAC Nº 13)","Parque Patricios 1 (CeSAC Nº 10)","Saavedra (CeSAC Nº 27)","San Cristóbal (CeSAC Nº 45)","San Telmo (CeSAC Nº 15)","Villa Lugano 2 (CeSAC Nº 7)","Villa Lugano 3 (CeSAC Nº 14)","Villa Lugano 4 (CeSAC Nº 18)","Villa Lugano 6 (CeSAC Nº 43)","Villa Lugano 7 (CeSAC Nº 44)","Villa Lugano 9 (CeSAC Nº 3)","Villa Lugano 10 (CeSAC Nº 28)","Villa Pueyrredón (CeSAC Nº 2)","Villa Urquiza (CeSAC Nº 12)","CMB Nº 1","CMB Nº 2","CMB Nº 3","CMB Nº 4","CMB Nº 5","CMB Nº 6","CMB Nº 7","CMB Nº 8","CMB Nº 9","CMB Nº 10","CMB Nº 11","CMB Nº 12","CMB Nº 13","CMB Nº 18","CMB Nº 19","CMB Nº 23","CMB Nº 24","CMB Nº 25","CMB Nº 26","CMB Nº 27","CMB Nº 29","CMB Nº 30","CMB Nº 31","CMB Nº 32","CMB Nº 33","CMB Nº 34","CMB Nº 35","CMB Nº 36","CMB Nº 37","CMB Nº 38","CMB Nº 39","C.S.M. Nº 1","C.S.M. Nº 3","COI Nº 1","COI Nº 4"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-34.6841683662419,-34.5447327022643],"lng":[-58.5265049533067,-58.3578122972908]}},"evals":[],"jsHooks":[]}</script>
+<p>Nada mal, no? No se preocupen si no entienden lo que hicimos, la única idea de esta introducción es mostrarle lo que van a ser capaces de hacer, nada más ni nada menos. Vamos a ir explicando cómo funciona todo esto.</p>
+</div>
+<div id="api-interfaz-de-programación-de-aplicaciones-1" class="section level2">
+<h2><span class="header-section-number">4.2</span> API: Interfaz de programación de aplicaciones</h2>
+<p>Sin saberlo, en el ejemplo anterior usamos la <a href="https://datosgobar.github.io/georef-ar-api/">API de georreferenciación de Argentina</a> a través de la función <strong>geocodeDirecciones()</strong> del paquete wrapar ¿Qué es una API? Una API es un conjunto de reglas preestablecidas que nos permiten comunicarnos con servicios que están escritos en diferente lenguaje y con un conjunto de procedimientos específicos. Imaginenlo como que nuestro código de R es español, y la API de geolocalización del Gobierno está en francés, la API podría ser un idioma intermedio, como el inglés, para comunicarnos. Si quieren aprender como comunicarse sin hacerlo por intermedio de <strong>wrapar</strong> [pueden aprenderlo leyendo los documentos del desarrollo del gobierno]. La idea de wrapar es no tener que aprender otro idioma y hacer todo desde R.</p>
+<p>Las APIs exceden a este desarrollo particular del gobierno y casi cualquier servicio de cualquier empresa tiene una API para que distintos usuarios puedan hacer consultas sin tener que conocer específicamente cómo es que el servicio trabaja por detrás, es muy útil y eficiente. En este capítulo vamos a usar dos APIs: la del Gobierno, que ya fue presentada, y la de Google. Veamos las funcionalidades y ventajas y desventajas que cada una tiene.</p>
+</div>
+<div id="servicio-de-normalización-de-datos-geográficos-de-argentina-1" class="section level2">
+<h2><span class="header-section-number">4.3</span> Servicio de Normalización de Datos Geográficos de Argentina</h2>
+<p>Podemos comunicarnos con el servicio de normalización de datos geográficos de Argentina mediante la función <strong>geocodeDirecciones()</strong> del paquete <strong>wrapar</strong>. La función necesita que le pasemos algunos parámetros para poder hacer bien su trabajo.</p>
+<ul>
+<li><strong>datos</strong>: En este parámtro simplemente hay que poner el data.frame que tiene la información que querés georeferencair</li>
+<li><strong>col_id</strong>: es el nombre de la columna que tiene los códigos identificadores únicos de cada uno de los puntos. La función lo hace obligatorio porque va a ser la columna que después va a ser útil para incorporar el resultado de la geocodificación.</li>
+<li><strong>col_direccion</strong>: es el nombre de la columna donde se encuentra la dirección, sin incluid información sobre la localidad, provincia, pais, etc</li>
+<li><strong>col_provincia</strong>: es el nombre de la columna que tiene el nombre de la provincia</li>
+</ul>
+<p>Con estos cuatro parámetros, cómo hicimos anteriormente, la función pasa las dirección a la API y la API nos devuelve un data.frame con las siguientes variables:</p>
+<ul>
+<li><strong>id</strong>: la columna que identifica a cada uno de los puntos</li>
+<li><strong>nMatchAPI</strong>: nos dice cuántos resultados encontró la API para esa dirección (puede ser más de uno)</li>
+<li><strong>codigoAPI</strong>: Un código que dice “Exito” cuando se pudo comunicar con la API o “Error” cuando hubo algún problema en la comunicación</li>
+<li><strong>calle.nombre, departamento.nombre, localidad_censal.nombre, y nomenclatura</strong>: variables donde tenemos más información sobre la dirección que encontró la API</li>
+<li><strong>ubicacion.lat y ubicacion.lon</strong> las coordenadas de latitud y longitud en el sistema de coordenads EPSG 4326</li>
+</ul>
+<p>Ahora que ya sabemos cómo funciona, relean el código que estaba en la parte de arriba ¿Cuántos puntos pudo geolocalizar? 97. En principio, no sabemos si están bien o mal (la API puede haber devuelto simplemente un punto que no correspondía), pero podemos estar seguros que para 18 de nuestros 115 casos no encontró ninguna respuesta. Esto suele pasar cuando la API no es capaz de mapear la dirección que le pasamos con otra que si reconozca. Usando otras herramientas vistas anteriormente, hagamos un mapa de distancia mínima entre cada una de las manzanas de la Ciudad de Buenos Aires y los puntos de los establecimientos de salud.</p>
+<p>Lo primero que tenemos que hacer para medir las distancias es tener proyectados a los CRS para que la distancia midan metros y no diferencias entre coordenadas latitud y longitud.</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb111-1"></a>manzanas &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;http://cdn.buenosaires.gob.ar/datosabiertos/datasets/manzanas/manzanas.geojson&quot;</span>)</span>
+<span id="cb111-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb111-2"></a><span class="co"># El objeto manzanas está representado en el CRS que corresponde al ESPG 4326</span></span>
+<span id="cb111-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb111-3"></a><span class="kw">st_crs</span>(manzanas)</span></code></pre></div>
+<pre><code>## Coordinate Reference System:
+##   User input: WGS 84 
+##   wkt:
+## GEOGCRS[&quot;WGS 84&quot;,
+##     DATUM[&quot;World Geodetic System 1984&quot;,
+##         ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+##             LENGTHUNIT[&quot;metre&quot;,1]]],
+##     PRIMEM[&quot;Greenwich&quot;,0,
+##         ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##     CS[ellipsoidal,2],
+##         AXIS[&quot;geodetic latitude (Lat)&quot;,north,
+##             ORDER[1],
+##             ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##         AXIS[&quot;geodetic longitude (Lon)&quot;,east,
+##             ORDER[2],
+##             ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##     ID[&quot;EPSG&quot;,4326]]</code></pre>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb113-1"></a><span class="co"># El objeto de saludSf no tiene información sobre el CRS de las coordenadas, pero sabemos que es 4326</span></span>
+<span id="cb113-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb113-2"></a><span class="kw">st_crs</span>(saludSf) &lt;-<span class="st"> </span><span class="dv">4326</span></span>
+<span id="cb113-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb113-3"></a><span class="co"># Convertimos a los dos a la proyección que usa el GCBA</span></span>
+<span id="cb113-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb113-4"></a>manzanas &lt;-<span class="st"> </span><span class="kw">st_transform</span>(manzanas,</span>
+<span id="cb113-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb113-5"></a>                         <span class="dt">crs=</span><span class="st">&quot;+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs &quot;</span>)</span>
+<span id="cb113-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb113-6"></a>saludSf &lt;-<span class="st"> </span><span class="kw">st_transform</span>(saludSf,</span>
+<span id="cb113-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb113-7"></a>                         <span class="dt">crs=</span><span class="st">&quot;+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs &quot;</span>)</span></code></pre></div>
+<p>Fìjense que usamos un texto largo en lugar de un código para especificar el CRS de la Ciudad de Buenos Aires. Esto suele pasar cuando una proyección no se encuentra correctamente indexada en el catálogo de EPSG. Lo único que hace EPSG es ponerle un número a cada conjunto de parámetros que determinan un CRS (como los que vemos en el texto que usamos dentro de st_transform). Para buscar los CRS cuando no saben cual usar, les recomiendo <a href="https://spatialreference.org/" class="uri">https://spatialreference.org/</a></p>
+<p>Ya podemos calcular las distancias.</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb114-1"></a><span class="co"># Tomamos las distancias</span></span>
+<span id="cb114-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb114-2"></a>distanciaManzanas &lt;-<span class="kw">st_distance</span>(<span class="dt">x =</span> manzanas, <span class="dt">y=</span>saludSf)</span>
+<span id="cb114-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb114-3"></a><span class="co"># Nos quedamos con el valor mínimo de distancia entre cada punto y cada manzana</span></span>
+<span id="cb114-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb114-4"></a>distanciaManzanas &lt;-<span class="st"> </span><span class="kw">apply</span>(distanciaManzanas,<span class="dv">1</span>,min)</span>
+<span id="cb114-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb114-5"></a><span class="co"># Agregamos estos datos al dataset de manzanas</span></span>
+<span id="cb114-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb114-6"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
+<span id="cb114-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb114-7"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">distMinima=</span>distanciaManzanas)</span></code></pre></div>
+<p>Quizás la parte más rara o con la que están menos familiares es la que dice <strong>apply(distanciaManzanas,1,min)</strong>. La función <strong>apply()</strong> sirve para iterar, es decir, para realizar el mismo procedimiento para todas las filas o columnas de una matriz. Cuando ponemos 1 luego de pasar a la matriz, va a hacer todo fila por fila, si dice 2 lo hará columna por columna. <em>distanciaManzanas</em> tenía la distancia en metros de cada uno de los centroides de las manzanas contra cada uno de los puntos, por lo cual lo que hace ahí es ir fila por fila y tomar el valor mìnimo (fijense que le pedimos que aplique la función min en el ùltimo argumento). Con esto, ya podemos hacer nuestro gráfico de la accesibilidad de las manzanas a establecimientos de salud:</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-1"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
+<span id="cb115-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-2"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">distCat=</span><span class="kw">cut</span>(distMinima,</span>
+<span id="cb115-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-3"></a>                               <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">400</span>,<span class="dv">600</span>,<span class="dv">900</span>,<span class="kw">max</span>(manzanas<span class="op">$</span>distMinima)),</span>
+<span id="cb115-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-4"></a>                               <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Hasta 400 metros&quot;</span>, <span class="st">&quot;Entre 400 y 600 metros&quot;</span>, <span class="st">&quot;Entre 600 y 900 metros&quot;</span>,<span class="st">&quot;Más de 900 metros&quot;</span>),</span>
+<span id="cb115-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-5"></a>                               <span class="dt">include.lowest =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb115-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-6"></a><span class="kw">ggplot</span>(manzanas) <span class="op">+</span></span>
+<span id="cb115-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-7"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>distCat),<span class="dt">color=</span><span class="ot">NA</span>) <span class="op">+</span></span>
+<span id="cb115-8"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-8"></a><span class="st">  </span><span class="kw">scale_fill_viridis_d</span>(<span class="dt">direction =</span> <span class="dv">-1</span>,<span class="dt">name=</span><span class="st">&quot;Distancia&quot;</span>) <span class="op">+</span></span>
+<span id="cb115-9"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-9"></a><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></span>
+<span id="cb115-10"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb115-10"></a><span class="st">  </span><span class="kw">coord_sf</span>(<span class="dt">datum =</span> <span class="ot">NA</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-103-1.png" width="672" /></p>
+<p>Se observa una importante parte de la Ciudad de Buenos Aires cubierta por al menos un hospital/centro de salud a menos de 400m, con algunas manchas azules en algunas zonas, que puede o no ser explicada por los 18 puntos que nos faltaron georeferenciar. Repliquemos lo mismo, pero ahora usando el servicio de google.</p>
+</div>
+<div id="google-geocode-api-1" class="section level2">
+<h2><span class="header-section-number">4.4</span> Google geocode API</h2>
+<p>Google ofrece una amplia gama de servicios para lo que ellos llaman “desarrolladors”, que excede largamente el uso de la API de Google Maps. Sin embargo, la forma para acceder a todos estos servicios tiene como origen una misma cuenta. Desde esta cuenta se pueden ir agregando diversos modulos con funcionalidades distintas. Veamos como registrar la cuenta y habilitar los servicios que necesitamos.</p>
+<p>Vayan a <a href="https://cloud.google.com/" class="uri">https://cloud.google.com/</a> e ingresen con una cuenta de Google (no es necesario que usen una cuenta personal, pueden crear una nueva en caso de ser necesario). Una vez que esten logueados, van a ver un botón en la esquina derecha que dicen “Consola”. Ingresen ahí y desde el menú de navegación en la parte izquierda de la pantalla vayan a APIs y servicios. Ahí van a ver que les va a pedir que creen un proyecto: para usar una API es necesario asociar a un “proyecto” en la plataforma de Google, al que le pueden poner el nombre
+que ustedes quieran.</p>
+<p>Lo que nosotros necesitamos ahora es activar las APIs que queremos usar. Google ofrece una multitud de APIs, por lo que más simple es buscarlas en la barra que nos ofrece. Vamos a activar dos APIs: Geocoding API y Distance Matrix API. Primero habilitemos Geocoding API y veamos qué pasa. Si todo funcionó bien, deberían estar en la página de su proyecto nuevo, pero ahora en el submenú de API deberían ver que dentro de API habilitadas tienen una que dice “Geocoding API” ¡Muy bien! Abajo de ese título van a ver que les recomienda otras API en API adicionales. Elijan Distance Matrix API. Habilítenla y listo, ya tenemos las dos APIs con las que vamos a trabajar en el curso.</p>
+<p>Ahora solo nos queda crear una especie de “contraseña” con la que vamos a vincular nuestra cuenta de Google desde R. Esto es necesario porque las API de Google son servicios pagos. Dan USD 300 de crédito inicial, pero luego hay que ingresar una tarjeta de crédito para continuar usando el servicio, aunque dan USD 200 de crédito todos los meses, el equivalente aproximadamente a 40.000 búsquedas de geocoding. Esta “contraseña” se llama credencial o “key”. Pueden activarla desde el menú de la izquierda en “API y servicios”
+y luego “credenciales”. Allí pueden crear una credencial, que es básicamente una clave de muchos caracteres que será necesaria para lo que sigue.</p>
+<p><strong>Importante: Para que efectivamente funcione lo que sigue en esta clase tienen que asociar una tarjeta de crédito a la cuenta de Google. Si bien “regala”" USD 300 en el primer uso, y USD 200 todos los meses, hay que tener cuidado una vez que la tarjeta ha sido ingresada. Si quieren probar el uso de esta herramienta pongan quotas desde su cuenta de Google.</strong></p>
+<p>Hechas las presentaciones formales, veamos cómo podemos hacer lo mismo con la funcion <strong>geocodeGoogle()</strong>. Esta función requiere parámetros similares a la de <strong>geocodeDirecciones()</strong>, veamos:</p>
+<ul>
+<li><strong>datos</strong>: En este parámtro simplemente hay que poner el data.frame que tiene la información que querés georeferencair</li>
+<li><strong>col_id</strong>: es el nombre de la columna que tiene los códigos identificadores únicos de cada uno de los puntos. La función lo hace obligatorio porque va a ser la columna que después va a ser útil para incorporar el resultado de la geocodificación.</li>
+<li><strong>cols_query</strong>: En esta columna hay que pasar un vector character con las variables que queremos que se incluyan en la consulta</li>
+<li><strong>col_key</strong>: nombre de la columna que tiene los datos de la “key” o “credencial” de google</li>
+<li><strong>col_region</strong>: Este parámetro es opcional y se puede delimitar la búsqueda de google a un área. Por default, region no tiene ningún valor por lo cual busca en todo el mundo.</li>
+</ul>
+<p>Veamosla en función. <strong>Este código, así como está, no debería funcionar porque la key es incorrecta</strong>. Deben colocar una propia para que funcione</p>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb116-1"></a><span class="co"># Mismas operaciones que anteriormente, pero esta vez agregamos una columna con la key y de region AR</span></span>
+<span id="cb116-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb116-2"></a>salud &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;data/HospitalesYCentrosSalud.csv&quot;</span>)</span>
+<span id="cb116-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb116-3"></a>salud &lt;-<span class="st"> </span>salud <span class="op">%&gt;%</span></span>
+<span id="cb116-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb116-4"></a><span class="st">         </span><span class="kw">mutate</span>(<span class="dt">id=</span><span class="kw">row_number</span>(),</span>
+<span id="cb116-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb116-5"></a>                <span class="dt">provincia=</span><span class="st">&quot;CABA&quot;</span>,</span>
+<span id="cb116-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb116-6"></a>                <span class="dt">key=</span><span class="st">&quot;aknfadgnadoigdagoida&quot;</span>,</span>
+<span id="cb116-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb116-7"></a>                <span class="dt">region=</span><span class="st">&quot;AR&quot;</span>)</span></code></pre></div>
+<p>Ahora ya podemos hacer el geocoding con google !</p>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb117-1"></a>saludGoogle &lt;-<span class="st"> </span><span class="kw">geocodeGoogle</span>(<span class="dt">datos =</span> salud,</span>
+<span id="cb117-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb117-2"></a>                             <span class="dt">col_id =</span> <span class="st">&quot;id&quot;</span>,</span>
+<span id="cb117-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb117-3"></a>                             <span class="dt">cols_query =</span><span class="kw">c</span>(<span class="st">&quot;Dirección&quot;,&quot;</span>provincia<span class="st">&quot;,&quot;</span>Barrio<span class="st">&quot;),</span></span>
+<span id="cb117-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb117-4"></a><span class="st">                             col_key = &quot;</span>key<span class="st">&quot;,</span></span>
+<span id="cb117-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb117-5"></a><span class="st">                             col_region = &quot;</span>region<span class="st">&quot;)</span></span></code></pre></div>
+<p>Un mapa rápido en leaflet para ver qué encontró:</p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb118-1"></a>saludGoogle &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(<span class="dt">x =</span> saludGoogle,</span>
+<span id="cb118-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb118-2"></a>                        <span class="dt">coords=</span><span class="kw">c</span>(<span class="st">&quot;results.geometry.location.lng&quot;</span>,<span class="st">&quot;results.geometry.location.lat&quot;</span>),</span>
+<span id="cb118-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb118-3"></a>                        <span class="dt">crs=</span><span class="dv">4326</span>)</span>
+<span id="cb118-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb118-4"></a><span class="kw">leaflet</span>(saludGoogle) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb118-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb118-5"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb118-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb118-6"></a><span class="st">  </span><span class="kw">addMarkers</span>()</span></code></pre></div>
+<div id="htmlwidget-c2c9912c3b9ff93af14b" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c2c9912c3b9ff93af14b">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[[-34.6241706,-34.6280253,-34.609417,-34.5813647,-34.6434781,-34.643665,-34.5648462,-34.6176449,-34.5850217,-34.6488717,-34.5859839,-34.6253397,-34.6001518,-34.6288509,-34.5947196,-34.5983326,-34.6396743,-34.6366205,-34.6356989,-34.6420282,-34.6145998,-34.5848207,-34.6388593,-34.622561,-34.6053809,-34.634411,-34.6070168,-34.6302362,-34.637679,-34.6082601,-34.5532339,-34.6255137,-34.6185059,-34.6346813,-34.6737869,-34.606696,-34.598894,-34.6493301,-34.656086,-34.6518434,-34.6493269,-34.6564018,-34.6427982,-34.6494825,-34.6466931,-34.6449611,-34.6500034,-34.6218342,-34.6400472,-34.6312143,-34.6065332,-34.6007789,-34.6549992,-34.6658029,-34.6541726,-34.5924202,-34.5872453,-34.5862205,-34.6433989,-34.6342609,-34.6362534,-34.5830141,-34.5825915,-34.5896061,-34.5841864,-34.5478336,-34.6253489,-34.6207491,-34.670579,-34.6786897,-34.6602065,-34.6735891,-34.6696479,-34.6777525,-34.6616144,-34.6844654,-34.6730224,-34.5764995,-34.6621592,-34.6732497,-34.6587569,-34.6583337,-34.5699876,-34.6458612,-34.6221406,-34.6348619,-34.6356266,-34.6109895,-34.6195845,-34.6417869,-34.6409811,-34.6729225,-34.631994,-34.5779494,-34.6193032,-34.6120551,-34.6526979,-34.6180479,-34.6297781,-34.6328805,-34.6470769,-34.55166,-34.6051698,-34.612442,-34.6335399,-34.6393807,-34.6279782,-34.5447401,-34.6191927,-34.5912198,-34.5851964,-34.6461599,-34.6518912,-34.66078,-34.547193,-34.5981835,-34.6658568,-34.6342609],[-58.4694909,-58.3654965,-58.4379138,-58.4071226,-58.4105591,-58.4541474,-58.4712391,-58.409611,-58.4018169,-58.5151763,-58.4723436,-58.5077002,-58.5108414,-58.3770383,-58.4108063,-58.47536,-58.3852734,-58.3830414,-58.3823233,-58.3812292,-58.4276387,-58.4029024,-58.3602242,-58.3944658,-58.4602111,-58.391356,-58.4333643,-58.3757536,-58.393661,-58.43508,-58.4414915,-58.4322185,-58.501652,-58.4032479,-58.4591987,-58.421414,-58.410614,-58.3893083,-58.3970171,-58.3747436,-58.404502,-58.3995351,-58.4423579,-58.4382999,-58.4345082,-58.445881,-58.4311613,-58.4919977,-58.3660957,-58.3578758,-58.4781813,-58.4593869,-58.506372,-58.5041801,-58.431271,-58.4202338,-58.4257403,-58.4417039,-58.48183,-58.3836638,-58.4005296,-58.3773756,-58.3767222,-58.3802473,-58.3776613,-58.4873436,-58.4021731,-58.3724662,-58.4952004,-58.4917729,-58.4741781,-58.4678513,-58.4757419,-58.466544,-58.4681291,-58.4639435,-58.4860448,-58.5095296,-58.4319821,-58.4460786,-58.453065,-58.4559788,-58.4741522,-58.4245629,-58.4829726,-58.5263772,-58.4525164,-58.5053183,-58.3936481,-58.5191898,-58.4316563,-58.4810744,-58.3728962,-58.4552678,-58.4651762,-58.4797836,-58.4227767,-58.5223284,-58.4296682,-58.4039756,-58.4683469,-58.463124,-58.4449113,-58.4033229,-58.3705343,-58.446083,-58.5040199,-58.4766067,-58.4380794,-58.4988236,-58.4860852,-58.371767,-58.4778604,-58.4331742,-58.4580843,-58.4108007,-58.5041105,-58.3836638],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-34.6844654,-34.5447401],"lng":[-58.5263772,-58.3578758]}},"evals":[],"jsHooks":[]}</script>
+<p>Parece bastante bien, veamos cuáles son las varaibles que nos devolvió</p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb119-1"></a><span class="kw">glimpse</span>(saludGoogle)</span></code></pre></div>
+<pre><code>## Rows: 118
+## Columns: 19
+## $ results.address_components              &lt;list&gt; [&lt;data.frame[7 x 3]&gt;, &lt;data.frame[6 x 3]&gt;, &lt;data.frame[8 x...
+## $ results.formatted_address               &lt;chr&gt; &quot;Dr. Juan Felipe Aranguren 2701, C1406 FWY, Buenos Aires, A...
+## $ results.geometry.bounds.northeast.lat   &lt;dbl&gt; -34.62389, -34.62763, NA, -34.58102, -34.64273, NA, NA, NA,...
+## $ results.geometry.bounds.northeast.lng   &lt;dbl&gt; -58.46902, -58.36497, NA, -58.40647, -58.40930, NA, NA, NA,...
+## $ results.geometry.bounds.southwest.lat   &lt;dbl&gt; -34.62439, -34.62853, NA, -34.58183, -34.64408, NA, NA, NA,...
+## $ results.geometry.bounds.southwest.lng   &lt;dbl&gt; -58.46994, -58.36607, NA, -58.40746, -58.41131, NA, NA, NA,...
+## $ results.geometry.location_type          &lt;chr&gt; &quot;ROOFTOP&quot;, &quot;ROOFTOP&quot;, &quot;ROOFTOP&quot;, &quot;ROOFTOP&quot;, &quot;GEOMETRIC_CENT...
+## $ results.geometry.viewport.northeast.lat &lt;dbl&gt; -34.62279, -34.62673, -34.60807, -34.58008, -34.64205, -34....
+## $ results.geometry.viewport.northeast.lng &lt;dbl&gt; -58.46813, -58.36417, -58.43656, -58.40561, -58.40896, -58....
+## $ results.geometry.viewport.southwest.lat &lt;dbl&gt; -34.62549, -34.62943, -34.61077, -34.58277, -34.64475, -34....
+## $ results.geometry.viewport.southwest.lng &lt;dbl&gt; -58.47083, -58.36687, -58.43926, -58.40831, -58.41166, -58....
+## $ results.place_id                        &lt;chr&gt; &quot;ChIJr_Z5l4zJvJURY2wsvn1SkM8&quot;, &quot;ChIJd9naU8k0o5URZ2n7ZEl68fA...
+## $ results.types                           &lt;list&gt; [&quot;premise&quot;, &quot;premise&quot;, &quot;street_address&quot;, &quot;premise&quot;, &lt;&quot;esta...
+## $ status                                  &lt;chr&gt; &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;, &quot;OK&quot;,...
+## $ id                                      &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, ...
+## $ results.plus_code.compound_code         &lt;chr&gt; NA, NA, &quot;9HR6+6R Buenos Aires, Argentina&quot;, NA, NA, &quot;9G4W+G8...
+## $ results.plus_code.global_code           &lt;chr&gt; NA, NA, &quot;48Q39HR6+6R&quot;, NA, NA, &quot;48Q39G4W+G8&quot;, &quot;48Q3CGPH+3G&quot;...
+## $ results.partial_match                   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ geometry                                &lt;POINT [°]&gt; POINT (-58.46949 -34.62417), POINT (-58.3655 -34.6280...</code></pre>
+<p>Wow, muchas variables. La primera columna tiene, adentro, un data.frame con información que está en el resto de las columnas, así que vamos a ignorarla. Luego tenemos la <strong>formatted_address</strong>, que nos permite ver cuál es la calle que efectivamente nos devolvió Google. Luego tenemos cuatro coordenadas bounds, que sirven solo cuando nos devolvió un polígono en lugar de un punto (no le vamos a prestar atención, vamos a trabajar con los puntos que haya devuelto). Luego en location.lat y location.lng tenemos específicamente la latitud y longitud de nuestra dirección. Existen otras columnas, pero con estas y <strong>id</strong> y <strong>partial_match</strong> ya podemos seguir.</p>
+<p>Si están atentos/as a lo que estamos haciendo, van a ver que saludGoogle devolvió 118 resultados cuando mandamos 115 ! Qué fue lo que pasó? Siempre que pasa esto es porque google no encontró un resultado “perfecto” para nuestra consulta y nos devolvió más de uno. Cómo nos damos cuenta? De distintas maneras, pero <strong>partial_match</strong>, <strong>status</strong> y mirar a los duplicados nos va a servir mucho. Para empezar, hagamos esto último: veamos cuáles son los que están duplicados</p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-1"></a><span class="co"># Buscamos los duplicados</span></span>
+<span id="cb121-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-2"></a>idsDuplicados &lt;-<span class="st"> </span>saludGoogle <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb121-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-3"></a><span class="st">                 </span><span class="kw">group_by</span>(id) <span class="op">%&gt;%</span></span>
+<span id="cb121-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-4"></a><span class="st">                 </span><span class="kw">summarise</span>(<span class="dt">conteo=</span><span class="kw">n</span>()) <span class="op">%&gt;%</span></span>
+<span id="cb121-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-5"></a><span class="st">                 </span><span class="kw">filter</span>(conteo<span class="op">&gt;</span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
+<span id="cb121-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-6"></a><span class="st">                 </span><span class="kw">pull</span>(id)</span>
+<span id="cb121-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-7"></a><span class="co"># Los vemos con View()</span></span>
+<span id="cb121-8"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb121-8"></a><span class="kw">View</span>(saludGoogle[saludGoogle<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>idsDuplicados,])</span></code></pre></div>
+<p>En “results.types” van a ver que los ids 78 y 79 son rutas en lugar de puntos, por lo cual no nos sirve: no pudo encontrar un punto que se parezca a la dirección que le pasamos. Vamos a tener que filtrar esos casos. Finalmente, el id 62 nos devuelve dos casos para la misma dirección, uno pareciera ser el hospital y otro la policía (en la misma dirección): eso es algo que no nos interesa. Entonces lo que vamos a hacer es sacar a 78 y 79 y quedarnos solo con uno de los dos del 62. Lo hacemos así:</p>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb122-1"></a><span class="co"># Filtramos los ids y cualquier caso duplicado en id</span></span>
+<span id="cb122-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb122-2"></a>saludGoogle &lt;-<span class="st"> </span>saludGoogle <span class="op">%&gt;%</span></span>
+<span id="cb122-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb122-3"></a><span class="st">               </span><span class="kw">filter</span>(<span class="op">!</span>id <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">78</span>,<span class="dv">79</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb122-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb122-4"></a><span class="st">               </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">duplicated</span>(id))</span></code></pre></div>
+<p>La función duplicated nos elimina a todas las filas que aparecen por segunda vez en el data.frame con el mismo id. En este caso, elimina la segunda vez que aparece el número 62, por lo que funcionó bien. Ahora tenemos 113 puntos georeferenciados, solo perdimos el 78 y el 79. Hagamos el mismo gráfico que hicimos anteriormente:</p>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-1"></a><span class="co"># El objeto de saludGoogle no tiene información sobre el CRS de las coordenadas, pero sabemos que es 4326</span></span>
+<span id="cb123-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-2"></a><span class="kw">st_crs</span>(saludGoogle) &lt;-<span class="st"> </span><span class="dv">4326</span></span>
+<span id="cb123-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-3"></a><span class="co"># Convertimos a los dos a la proyección que usa el GCBA</span></span>
+<span id="cb123-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-4"></a>manzanas &lt;-<span class="st"> </span><span class="kw">st_transform</span>(manzanas,</span>
+<span id="cb123-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-5"></a>                         <span class="dt">crs=</span><span class="st">&quot;+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs &quot;</span>)</span>
+<span id="cb123-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-6"></a>saludGoogle &lt;-<span class="st"> </span><span class="kw">st_transform</span>(saludGoogle,</span>
+<span id="cb123-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-7"></a>                         <span class="dt">crs=</span><span class="st">&quot;+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs &quot;</span>)</span>
+<span id="cb123-8"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-8"></a><span class="co"># Tomamos las distancias</span></span>
+<span id="cb123-9"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-9"></a>distanciaManzanas &lt;-<span class="st"> </span><span class="kw">st_distance</span>(<span class="dt">x =</span> manzanas, <span class="dt">y=</span>saludGoogle)</span>
+<span id="cb123-10"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-10"></a><span class="co"># Nos quedamos con el valor mínimo de distancia entre cada punto y cada manzana</span></span>
+<span id="cb123-11"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-11"></a>distanciaManzanas &lt;-<span class="st"> </span><span class="kw">apply</span>(distanciaManzanas,<span class="dv">1</span>,min)</span>
+<span id="cb123-12"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-12"></a><span class="co"># Agregamos estos datos al dataset de manzanas</span></span>
+<span id="cb123-13"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-13"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
+<span id="cb123-14"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-14"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">distMinima=</span>distanciaManzanas)</span>
+<span id="cb123-15"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-15"></a></span>
+<span id="cb123-16"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-16"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
+<span id="cb123-17"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-17"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">distCat=</span><span class="kw">cut</span>(distMinima,</span>
+<span id="cb123-18"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-18"></a>                               <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">400</span>,<span class="dv">600</span>,<span class="dv">900</span>,<span class="kw">max</span>(manzanas<span class="op">$</span>distMinima)),</span>
+<span id="cb123-19"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-19"></a>                               <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Hasta 400 metros&quot;</span>, <span class="st">&quot;Entre 400 y 600 metros&quot;</span>, <span class="st">&quot;Entre 600 y 900 metros&quot;</span>,<span class="st">&quot;Más de 900 metros&quot;</span>),</span>
+<span id="cb123-20"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-20"></a>                               <span class="dt">include.lowest =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb123-21"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-21"></a><span class="kw">ggplot</span>(manzanas) <span class="op">+</span></span>
+<span id="cb123-22"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-22"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>distCat),<span class="dt">color=</span><span class="ot">NA</span>) <span class="op">+</span></span>
+<span id="cb123-23"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-23"></a><span class="st">  </span><span class="kw">scale_fill_viridis_d</span>(<span class="dt">direction =</span> <span class="dv">-1</span>,<span class="dt">name=</span><span class="st">&quot;Distancia&quot;</span>) <span class="op">+</span></span>
+<span id="cb123-24"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-24"></a><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></span>
+<span id="cb123-25"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb123-25"></a><span class="st">  </span><span class="kw">coord_sf</span>(<span class="dt">datum =</span> <span class="ot">NA</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-111-1.png" width="672" /></p>
+<p>Bastante parecida a la geolocalización de la API del gobierno, a simple vista, pero con una mayor cobertura. Veamos, ahora, en cuanto difieren los cálculos de uno y otro dataset</p>
+</div>
+<div id="diferencias-entre-las-dos-apis-1" class="section level2">
+<h2><span class="header-section-number">4.5</span> Diferencias entre las dos APIs</h2>
+<p>Podemos ver las diferencias de muchas maneras, pero poniendo los puntos con un color de cada uno no sería lo mejor, ya que no podemos ver entre cual par de puntos fue la diferencia. Hagamos algo más simple: la distancia entre cada uno de los puntos.</p>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-1"></a>distancias &lt;-<span class="st"> </span><span class="kw">st_distance</span>(<span class="dt">x =</span> saludGoogle[saludGoogle<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>saludSf<span class="op">$</span>id,],</span>
+<span id="cb124-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-2"></a>            saludSf[saludSf<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>saludGoogle<span class="op">$</span>id,],</span>
+<span id="cb124-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-3"></a>            <span class="dt">by_element =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb124-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-4"></a>distancias &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">distancia=</span><span class="kw">as.numeric</span>(distancias))</span>
+<span id="cb124-5"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-5"></a><span class="kw">ggplot</span>(distancias) <span class="op">+</span></span>
+<span id="cb124-6"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-6"></a><span class="st">  </span><span class="kw">geom_histogram</span>(<span class="kw">aes</span>(<span class="dt">x=</span>distancia)) <span class="op">+</span></span>
+<span id="cb124-7"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-7"></a><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></span>
+<span id="cb124-8"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb124-8"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;Discrepancia (metros)&quot;</span>,<span class="dt">y=</span><span class="st">&quot;Cantidad de casos&quot;</span>)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-112-1.png" width="672" /></p>
+<p>La diferencia es baja en casi todos los casos, menos uno que está en aproximadamente 900 metros. Si aceptamos una tolerancia de 200 metros de diferencia, la coincidencia es casi total, nada mal. Google tiene una ventaja, igual: devolvió todos menos dos puntos.</p>
+</div>
+<div id="una-tercera-alternativa-geocode_osm-1" class="section level2">
+<h2><span class="header-section-number">4.6</span> Una tercera alternativa: geocode_OSM()</h2>
+<p>En general, la tarea de geocodificación requiere cierta prueba y error. No todos los servicios de geocodificación saben interpretar de la misma manera a las direcciones, y muchas veces las asignan a distintas coordenadas (este problema puede ser especialmente importante al trabajar con Google Maps, que siempre intenta devolver algún resultado). <strong>Open Street Map (OSM)</strong> nos brinda otra alternativa para poder hacer geocoding, y esta vez de manera gratuita y sin restricciones geográficas (es decir, funciona para distintos países).</p>
+<p>Para usar este servicio, deben tener instalado <strong>tmaptools</strong> y su uso es realmente simple. Solo debemos generar una variable que tenga la dirección que vamos a consultar y luego usar <strong>geocode_OSM()</strong></p>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb126-1"></a><span class="kw">library</span>(tmaptools)</span>
+<span id="cb126-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb126-2"></a>salud &lt;-<span class="st"> </span>salud <span class="op">%&gt;%</span></span>
+<span id="cb126-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb126-3"></a><span class="st">         </span><span class="kw">mutate</span>(<span class="dt">consultaOSM=</span><span class="kw">paste</span>(Dirección,<span class="st">&quot;, Ciudad de Buenos Aires, Argentina&quot;</span>,<span class="dt">sep=</span><span class="st">&quot;&quot;</span>))</span>
+<span id="cb126-4"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb126-4"></a>saludOSM &lt;-<span class="st"> </span><span class="kw">geocode_OSM</span>(salud <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(consultaOSM),<span class="dt">projection =</span> <span class="dv">4326</span>,<span class="dt">return.first.only =</span> <span class="ot">TRUE</span>,<span class="dt">as.sf =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p>A diferencia de lo que hicimos con <strong>wrapar</strong>, en este caso ya nos devolvió un objeto sf, podemos usar leaflet para hacer un control de que, al menos, nuestros puntos están en la Ciudad de Buenos Aires</p>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb127-1"></a><span class="kw">leaflet</span>(saludOSM) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb127-2"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb127-2"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb127-3"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas-1.html#cb127-3"></a><span class="st">  </span><span class="kw">addMarkers</span>()</span></code></pre></div>
+<div id="htmlwidget-03576c1110913d8f9bdd" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-03576c1110913d8f9bdd">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[[-34.6242483,-34.6084065,-34.5810555163265,-34.6560011,-34.5583089,-34.6176934,-34.5847212666667,-34.6492731020408,-34.62547565,-34.5999173,-34.5945874,-34.604589,-35.1679404,-34.6358658,-34.6329959,-34.6462774,-34.5550359,-34.5844326,-34.622104,-34.5779815,-34.607366,-34.63007535,-34.6374960606061,-34.6084065,-34.55351655,-34.5878513,-34.6268388,-34.63468635,-34.6622313,-34.606822,-34.5988973,-34.64888115,-34.6281779,-34.6218802857143,-34.64013745,-34.6314566,-34.6401764,-34.654182,-34.5926595622934,-34.58730655,-34.5997731,-34.629461,-34.5884645,-34.6075682,-34.5478244,-34.6253603,-34.67048345,-34.67810865,-34.66030355,-34.6008299,-34.6777277,-34.6615984,-34.681315,-34.6730878,-34.5764869,-34.5633765,-34.64592435,-34.6221214,-34.635681,-34.6109958,-34.6190732,-34.6418029285714,-34.6412013265306,-34.669869,-34.6319058,-34.5781231428571,-34.619245122449,-34.6119995,-34.6484502,-34.6180632,-34.6297743265306,-34.63269155,-34.6463007755102,-34.5517119673469,-34.6051898,-34.5525291,-34.6335244,-34.6351883,-34.6280320204082,-34.5448204285714,-34.586661,-34.5852391,-34.6462228,-34.65187575,-34.6560011,-34.5472221285714,-34.5997731,-34.5884645],[-58.4694031,-58.4168375,-58.4068218204082,-58.4386088969133,-58.4599229,-58.4101922034941,-58.4005279808081,-58.5156575142857,-58.5077606302197,-58.5111451,-58.4111581,-58.4373456,-58.2373799,-58.3837717701079,-58.3833639,-58.3978158,-58.7065136,-58.4024634,-58.379921,-58.4269728,-58.5661311,-58.375699499861,-58.3937845858586,-58.4168375,-58.441253372423,-58.3947412,-58.4908297,-58.4031220144564,-58.4466051,-58.421516,-58.4107803153607,-58.3893884545564,-58.4527373,-58.4917801428571,-58.3659071241656,-58.3578604897865,-58.4862473,-58.431095,-58.4205125184204,-58.4258083848219,-58.3818292521477,-58.4428148,-58.3929713,-58.4370894,-58.4871936064403,-58.4022203,-58.4947996266636,-58.4910422005937,-58.4740272062272,-58.3908674,-58.4667533791796,-58.4684667,-58.4677933,-58.4860017,-58.5094595,-58.4637463,-58.4245814360081,-58.482968,-58.452472,-58.5053554,-58.3808518007215,-58.5192809,-58.431919,-58.4712903506648,-58.3728719,-58.4554016938776,-58.4650798367347,-58.4796768,-58.418344,-58.5223198,-58.4297255510204,-58.404034436024,-58.4693234489796,-58.4631725653061,-58.4448065,-58.4862759,-58.370481,-58.4273811,-58.5040043061224,-58.4766253469388,-58.3940271,-58.4860885970291,-58.3718186,-58.47784,-58.4386088969133,-58.4580874285714,-58.3818292521477,-58.3929713],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-35.1679404,-34.5448204285714],"lng":[-58.7065136,-58.2373799]}},"evals":[],"jsHooks":[]}</script>
+<p>Puede fallar… algunos están afuera de la Ciudad de Buenos Aires ¿Tienen idea de como detectarlos ? Les doy una pista: pueden bajarse un mapa de argentina por provincia (por ejemplo de acá)[<a href="https://www.indec.gob.ar/indec/web/Institucional-Indec-Codgeo" class="uri">https://www.indec.gob.ar/indec/web/Institucional-Indec-Codgeo</a>] y hacer un <strong>st_join()</strong> y luego filtrar solo a los que están en CABA.</p>
+</div>
+<div id="ejercicios-2" class="section level2">
+<h2><span class="header-section-number">4.7</span> Ejercicios</h2>
+<p>Busquen un conjunto de direcciones que les interese y calculen las distancias entre ellas usando la aplicación de geolocalización de Argentina y la función de distancia del paquete sf.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="tiempos-de-viaje-y-análisis-de-accesibilidad-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

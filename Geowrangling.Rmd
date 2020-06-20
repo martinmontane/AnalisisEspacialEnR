@@ -1,0 +1,399 @@
+# Tiempos de viaje y análisis de accesibilidad
+
+Nuestros datos espaciales pueden ser enriquecidos de distintas maneras, no solo a través de la relación con otras entidades espaciales, tal como se mostró en el ejercicio de ubicación óptima para uno nuevo centro de salud anteriormente. Es posible agregar información sobre tiempos de desplazamiento en distintos tipos de desplazamiento o aproximar un polígono que, para un determinado punto, muestra cuáles son los lugares a los que se pueden acceder en u determinado tiempo. Yendo un paso más atrás, incluso podemos lograr encontrar la coordenadas a partir del texto de una dirección. Vamos a aplicar todos estos conceptos y verlos en acción en un tema  muy interesante: el acceso a los espacios verdes en la Ciudad de Buenos Aires.
+
+## La distancia espacial y la distancia de viaje
+
+Las personas que vivimos en ciudades entendemos a la perfección que la distancia entre punto A y B puede medirse de distintas maneras. A veces, caminar 1000 metros suele tardar mucho menos que hacerlo en auto, y a veces los tiempos de transporte público pueden variar mucho según la proximidad con distintos medios de transporte disponibles.
+
+En distintas circunstancias puede ser muy importante entender cuáles son las condiciones de acceso de cada una de las zonas de una ciudad para distintas razones: trabajo, recreación, salud, entre otras variables. En esta clase vamos a medir el acceso a la los espacios verdes de la Ciudad de Buenos Aires, pero tan solo por una cuestión de acceso a datos. Si tuvieramos, por ejemplo, información sobre la ubicación de los puntos donde las empresas están ubicadas, podríamos estimar la accesibilidad al mercado de trabajo de cada uno de los lugares. Sea como fuere, basta de preámbulos y veamos cómo podemos procesar los datos espaciales para tener una medida espacial del acceso a espacios verdes en la Ciudad de Buenos Aires.
+
+Para esto vamos a hacer lo siguiente: 
+
+- Medir la cobertura de los espacios verdes de la CABA, midiendo desde qué lugares se puede llegar a 15 minutos caminando
+- Cruzar estos datos con las manzanas y establecer que aquellas manzanas que no se encuentran en este espacio de cobertura están "mal atendidas"
+
+
+## Los paquetes que vamos a utilizar
+
+Los capítulos de este libro en general no suelen introducir los paquetes que tienen las herramientas que vamos a utilizar antes de que sean necesarias para resolver un problema en particular. Sin embargo, para este capítulo hacemos una pequeña excepción, ya que vamos a cargar un conjunto de paquetes en los que vamos a tener que hacer zoom tanto en lo que ofrecen como en qué pasos adicionales tenemos que hacer para utilizarlas. Vamos paso por paso:
+
+- **sf**: Este paquete ya lo conocemos, es el que nos permite trabajar con datos espaciales en R.
+- **tidyverse**: Colección de paquetes que nos permite cumplir muchas de las tareas necesarias en un proyecto de ciencia de datos. En esta clase vamos a investigar una función del paquete **purrr**, parte de tidyverse, y que nos permite
+- **leaflet**: Herramienta muy poderosa para generar mapas interactivos. En este capítulo lo vamos a utilizar para que resolver uno de los potenciales problemas que puede tener R para actuar como GIS: la falta de modificaciones o exploraciones "manuales" de los datos espaciales
+- **hereR**: Si bien existen distintas alternativas para medir los tiempos de desplazamiento, en este caso vamos a usar el servicio de HERE maps. La API de here puede usarse utilizando el lenguaje de R gracias a las personas que desarrollaron **hereR**.
+
+### Cómo usar los servicios de HERE
+
+HERE Maps es una empresa que nos brinda distintas herramientas de geolocalización, medidas de tiempo de viaje entre distintos puntos. Piensen en ella como una caja de herramientas donde podemos elegir entre ellas para poder resolver problemas particulares. A diferencia de otras alternativas, como Google Maps, HERE nos permite realizar hasta 250.000 consultas gratuitas por mes sin tener que poner nuestra tarjeta de crédito como garantía. Solía ser de esta manera con Google Maps en el pasado, pero cambiaron las condiciones de un tiempo para acá, por lo cual hay que buscar alternativas y HERE nos puede ser útil.
+
+Para usar HERE Maps en R, además de instalar el paquete **hereR**, debemos tener una *key*, que no es otra cosa que una contraseña única que nos pide HERE Maps para poder vincular el uso que le damos a la cuenta desde R con sus registros internos. Para esto, primero hay que crear una cuenta en https://developer.here.com/. Una vez que hayan creado la cuenta - gratuita - tienen que ir a los "projects" que tiene y hacer click en **create API key** donde dice REST. Una vez que la creen, van a ver que les aparece una tabla con "API KEY" y un botón que dice "COPY". Hagan click ahí y peguénlo por algún notepad o similar, ya van a ver cómo vamos a poder utilizarlo.
+
+
+## Los datos: repositorio de datos del GCBA
+
+Nuestra materia prima para la introducción a estas herramientas estatales será el dataset espacial de espacios verdes de la Ciudad de Buenos Aires y la información sobre el trazado urbano de la Ciudad, también provisto por el GCBA. Estos datos pueden reemplazarse por otros datasets en caso que quieran replicar este análisis para otras ciudades. En particular para Argentina, es posible usar los radios censales, la mínima unidad espacial para un censo en Argentina, para reemplazar las manzanas. Por otro lado, los datasets de espacios verdes puede ser un poco más difíciles de encontrar, pero siempre existen esfuerzos para construir estos datasets que pueden encontrar haciendo búsquedas por Google
+
+Los datos de las manzanas se pueden descargar desde https://data.buenosaires.gob.ar/dataset/manzanas, mientras que los de espacios verdes desde https://data.buenosaires.gob.ar/dataset/espacios-verdes. En mi caso, yo descargué los geojson y los guardé en una carpeta que se llama **data**, pero pueden hacer lo que ustedes crean necesario!
+
+
+```{r, message=FALSE, warning=FALSE,results='hide'}
+library(tidyverse)
+library(sf)
+library(hereR)
+library(leaflet)
+manzanas <- st_read("data/manzanas.geojson")
+espaciosVerdes <- st_read("data/espaciosVerdes.geojson")
+```
+
+Veamos rápidamente qué es lo que cargamos con la ayuda de leaflet:
+
+```{r}
+leaflet(espaciosVerdes) %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons()
+```
+
+Parece que tenemos un conjunto de espacios urbanos de la ciudad de buenos aires, que es exactamente lo que queríamos. Igualmente vamos a hacer algunos cambios a este dataset, ya que vamos a quedarnos con espacios que sean lo suficientemente grande, de una manera muy arbitraria, como para poder ser aprovechados recreativamente: vamos a imponer que el espacio verde tenga al menos una superficie de 10.000 metros cuadrados, es decir una manzana.
+
+## Transformando nuestros datos
+
+Ahora que tenemos ya cargados nuestros datos espaciales, podemos transformarlos como para poder medir la cobertura de la oferta de espacio verde en la CABA. Para empezar, vamos a restringir espacios verdes a aquellos espacios verdes que tengan más de 1km2 de superficie total. Esto lo hacemos porque queremos medir de alguna manera el "uso" que le pueden dar a esos espacios, no solo si existe o no un lugar con zonas verdes. Es un criterio discutible, pero acá viene la mejor parte: cuando terminen este capítulo van a poder ir cambiando estos criterios. 
+
+¿Cómo podemos saber el tamaño de los polígonos de los espacios verdes? Esto es posible hacer siempre que tengamos nuestros datos espaciales cargados como un objeto sf. Para esto, primero vamos a proyectar en 2 dimensiones a los datos que cargamos, usando la proyección adaptada a la Ciudad de Buenos Aires:
+
+```{r}
+espaciosVerdes <- st_transform(espaciosVerdes,
+                               crs = "+proj=tmerc +lat_0=-34.6297166 +lon_0=-58.4627 +k=1 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs")
+```
+
+Una vez que hicimos esto, entonces ya estamos en condiciones de poder conocer el área de cada uno de los polígonos. La función que usamos es **st_area()**, pero debemos usar un punto, que hace referencia a "todo el dataset" dentro de tidyverse. Es decir, cuando usemos mutate, por ejemplo, el "." hará referencia a todas las filas, es decir, a todos los polígonos de nuestro dataset. La función st_area() nos devuelve un tipo particular de datos: **units**, es decir que son datos con unidad (en este caso, metros cuadrados). Como esto ya lo sabemos, lo convertimos en un vector clásico con **as.numeric()** como para poder luego usar **filter()** y quedarnos solos con los que queríamos
+
+```{r}
+espaciosVerdes <- espaciosVerdes %>% 
+                  mutate(area=st_area(.)) %>% 
+                  mutate(area=as.numeric(area)) %>%
+                  filter(area>10000) 
+
+```
+
+Probemos nuevamente con qué logramos quedaros:
+
+```{r}
+leaflet(espaciosVerdes %>% st_transform(4326)) %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons()
+```
+
+Muy bien, ahora pensemos en un problema un poco más específico. Para medir la distancia entre dos puntos necesitamos... ¡puntos! Y nuestros dos datasets, manzanas y espacios verdes, son polígonos, tenemos que resolver esto de alguna manera. Podríamos tomar centroides de ambos casos pero tendríamos un problema muy importante: cuando las figuras son largas y/o grandes, el centroide no puede ser un buen indicador de punto de partida o llegada.
+
+La solución propuesta es solo medir el tiempo de viaje caminando desde los espacios verdes, pero desde un conjunto de puntos **al azar** que estén dentro de los polígonos, como para poder hacer más representativo el hecho de que al espacio verde se puede acceder desde distintos puntos. Si esto no queda del todo claro, vamos con un ejemplo bien sencillo. Enfoquémonos un segundo en el Parque Chacabuco. Para eso vamos a filtrarlo y convertirlo a ESPG 4326, que es lo que necesita leaflet para graficar
+
+```{r}
+parqueChacabuco <- espaciosVerdes %>% 
+                   filter(nombre == "Parque Chacabuco") %>% 
+                   st_transform(4326)
+leaflet(parqueChacabuco) %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons()
+```
+
+El parque es grande, si tomáramos una esquina, probablemente caminando 10 o 15 minutos estaríamos todavía dentro del mismo parque, y quizás arrancando desde el centro también... Retomemos este problema mientras aprendemos a pedir tiempo de viajes.
+
+## ¿Cuánto tardo en llegar al monumental?
+
+El equipo más grande de la Argentina tiene su estadio en Avenida Presidente Figueroa Alcorta 7597, en la Ciudad de Buenos Aires. Yo vivo por alguna zona de Palermo - vamos a mantener un poco la anonimidad - digamos Charcas 3591. Solo tengo esta información, pero me gustaría saber cuánto tiempo puedo tardar caminando, en auto o en bicicleta ¿Puedo hacerlo? Claró, puedo entrar a Google Maps y buscar las opciones. Pero acá vamos a hacerlo desde R y con el servicio de HERE Maps, lo cual después nos va a permitir llevar esto un paso más adelante y responder nuestro problema inicial.
+
+Lo primero que tenemos que hacer es generar un data frame con la información que sí tenemos:
+
+```{r}
+# Esta key es falsa, por obvias razones. Reemplacen este valor por uno que funcione
+direcciones <- data.frame(lugar=c("Casa","Monumental"),
+                          direccion=c("Charcas 3591, Ciudad de Buenos Aires, Argentina","Avenida Presidente Figueroa Alcorta 7597, Ciudad de Buenos Aires, Argentina"))
+
+```
+
+Luego, usamos la función de **geocode()** de hereR, que solo nos pide un vector con las direcciones a geolocalizar:
+
+```{r echo=FALSE}
+load(file = 'data/ubicacionRiver.RData')
+```
+
+```{r eval=FALSE}
+ubicaciones <- geocode(direcciones %>% pull(direccion))
+```
+
+Si todo salió bien, ahora deberían tener un objeto *ubicaciones* con información espacial sobre nuestros datos... veamos si están bien georreferenciados
+
+```{r}
+leaflet(ubicaciones) %>% 
+  addTiles() %>% 
+  addMarkers()
+```
+
+Si exploran un poco, van a ver que todo salió relativamente bien. Ahora lo que vamos a hacer es usar la función **route()**, la que se encarga de consultarle a HERE Maps cuánto tardamos entre el punto A y el B. En principio, solo necesita un origen, un destino y un modo de transporte, que en este caso va a ser "pedestrian", es decir, cuánto tardamos caminando entre los dos puntos
+
+```{r echo = FALSE}
+load("data/viajeRiver.RData")
+```
+```{r eval=FALSE}
+viaje <- route(origin = ubicaciones[1,],
+               destination = ubicaciones[2,],
+               mode = "pedestrian",
+               datetime = as.POSIXct(x = "17/01/2020 18:00:00",format="%d/%m/%Y %H:%M:%S"))
+```
+```{r}
+glimpse(viaje)
+```
+El tiempo lo devuelve en la variable **travelTime** en segundos, por lo que dice que tardariamos 6480/60 = 108 minutos (una hora y 48 minutos) en hacer 6.389 metros (vean "distance"). Muy bien, ahora probablemente les haya aparecido un horario distinto al que aparece en la salida de este libro... y esto es porque por default hereR consulta por cuanto tardaría saliendo en el mismo instante de la consulta. No se preocupen, acá les explico como replicar lo que hice recién, y también puede serles útiles para medir otro tiempo de distancia. Solo tienen que cambiar la fecha y el horario y les va a funcionar correctamente
+
+```{r eval=FALSE}
+viaje <- route(origin = ubicaciones[1,],
+               destination = ubicaciones[2,],
+               mode = "pedestrian",
+               datetime = as.POSIXct(x = "17/01/2020 18:00:00",format="%d/%m/%Y %H:%M:%S"))
+```
+
+Medir tiempo de viaje en auto es muy similar, solo tienen que cambiar "pedestrian" por "car", de la siguiente manera:
+
+```{r eval=FALSE}
+viaje <- route(origin = ubicaciones[1,],
+               destination = ubicaciones[2,],
+               mode = "car",
+               datetime = as.POSIXct(x = "17/01/2020 18:00:00",format="%d/%m/%Y %H:%M:%S"))
+```
+
+Bien, ahora estamos más cerca de la herramienta que finalmente vamos a usar: las isocronas. Esto que suena horrible es simplemente **un polígono que delimita el espacio al cual se puede llegar en un tiempo fijo**. Se trata de una aproximación, ya que nunca puede saberse exactamente cuál es este polígono, pero hagamos la prueba desde mi supuesto hogar: cuál es el polígono que podemos alcanzar caminando solo 15 minutos
+
+```{r echo=FALSE}
+load("data/isolinea.RData")
+```
+
+```{r eval=FALSE}
+viajeCaminando <- isoline(ubicaciones[1,],mode = "pedestrian",range = 60*15)
+```
+
+Ahora veamos qué es lo que nos devolvió:
+
+```{r}
+leaflet(viajeCaminando) %>% 
+  addTiles() %>% 
+  addPolygons() %>% 
+  addMarkers(data=ubicaciones[1,])
+```
+
+Ese polígono nos muestra todos los lugares a los que podemos acceder en una caminata de 15 minutos desde Charcas 3591. Ahora bien, recuerden nuestro punto inicial: queremos medir la cobertura de los espacios verdes en la Ciudad de Buenos Aires. Algunos son muy grandes, entonces nos conviene conseguir esta isocrona para más de un punto dentro del mismo parque, de tal manera de poder capturar este efecto. Veamoslo, de nuevo, con el el ejemplo del Parque Chacabuco.
+
+## Midiendo la cobertura de los parques
+
+Si siguieron este capítulo correctamente, deberían tener un objeto **parqueChacabuco** con sus polígonos. Vamos a medir la cobertura mediante dos métodos alternativos: usando el **centroide** de los polígonos y tomando al azar 4 puntos del parque. Comparemos los resultados.
+
+Lo primero que tenemos que hacer, es reproyectar esos polígonos para poder tomar puntos al azar y también para tomar los centroides. En general, cuando realizamos esta clase de operaciones conviene tener a los datos espaciales proyectados en dos dimensiones
+
+```{r}
+parqueChacabuco <- parqueChacabuco %>% 
+                   st_transform("+proj=tmerc +lat_0=-34.6297166 +lon_0=-58.4627 +k=1 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs")
+```
+
+Ahora ya podemos tomar el centroide, con la función **st_centroid**
+
+```{r}
+centroideChacabuco <- st_centroid(parqueChacabuco)
+```
+
+Y también cuatro puntos al azar, con la función **st_sample**
+
+```{r echo = FALSE}
+load("data/puntosChacabuco.RData")
+```
+
+```{r eval = FALSE}
+set.seed(1)
+puntosChacabuco <- st_sample(parqueChacabuco,size = 4)
+```
+
+Como siempre, podemos ver muy fácilmente que es lo que acabamos de hacer, con la ayuda de leaflet
+
+```{r}
+leaflet() %>% 
+  addTiles %>% 
+  addPolygons(data=parqueChacabuco %>% st_transform(4326)) %>% 
+  addCircleMarkers(data=puntosChacabuco %>% st_transform(4326), color='red') %>% 
+  addCircleMarkers(data=centroideChacabuco %>% st_transform(4326),color ='yellow') 
+  
+```
+
+Ahora midamos la isolinea de 15 minutos para esta forma de identificar al parque. Antes de so, tenemos que hacer algo con puntosChacabuco, porque no es un objeto sf ! miren
+
+```{r}
+class(puntosChacabuco)
+```
+
+Lo que tenemos que usar es **st_as_sf()**, que es la forma de decirle a R que queremos que ese objeto sea uno sf:
+
+```{r}
+puntosChacabucoSF <- st_as_sf(puntosChacabuco)
+class(puntosChacabucoSF)
+```
+
+Ahora sí, ya estamos en condiciones de hacer lo que queríamos. Para el centroide es muy simple, usamos de nuevo **isoline()** y no tenemos mayores inconvenientes
+
+```{r echo= FALSE}
+load("data/isoCronaCentroide.RData")
+```
+
+```{r eval= FALSE}
+isoCronaCentroide <- isoline(centroideChacabuco,mode = "pedestrian",range = 60*15)
+```
+
+Ahora bien, lamentablemente la función **isoline()** no hace automáticamente la operación para todas las filas. Eso ciertamente nos haría el trabajo más simple, pero no vamos a impedir que eso nos deje terminar el trabajo. Lo que vamos a usar es la función **map()** del paquete **purrr**. Lo que hace es hacer una función, la que queramos, para un conjunto de objetos que le digamos. Es muy general, por lo cual veamosla en funcionamiento:
+
+```{r}
+map(c(1:5),function(x) x+5)
+```
+
+Todas las funciones de **map()** tienen las dos cosas que les dije. En primer lugar, un conjunto de elementos a los cuales queremos hacerles una función en particular. En este caso, le pasamos los números que van desde el 1 al 5. Después, creamos una función que toma el el valor x y le suma 5. **x** en ese contexto significa cada uno de los valores que decíamos antes. Lo que devuelve es una lista con todos los valores que queríamos. Si no quedó del todo claro, no importa: ya va a quedar más claro con la experiencia. Apliquemoslo a este ejemplo entonces:
+
+```{r echo = FALSE}
+load("data/isoCronaPuntos.RData")
+```
+```{r eval = FALSE}
+isocronaPuntos <- map(1:nrow(puntosChacabucoSF),
+                         function(x) { isoline(puntosChacabucoSF[x,],mode = "pedestrian",range = 60*15) })
+```
+
+Fijense que lo que nos devolvió es una lista con 4 isolineas basadas en cada uno de los puntos que tomamos aleatoriamente anteriormente. Ahora nos queda juntarlos con rbind. Podemos hacerlo uno por uno, pero también podemos apoyarnos en **do.call()** que es muy similar a **map()**. La principal diferencia en este caso es que tenemos que pasarle la función que queremos que haga entre comillas, y luego la lista sobre la que queremos que lo haga. Nosotros queremos qu use **rbind** para todos los elementos de **isocronaPuntos**.
+
+```{r}
+isocronaPuntos <- do.call("rbind",isocronaPuntos)
+```
+
+Vemos que es lo que tenemos hasta ahora:
+
+```{r}
+leaflet(isocronaPuntos) %>% 
+  addTiles() %>% 
+  addPolygons()
+```
+
+Podemos ver que las curvas se solapan quizás demasiado, y eso no es lo que buscamos. Entonces directamente lo que vamos a hacer es unir todo en un solo gran polígono, para hacer las cosas más fáciles. Esto se hace con **st_union()**
+
+```{r}
+isocronaPuntos <- st_union(isocronaPuntos)
+```
+
+Finalmente podemos comparar la cobertura con ambas metodologías: centroides y puntos. Veamos la diferencia:
+
+```{r}
+ggplot() +
+  geom_sf(data=parqueChacabuco) +
+  geom_sf(data=isoCronaCentroide, fill="red",alpha=0.1) +
+  geom_sf(data=isocronaPuntos, fill="orange", alpha=0.2)
+```
+
+Otra forma de verlo es sumar el área de cobertura de ambas alternativas:
+
+```{r}
+st_area(isoCronaCentroide)
+st_area(isocronaPuntos)
+```
+
+Una diferencia más que importante en cobertura ! Ahora ya estamos en condiciones de hacer el ejercicio por el que veníamos: caracterizar la cobertura de los espacios verdes en la Ciudad de Buenos Aires
+
+## Redondeando: caracterizando la oferta de los espacios verdes en CABA
+
+Toda la larga discusión que tiene este capítulo puede resumirse en tan pocas líneas como las que siguen:
+
+```{r echo=FALSE}
+load("data/isocronosEspaciosVerdesJuntasUnion.RData")
+```
+
+```{r eval=FALSE}
+# Para cada uno de los espacios verdes agarramos 4 puntos al azar
+puntosEspaciosVerdes <- map(1:nrow(espaciosVerdes),function(x){
+  st_sample(espaciosVerdes[x,],size=4)
+})
+# Juntamos todos los puntos en un objeto
+puntosEspaciosVerdes <- do.call("c",puntosEspaciosVerdes)
+# Lo convertimos a un objeto SF
+puntosEspaciosVerdesSF <- st_as_sf(puntosEspaciosVerdes)
+# Hacemos una transformación para que esté en el WSG84, que es lo que puede procesar isoline()
+puntosEspaciosVerdesSF <- st_transform(puntosEspaciosVerdesSF,crs=4326)
+# Efectivamente calculamos las isocronas para cada uno de los puntos
+isocronosEspaciosVerdes <- map(1:nrow(puntosEspaciosVerdesSF),function(x) {
+  # Esta línea es solo para que nos vaya avisando qué está haciendo
+  cat("Procesando: ",x,"\r")
+  isoline(puntosEspaciosVerdesSF[x,], mode = "pedestrian",range_type = "time",range = 60*15)
+})
+# Los juntamos en el mismo data frame
+isocronosEspaciosVerdesJuntas <- do.call(rbind,isocronosEspaciosVerdes)
+# Hacemos un gran poligono
+isocronosEspaciosVerdesJuntasUnion <-  st_union(isocronosEspaciosVerdesJuntas)
+```
+
+Va a tardar un poco porque son 588 puntos para los cuales tiene que encontrar las icoronas... Pero si lo dejan correr, va a terminar de procesarlo. Podemos ver la cobertura que estimamos en un mapa de leaflet
+
+```{r}
+leaflet(isocronosEspaciosVerdesJuntasUnion %>% st_transform(4326)) %>% 
+  addTiles() %>% 
+  addPolygons()
+```
+
+Ahora simplemente tenemos que hacer un spatial join con **st_join()**. Recuerden que lo que hace esta función es unir a dos datasets según algún criterio de unión, siendo por default si se intersectan o no. En los casos que se intersecten, entonces va a agregar la información que se encuentra en el segundo dataset al primero. En caso de que no existe unión, ese valor para ese punto/polígono en particular será **NA**. Para hacer el spatial join vamos a proyectar a los dos datasets, convertimos como objeto sf a todo el espacio que identifica la cobertura de espacios verdes, y creamos una variable que identifique eso, y generamos efectivamente el spatial join.
+
+```{r}
+# Transformamos la proyección de las manzanas
+manzanas <- manzanas %>%
+            st_transform("+proj=tmerc +lat_0=-34.6297166 +lon_0=-58.4627 +k=1 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs")
+# Transformamos la proyección de la cobertura de espacios verdes
+isocronosEspaciosVerdesJuntasUnion <- isocronosEspaciosVerdesJuntasUnion %>%
+  st_transform("+proj=tmerc +lat_0=-34.6297166 +lon_0=-58.4627 +k=1 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs")
+# Lo convertimos en un objeto sf y creamos una columna, cobertura, que tendrá valor TRUE siempre
+isocronosEspaciosVerdesJuntasUnion <- st_as_sf(isocronosEspaciosVerdesJuntasUnion) %>% 
+                                      mutate(cobertura=TRUE)
+# Spatial join
+manzanas <- st_join(manzanas,st_as_sf(isocronosEspaciosVerdesJuntasUnion))
+# Completamos los datos para los casos en los cuales no hubo ningún resultadoe en el match
+manzanas <- manzanas %>% mutate(cobertura=ifelse(is.na(cobertura),FALSE,TRUE))
+```
+
+
+Hacemos el gráfico con ggplot, listo para exportar en caso que sea necesario con **ggsave()**
+
+```{r}
+ggplot(manzanas) +
+  geom_sf(aes(fill=cobertura), color=NA) +
+  theme_minimal() +
+  coord_sf(datum=NA) +
+  scale_fill_manual(values = c("#377eb8","#e41a1c"),
+                    breaks = c(TRUE,FALSE),
+                    labels=c("Menos de 15 minutos","Más de 15 minutos"))
+```
+
+Se puede mejorar y hacer el siguiente gráfico si usan **ggmap()** para agregar un mapa de base. Usamos **getbb** para que nos de la Bounding Box, es decir cuatro puntos, que definen todo un rectángulo dónde se puede ver la Ciudad de Buenos Aires 
+
+```{r message=FALSE, warning=FALSE}
+library(osmdata)
+library(ggmap)
+bbCABA <-getbb("Ciudad de Buenos Aires, Argentina")
+cabaBaseMap <- get_stamenmap(bbCABA,maptype = "toner-lite",zoom=12)
+ggmap(cabaBaseMap,extent = "device") +
+  geom_sf(data=manzanas %>% st_transform(4326),aes(fill=cobertura), color=NA, inherit.aes=FALSE, alpha=0.7) +
+    theme_minimal() +
+  coord_sf(datum=NA) +
+  labs(x="",y="") +
+  scale_fill_manual(values = c("#377eb8","#e41a1c"),
+                    breaks = c(TRUE,FALSE),
+                    labels=c("Menos de 15 minutos","Más de 15 minutos"),
+                    name="")+
+  theme(legend.position = "bottom")
+```
+
+
+## Ejercicios
+
+1. ¿Cuánto tiempo tardás en llegar desde tu casa hasta la oficina de trabajo en auto? Usá hereR en R para poder sacar esa conclusión ¿Qué camino te sugirió? Podés descubrirlo haciendo un gráfico del objeto que devuelve la función **route()**
+
+2. Estimar la cobertura de espacios verdes en la ciudad de buenos aires, pero en lugar de usar 15 minutos como en el capítulo, usar 30 minutos ¿Qué zonas no están cubiertas con un parque a 30 minutos de caminata?
+
+3. El GCBA ofrece información sobre la ubicación geográfica de las (comisarias en la Ciudad)[!https://data.buenosaires.gob.ar/dataset/comisarias-policia-ciudad] ¿Hay zonas de la Ciudad en las cuales no hay acceso a una comisaria en menos de 10 minutos en auto, según HERE Maps?  

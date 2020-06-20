@@ -1,0 +1,19 @@
+---
+title: "Herramientas de análisis espacial en R"
+author: "Martin Montane"
+description: "Usando R para analizar datos espaciales"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output:
+  bookdown::gitbook
+documentclass: book
+---
+# Herramientas de análisis espacial en R {-}
+
+Los datos espaciales requieren un tratamiento particular tanto en su representación, su almacenamiento, sus transformaciones, sus visualizaciones y su análisis. En este compendio de notas de clase se introducen las herramientas necesarias para comenzar a aprovechar todas las oportunidades que los datos espaciales nos brindan.
+
+## ¿Qué necesitamos para arrancar? {-}
+
+En estas notas de clase se usa el lenguaje de programación R. Recomiendo utilizar RStudio para que nos ayude con los proyectos y la edición de los códigos en R Descargar instalar estos dos softwares es muy simple ya que son gratuitos. R de hecho es un lenguaje de programación *open source*, o de código abierto, lo que significa que cualquiera puede colaborar. [Haciendo click aquí](https://cran.r-project.org/) van a poder descargar la última versión de R para Windows, Mac o Linux. Una vez que lo hayan descargado solo tienen que instalarlo.
+
+Ahora [descarguen RStudio](https://www.rstudio.com/products/rstudio/download/), también van a poder elegir la versión que corresponde según su sistema operativo. RStudio va a identificar automáticamente la versión de R que ya tienen instalada, **por lo que es importante que instalen RStudio luego de haber instalado R**. Una vez que tienen todo esto instalado pueden pasar al primer capítulo de este libro

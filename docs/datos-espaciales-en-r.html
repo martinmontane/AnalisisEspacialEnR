@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>1 Datos espaciales en R | Herramientas de análisis espacial en R</title>
+  <meta name="description" content="Usando R para analizar datos espaciales" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="1 Datos espaciales en R | Herramientas de análisis espacial en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Usando R para analizar datos espaciales" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="1 Datos espaciales en R | Herramientas de análisis espacial en R" />
+  
+  <meta name="twitter:description" content="Usando R para analizar datos espaciales" />
+  
+
+<meta name="author" content="Martin Montane" />
+
+
+<meta name="date" content="2020-06-20" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3.9000/leaflet-providers-plugin.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-necesitamos-para-arrancar"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html"><i class="fa fa-check"></i><b>1</b> Datos espaciales en R</a><ul>
+<li class="chapter" data-level="1.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#qué-es-un-dato-espacial"><i class="fa fa-check"></i><b>1.1</b> ¿Qué es un dato espacial?</a></li>
+<li class="chapter" data-level="1.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#dónde-estamos-en-la-tierra"><i class="fa fa-check"></i><b>1.2</b> ¿Dónde estamos en la Tierra?</a></li>
+<li class="chapter" data-level="1.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#coordinate-reference-systems"><i class="fa fa-check"></i><b>1.3</b> Coordinate Reference Systems</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#elipsoides-sistemas-de-coordenadas-y-datums"><i class="fa fa-check"></i><b>1.3.1</b> Elipsoides, sistemas de coordenadas y datums</a></li>
+<li class="chapter" data-level="1.3.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#proyecciones"><i class="fa fa-check"></i><b>1.3.2</b> Proyecciones</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud"><i class="fa fa-check"></i><b>1.4</b> Manos a la obra ¿Dónde construir el próximo centro de salud?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#cargando-los-datos-espaciales"><i class="fa fa-check"></i><b>1.4.1</b> Cargando los datos espaciales</a></li>
+<li class="chapter" data-level="1.4.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#detectando-la-cobertura-actual."><i class="fa fa-check"></i><b>1.4.2</b> Detectando la cobertura actual.</a></li>
+<li class="chapter" data-level="1.4.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#distancia-contra-la-avenida-más-cercana"><i class="fa fa-check"></i><b>1.4.3</b> Distancia contra la avenida más cercana</a></li>
+<li class="chapter" data-level="1.4.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#incorporando-el-resto-de-las-variables"><i class="fa fa-check"></i><b>1.4.4</b> Incorporando el resto de las variables</a></li>
+<li class="chapter" data-level="1.4.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#creando-nuestro-índice-de-demanda-de-salud"><i class="fa fa-check"></i><b>1.4.5</b> Creando nuestro índice de demanda de salud</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#ejercicio"><i class="fa fa-check"></i><b>1.5</b> Ejercicio</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><i class="fa fa-check"></i><b>2</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="2.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#qué-es-la-geocodificación-o-geocoding"><i class="fa fa-check"></i><b>2.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="2.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#api-interfaz-de-programación-de-aplicaciones"><i class="fa fa-check"></i><b>2.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="2.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#servicio-de-normalización-de-datos-geográficos-de-argentina"><i class="fa fa-check"></i><b>2.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="2.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#google-geocode-api"><i class="fa fa-check"></i><b>2.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="2.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#diferencias-entre-las-dos-apis"><i class="fa fa-check"></i><b>2.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="2.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#una-tercera-alternativa-geocode_osm"><i class="fa fa-check"></i><b>2.6</b> Una tercera alternativa: geocode_OSM()</a></li>
+<li class="chapter" data-level="2.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#ejercicios"><i class="fa fa-check"></i><b>2.7</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><i class="fa fa-check"></i><b>3</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="3.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#la-distancia-espacial-y-la-distancia-de-viaje"><i class="fa fa-check"></i><b>3.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="3.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-paquetes-que-vamos-a-utilizar"><i class="fa fa-check"></i><b>3.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cómo-usar-los-servicios-de-here"><i class="fa fa-check"></i><b>3.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-datos-repositorio-de-datos-del-gcba"><i class="fa fa-check"></i><b>3.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="3.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#transformando-nuestros-datos"><i class="fa fa-check"></i><b>3.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="3.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cuánto-tardo-en-llegar-al-monumental"><i class="fa fa-check"></i><b>3.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="3.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#midiendo-la-cobertura-de-los-parques"><i class="fa fa-check"></i><b>3.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="3.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba"><i class="fa fa-check"></i><b>3.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="3.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#ejercicios-1"><i class="fa fa-check"></i><b>3.8</b> Ejercicios</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Herramientas de análisis espacial en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="datos-espaciales-en-r" class="section level1">
+<h1><span class="header-section-number">1</span> Datos espaciales en R</h1>
+<pre><code>Al terminar este capítulo ustedes van a poder:
+- Comprender por qué los datos espaciales son distintos al resto de los datos
+- Las dificultades de la representación de esos datos y los estándares utilizados
+- Trabajar con datos espaciales en R: su importación, manipulación e introducción a los gráficos
+- Identificar los principales tipos de archivos donde suelen compartirse estos datos</code></pre>
+<div id="qué-es-un-dato-espacial" class="section level2">
+<h2><span class="header-section-number">1.1</span> ¿Qué es un dato espacial?</h2>
+<p>Un dato <strong>espacial</strong> o <strong>georreferenciado</strong> tiene una característica que lo hace único: posee información sobre su ubicación en la Tierra. No es el único tipo de dato que tiene particularidades, por ejemplo las <strong>series de tiempo</strong> tienen información sobre un específico período de tiempo donde se registró la información. Esto trae importantes consideraciones al momento de realizar el análisis estadístico, lo que generó el desarrollo de toda una rama de la estadística. No obstante, los <strong>datos espaciales</strong> no presentan un desafío solo al momento de su análisis, sino que presentan específicidades en la forma de representar su información geográfica y realizar transformaciones en los datos.</p>
+</div>
+<div id="dónde-estamos-en-la-tierra" class="section level2">
+<h2><span class="header-section-number">1.2</span> ¿Dónde estamos en la Tierra?</h2>
+<p>La respuesta a esta pregunta puede ser un poco más compleja de lo que uno piensa, al menos si desea realizar un análisis con esta información. La respuesta más fácil en este momento sería decir: Av. Figueroa Alcorta 7350, Ciudad de Buenos Aires, Argentina. Bien, es un primer paso. Ahora: ¿Cómo calculamos la distancia con respecto a Abbey Road 2, Londres, Inglaterra, donde se encuentra el famoso cruce peatonal de la tapa del disco de los Beatles, <em>Abbey Road</em>? Imposible saberlo solo con esa información.</p>
+<p>Si nosotros introdujéramos esos datos en un GPS (o <em>Google Maps</em>), lo que haría es <em>traducir</em> las direcciones que les pasamos a un sistema de grillas que divide al globo en celdas en base a líneas imaginarias en sentido paralelo a los polos (paralelos) y perpendicular a ellos (meridianos). Nuestra dirección quedaría transformada directamente en un vector con dos posiciones: <strong>latitud</strong> y <strong>longitud</strong>. Ahora “Av. Figueroa Alcorta 7350, Ciudad de Buenos Aires, Argentina” se convirtió en (-34.714656,-58.785999) y “Abbey Road 2, Londres, Inglaterra” en (51.532068, -0.177305). Las latitudes y longitudes se expresan en <strong>grados</strong>, así que ya podemos establecer una diferencia cuantitativa entre nuestras dos posiciones ¡Incluso podemos expresarlo en una medida de distancia como metros o kilómetros!</p>
+<p>Para esta clase vamos a necesitar varios paquetes, así que los cargamos. Recordemos que si no están instalados hay que usar la función <code>install.packages()</code></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="datos-espaciales-en-r.html#cb2-1"></a><span class="kw">library</span>(tidyverse)  <span class="co"># Paquete multiuso</span></span>
+<span id="cb2-2"><a href="datos-espaciales-en-r.html#cb2-2"></a><span class="kw">library</span>(sf)  <span class="co"># Paquete clave para manipular datos espaciales</span></span>
+<span id="cb2-3"><a href="datos-espaciales-en-r.html#cb2-3"></a><span class="kw">library</span>(leaflet)  <span class="co"># Uno de los paquetes para </span></span></code></pre></div>
+<p>Una vez que los cargamos, vamos a crear nuestro dataframe con datos espaciales en base a las coordenadas latitud y longitud que definimos anteriormente:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="datos-espaciales-en-r.html#cb3-1"></a><span class="co"># Creamos un Data Frame con los datos necesarios</span></span>
+<span id="cb3-2"><a href="datos-espaciales-en-r.html#cb3-2"></a>datos &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">lat =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">34.714656</span>, <span class="fl">51.532068</span>), <span class="dt">long =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">58.785999</span>, </span>
+<span id="cb3-3"><a href="datos-espaciales-en-r.html#cb3-3"></a>    <span class="fl">-0.177305</span>), <span class="dt">ubicacion =</span> <span class="kw">c</span>(<span class="st">&quot;UTDT&quot;</span>, <span class="st">&quot;Abbey Road&quot;</span>))</span>
+<span id="cb3-4"><a href="datos-espaciales-en-r.html#cb3-4"></a><span class="co"># Lo convertimos a un objeto sf</span></span>
+<span id="cb3-5"><a href="datos-espaciales-en-r.html#cb3-5"></a>puntosEspaciales &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(datos, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;long&quot;</span>, <span class="st">&quot;lat&quot;</span>), </span>
+<span id="cb3-6"><a href="datos-espaciales-en-r.html#cb3-6"></a>    <span class="dt">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb3-7"><a href="datos-espaciales-en-r.html#cb3-7"></a><span class="co"># st_distance() nos permite encontrar la diferencia en la</span></span>
+<span id="cb3-8"><a href="datos-espaciales-en-r.html#cb3-8"></a><span class="co"># unidad que diga el CRS (sistema de coordenadas de</span></span>
+<span id="cb3-9"><a href="datos-espaciales-en-r.html#cb3-9"></a><span class="co"># referencia)</span></span>
+<span id="cb3-10"><a href="datos-espaciales-en-r.html#cb3-10"></a><span class="kw">st_distance</span>(puntosEspaciales)  <span class="co"># En metros</span></span></code></pre></div>
+<pre><code>## Units: [m]
+##          [,1]     [,2]
+## [1,]        0 11131513
+## [2,] 11131513        0</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="datos-espaciales-en-r.html#cb5-1"></a><span class="kw">st_distance</span>(puntosEspaciales)<span class="op">/</span><span class="dv">1000</span>  <span class="co"># En kilómetros</span></span></code></pre></div>
+<pre><code>## Units: [m]
+##          [,1]     [,2]
+## [1,]     0.00 11131.51
+## [2,] 11131.51     0.00</code></pre>
+<p>Según estos cálculos, nos separan aproximadamente 11.131 kms de Abbey Road. Perfecto, pudimos definir nuestra ubicación en la tierra e incluso medir la distancia con otro punto. Hay un parámetro que todavía no introdujimos y que resulta clave cuando lidiamos con datos espaciales: <strong>CRS</strong>, las siglas de Coordinate Reference System.</p>
+<p>Incluso podemos hacer nuestro primer gráfico interactivo de una manera muy rápida</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="datos-espaciales-en-r.html#cb7-1"></a><span class="kw">leaflet</span>(puntosEspaciales) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb7-2"><a href="datos-espaciales-en-r.html#cb7-2"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb7-3"><a href="datos-espaciales-en-r.html#cb7-3"></a><span class="st">  </span><span class="kw">addMarkers</span>()</span></code></pre></div>
+<div id="htmlwidget-f476f8f0d059b6e9a368" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f476f8f0d059b6e9a368">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[[-34.714656,51.532068],[-58.785999,-0.177305],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-34.714656,51.532068],"lng":[-58.785999,-0.177305]}},"evals":[],"jsHooks":[]}</script>
+<p>Vayamos paso por paso. En la siguiente sección veremos los distintos modelos de la tierra que usamos para poder representar estas ubicaciones espaciales.</p>
+</div>
+<div id="coordinate-reference-systems" class="section level2">
+<h2><span class="header-section-number">1.3</span> Coordinate Reference Systems</h2>
+<div id="elipsoides-sistemas-de-coordenadas-y-datums" class="section level3">
+<h3><span class="header-section-number">1.3.1</span> Elipsoides, sistemas de coordenadas y datums</h3>
+<p>Representar una ubicación en la superficie de la tierra implica superar diversos obstáculos. Para empezar, la tierra no es una esfera: tiene una forma que suele modelarse como <strong>geoide</strong>, pero incluso eso es una aproximación. La tierra tiene una forma particular, con diversos accidentes geográficos que la hacen única (y difícil de manipular matemáticamente). Sin embargo, nosotros - y a fines prácticos, todas las personas que trabajan con datos georreferenciados - trabajamos en su versión como <strong>geoide</strong>, y es en relación a esta modelización de la tierra que se montan los CRS.</p>
+<p>Definido el <strong>geoide</strong>, ese modelo de la forma de la tierra, introducimos el primer componente de los CRS: el <strong>elipsoide</strong>. El elipsoide es una aproximación al <strong>geoide</strong> con mejores propiedades matemáticas. Para definir un <strong>elipsoide</strong> necesitamos un par de parámetros que definen su forma. Una vez que contamos con un <strong>elipsoide</strong> podemos establecer un sistema de grillas tridimensional, como el de latitud y longitud, que lo segmenta según los ángulos que se forman entre la línea imaginaria paralela a los polos (paralelos) y la línea imaginaria perpendicular a los polos (meridiano) en un determinado punto, en relación al paralelo y meridiano de origen.</p>
+<p>Pero ¿cómo relacionamos al <strong>elipsoide</strong> con el <strong>geoide</strong>? Si bien el primero es una aproximación del segundo, para establecer un CRS necesitamos saber como se relacionan entre ellos: tenemos que “fijar” el <strong>elipsoide</strong> al <strong>geoide</strong>. Esto es lo que hace el <strong>datum</strong>: define el origen y la orientación de los ejes de coordenadas. Piensen en el <strong>datum</strong> como la información necesaria para “dibujar” el <strong>sistema de coordenadas</strong> en el <strong>elipsoide</strong></p>
+<p>Entonces ya tenemos tres elementos que poseen los CRS:</p>
+<ol style="list-style-type: decimal">
+<li>Un <strong>elipsoide</strong> (un modelo de la tierra, en rigor de un <strong>geoide</strong>)</li>
+<li>Un <strong>sistema de coordenadas</strong>, que nos permite determinar la posición de un punto en relación a otro en base a líneas imaginarias</li>
+<li>Un <strong>datum</strong>, que nos permite dibujar ese <strong>sistema de coordenadas</strong> en el <strong>elipsoide</strong> de tal manera que represente al ubicaciones específicas en el <strong>geoide</strong></li>
+</ol>
+<p>Si no quedó del todo claro no se preocupen: es un tema complejo que, en la mayoría de los casos, solo basta con saber que estos conceptos existen y qué significan. El objetivo de esta subsección es dar la definición básica de cada elemento porque probablemente se encuentren con esta información en diversos lugares, pero a fines prácticos suele utilizarse siempre el mismo elipsoide, datum y sistema de coordenadas, o variaciones que no tienen grandes efectos a los fines prácticos de nuestros trabajos. El World Geodetic System (<strong>WGS84</strong>) es un standard en la industria a nivel mundial, y existen algunas variaciones locales (la más famosa, el North American Datum (<strong>NAD83</strong>)) que no nos traerán mayores problemas al momento de las transformaciones. Piensen en el CRS como las unidades de peso o de distancia: cada observación que veamos de datos espaciales corresponde a un determinado CRS y no corresponde hacer operaciones entre dos observaciones pertenecientes a distintos CRS.</p>
+</div>
+<div id="proyecciones" class="section level3">
+<h3><span class="header-section-number">1.3.2</span> Proyecciones</h3>
+<p>Hasta ahora hemos trabajado en la representación de la Tierra en tres dimensiones. Sin embargo, todos los mapas con los que hemos trabajado desde chicos tienen dos dimensiones ¿Cómo transformamos un objeto de tres dimensiones a uno de dos dimensiones? Debemos realizar <strong>proyecciones</strong> de ese objeto tridimensional que, como veremos en breve, involucra diversos <strong>tradeoffs</strong>[^1]. Piensen en la proyección como una tarea de traducción: algo se pierde en el proceso.</p>
+<p>La proyección hoy en día más famosa es <strong>MERCATOR</strong>, la proyección que usa, entre otros servicios, <strong>Google Maps</strong>. Diseñada hace ya varios siglos para la navegación marítima, esta transformación es relativamente buena en lo relativo preservar formas y útil para navegar.</p>
+<p>En lo que realmente falla este tipo de proyección es en definir el tamaño de las unidades geógraficas: los países que están cerca de los polos aparentan tener un tamaño mucho más grande del que realmente tienen, mientras que lo inverso sucede con los que están cerca de la línea del ecuador. Tal es así que existe una página web (<a href="https://thetruesize.com/" class="uri">https://thetruesize.com/</a>) que permite experimentar de manera interactiva con los tamaños de los países en diversas partes de la proyección. En la Figura 1 muestro un ejemplo: Groenlandia, Islandia, Noruega, Suecia, Finlandia y Reino Unido combinadas ocupan aproximadamente el 50% de Brasil (Figura 1).</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-4"></span>
+<img src="data/Tutorial%203/projections.png" alt="La proyección MERCATOR distorsiona nuestra percepción de los tamaños" width="800px" />
+<p class="caption">
+Figure 1.1: La proyección MERCATOR distorsiona nuestra percepción de los tamaños
+</p>
+</div>
+<p>La oferta de proyecciones es prácticamente ilimitada. El paquete <code>mapproj</code> en R nos permite transformar el mundo en base a diversas proyecciones, incluyendo algunas que preservan el tamaño de los países. La Figura 2 muestra el mundo desde otra perspectiva: los países del norte son más chicos de lo que parecen en la proyección mercator.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-5"></span>
+<img src="data/Tutorial%203/mollyout.png" alt="La proyección MOLLWEIDE mantiene la representación de los tamaños" width="800px" />
+<p class="caption">
+Figure 1.2: La proyección MOLLWEIDE mantiene la representación de los tamaños
+</p>
+</div>
+<p>Las proyecciones también forman parte de los CRS, que pueden o no tener una proyección. Sea como sea, lo importante de esta sección es haberlos convencido de que importa <strong>conocer en que CRS están expresados los datos espaciales</strong>. Las transformaciones entre CRS no hace falta conocerlas, sino que el paquete <strong>sf</strong> lo hará por nosotros. Insisto: lo importante es saber que los datos espaciales SIEMPRE tienen un CRS, aun si no está definido explícitamente en nuestro archivo. Volvamos al ejemplo de los inmuebles de las propiedades de la introducción de este libro para ver un qué formato de archivos tienen los datos espaciales y un ejemplo sobre transformación de CRS.</p>
+</div>
+</div>
+<div id="manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud" class="section level2">
+<h2><span class="header-section-number">1.4</span> Manos a la obra ¿Dónde construir el próximo centro de salud?</h2>
+<p>Mostremos algunas de las funciones de datos espaciales de R con un problema muy concreto. Pónganse en la piel de una funcionara pública que debe decidir en qué manzana específica de la Ciudad de Buenos Aires debe abrir un nuevo centro de salud. Existen múltiples maneras de lidiar con este problema, pero supongamos por un segundo que esta funcionaria sabe como trabajar con GIS y, específicamente, con R. Antes de escuchar las demandas de los habitantes, prefiere conocer, en base a los datos, en qué manzanas hay una mayor necesidad de construir un nuevo centro de salud. Para eso, va a utilizar distintos conjuntos de datos y herramientas de R.</p>
+<p>El objetivo va a ser generar un Índice de Demanda de Salud (IDS) que, para cada manzana de la Ciudad de Buenos Aires, nos va a indicar qué tan necesaria es la construcción de un centro de salud. Este indicador se va a basar en distintas variables, a saber:</p>
+<ul>
+<li>La densidad poblacional en la zona</li>
+<li>La cantidad de hogares con Necesidades Básicas Insatisfechas (NBI)</li>
+<li>La atención preexistente por el sistema de salud</li>
+<li>La distancia con la avenida más cercana</li>
+</ul>
+<p>Veamos de dónde podemos conseguir estos datos y cómo podemos leerlos en R</p>
+<div id="cargando-los-datos-espaciales" class="section level3">
+<h3><span class="header-section-number">1.4.1</span> Cargando los datos espaciales</h3>
+<p>Los datos espaciales, a diferencia de otros tipos de datos, tienen formatos específicos para su almacenamiento. No es el objetivo de este libro introducir a todos los formatos, que son efectivamente muchos. Vamos a leer datos de tres formatos distintos:</p>
+<ul>
+<li><p><strong>Geojson</strong>: Se trata de una forma de representación de datos como listas, siguiendo el formato de <em>json</em>, pero adaptado para almacenar datos espaciales. Por default, el sistema de coordenada de referencias es el EPSG número 4325, que utiliza el WGS 84, el standard más utilizado en el mundo. El hecho de que lo guarde por default con este CRS es muy importante: no hace falta información de contexto sobre en qué CRS está, porque solo puede estar en ese-</p></li>
+<li><p><strong>Shapefiles</strong>: Los shapefiles son un formato antiguo para almacenar datos espaciales, y es propiedad de la empresa ESRI (los creadores de ArcGIS). Los shapefiles están siempre compuestos múltiples archivos, cada uno cumpliendo una función. Los datos específicos de las coordenadas se encuentran en un archivo .shp, pero la proyección se encuentra en .proj, y no siempre viene incluida en nuestros datos.</p></li>
+<li><p><strong>csv</strong>: los famosos archivos separados por comas pueden tener información espacial dentro dellos, particularmente cunado se trata de puntos. Suelen especificarse coordenadas como columnas “X” e “Y” o “lat” y “lon”</p></li>
+</ul>
+<p>El GCBA ofrece un dataset espacial con todas las vías de circulación de autos en la Ciudad de Buenos Aires (en este link)[<a href="https://data.buenosaires.gob.ar/dataset/calles" class="uri">https://data.buenosaires.gob.ar/dataset/calles</a>]. Les va a dar la opción de descargar los datos en shapefiles o geojson. Descarguen el shapefile (estará comprimido en un .zip) y extraiganlo en la carpeta del proyecto.</p>
+<p>Para leer a este y al resto de los archivos espaciales - con excepción de csv - podemos usar <strong>read_sf()</strong>. Acá estoy suponiendo que tienen a todos los archivos de este shapefile dentro de la carpeta callejero-rar/</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="datos-espaciales-en-r.html#cb8-1"></a><span class="co"># Cargamos la librería de SF</span></span>
+<span id="cb8-2"><a href="datos-espaciales-en-r.html#cb8-2"></a><span class="kw">library</span>(sf)</span>
+<span id="cb8-3"><a href="datos-espaciales-en-r.html#cb8-3"></a>calles &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;callejero-rar/callejero.shp&quot;</span>)</span></code></pre></div>
+<p>Si lograron hacerlo, entonces deberían tener un objeto que se llama <strong>calles</strong>. Lo primero que tenemos que entender cuando leemos datos espaciales es el sistema de coordenadas de referencia en el que están representados. Esto podemos hacerlo con <strong>st_crs()</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="datos-espaciales-en-r.html#cb9-1"></a><span class="kw">st_crs</span>(calles)</span></code></pre></div>
+<pre><code>## Coordinate Reference System:
+##   User input: WGS 84 
+##   wkt:
+## GEOGCRS[&quot;WGS 84&quot;,
+##     DATUM[&quot;World Geodetic System 1984&quot;,
+##         ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+##             LENGTHUNIT[&quot;metre&quot;,1]]],
+##     PRIMEM[&quot;Greenwich&quot;,0,
+##         ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##     CS[ellipsoidal,2],
+##         AXIS[&quot;latitude&quot;,north,
+##             ORDER[1],
+##             ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##         AXIS[&quot;longitude&quot;,east,
+##             ORDER[2],
+##             ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##     ID[&quot;EPSG&quot;,4326]]</code></pre>
+<p>En este caso nuestro dataset de calles está expresado en el EPSG 4326 ¿Qué significa esto? El EPSG es un sistema con índices de sistema de coordenadas de referencia. Cada uno de estos números representa a cada combinación de parámetros que determinan un sistema de coordenadas de referencia. Pueden buscar estos números en <a href="https://spatialreference.org/" class="uri">https://spatialreference.org/</a>. <a href="https://spatialreference.org/ref/epsg/wgs-84/">Aquí pueden ver específicamente información sobre el 4326</a>.</p>
+<p>Ahora carguemos información sobre la población y la cantidad de hogares con necesidades básicas insatisfechas - una forma de medir la pobreza - por radio censal según el censo 2010, siendo los radios censales la mínima unidad de medida del censo. Nuevamente vamos a poder descargar estos datos desde <a href="https://data.buenosaires.gob.ar/dataset/informacion-censal-por-radio">aquí</a>. Esta vez descarguen la opción de <strong>geojson</strong> y, nuevamente, guárdenlo en la carpeta de su proyecto</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="datos-espaciales-en-r.html#cb11-1"></a>radiosCensales &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;caba_radios_censales.geojson&quot;</span>)</span></code></pre></div>
+<p>En este caso no necesitamos saber cuál el es el sistema de coordenada de referencias… siempre será el WSG84. Veamos qué variables trae</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="datos-espaciales-en-r.html#cb12-1"></a><span class="kw">glimpse</span>(radiosCensales)</span></code></pre></div>
+<pre><code>## Rows: 3,554
+## Columns: 9
+## $ RADIO_ID    &lt;chr&gt; &quot;1_1_1&quot;, &quot;1_12_1&quot;, &quot;1_12_10&quot;, &quot;1_12_11&quot;, &quot;1_12_2&quot;, &quot;1_12_3&quot;, &quot;1_12_4&quot;, &quot;1_12_5&quot;, &quot;1_12_6...
+## $ BARRIO      &lt;chr&gt; &quot;RETIRO&quot;, &quot;SAN NICOLAS&quot;, &quot;SAN NICOLAS&quot;, &quot;SAN NICOLAS&quot;, &quot;SAN NICOLAS&quot;, &quot;SAN NICOLAS&quot;, &quot;SA...
+## $ COMUNA      &lt;chr&gt; &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;...
+## $ POBLACION   &lt;dbl&gt; 336, 341, 296, 528, 229, 723, 393, 600, 472, 786, 329, 1356, 586, 725, 358, 426, 614, 29...
+## $ VIVIENDAS   &lt;dbl&gt; 82, 365, 629, 375, 445, 744, 341, 505, 504, 546, 275, 895, 404, 641, 266, 252, 641, 382,...
+## $ HOGARES     &lt;dbl&gt; 65, 116, 101, 136, 129, 314, 209, 275, 202, 347, 129, 342, 163, 136, 104, 157, 235, 142,...
+## $ HOGARES_NBI &lt;dbl&gt; 19, 25, 1, 7, 16, 104, 110, 32, 49, 89, 15, 57, 1, 1, 2, 2, 5, 1, 74, 3, 31, 43, 74, 48,...
+## $ AREA_KM2    &lt;dbl&gt; 1.79899705, 0.01856469, 0.04438025, 0.36634000, 0.01836301, 0.03672540, 0.01671179, 0.03...
+## $ geometry    &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-58.37189 -..., MULTIPOLYGON (((-58.38593 -..., MULTIPOLYGO...</code></pre>
+<p>¿Ven esa columna <strong>geometry</strong>? Es donde están almacenados nuestros datos espaciales, en este caso son polígonos. Es una forma muy prolija de guardar la información espacial, al mismo tiempo que el resto de las variables pueden trabajarse como si fuera un data.frame normal. Si están atentos y atentas se van a dar cuenta de que no tenemos una medida de densidad… todavía, ya lo vamos a solucionar.</p>
+<p>Finalmente, nos falta información sobre la oferta actual de cobertura de salud, para esto vamos a usar solamente a los hospitales de la Ciudad de Buenos Aires, siendo conscientes de que existen otras formas de brindar atención de salud, como los Centros de Salud y Acción Comunitaria (CeSACs).</p>
+<p>El dataset de hospitales se encuentra en un csv al que le hice pequeñas modificaciones y pueden descargar haciendo <a href="https://raw.githubusercontent.com/martinmontane/AnalisisEspacialEnR/master/data/Hospitales.csv">click acá</a></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="datos-espaciales-en-r.html#cb14-1"></a>hospitales &lt;-<span class="st"> </span><span class="kw">read_delim</span>(<span class="st">&quot;Hospitales.csv&quot;</span>,<span class="dt">delim =</span> <span class="st">&quot;;&quot;</span>)</span></code></pre></div>
+<p>Todavía esto no es un dato espacial… al menos no para R: para eso tenemos que convertirlo en un objeto SF, que tenga a las coordenadas en la columna <strong>geometry</strong>. Veamos qué columnas tiene</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="datos-espaciales-en-r.html#cb15-1"></a><span class="kw">glimpse</span>(hospitales)</span></code></pre></div>
+<pre><code>## Rows: 36
+## Columns: 33
+## $ long                    &lt;dbl&gt; -58.37755, -58.41207, -58.40273, -58.38516, -58.39131, -58.43494, -58.37584,...
+## $ lat                     &lt;dbl&gt; -34.62885, -34.59419, -34.58453, -34.63940, -34.63415, -34.60847, -34.63021,...
+## $ nombre                  &lt;chr&gt; &quot;HOSPITAL GENERAL DE NIÑOS PEDRO DE ELIZALDE&quot;, &quot;HOSPITAL GENERAL DE NIÑOS RI...
+## $ nom_map                 &lt;chr&gt; &quot;HOSP. DE ELIZALDE&quot;, &quot;HOSP. GUTIERREZ&quot;, &quot;HOSP. ODONTOLOGICO CARRILLO&quot;, &quot;HOSP...
+## $ objeto                  &lt;chr&gt; &quot;HOSPITAL&quot;, &quot;HOSPITAL&quot;, &quot;HOSPITAL&quot;, &quot;HOSPITAL&quot;, &quot;HOSPITAL&quot;, &quot;HOSPITAL&quot;, &quot;HOS...
+## $ calle_nombre            &lt;chr&gt; &quot;MANUEL A. MONTES DE OCA&quot;, &quot;GALLO&quot;, &quot;SANCHEZ DE BUSTAMANTE&quot;, &quot;BRANDSEN&quot;, &quot;CA...
+## $ calle_altura            &lt;dbl&gt; 40, 1330, 2529, 2570, 2061, 4821, 849, 315, 375, 1795, 955, 2151, 4151, 15, ...
+## $ calle_altura_1          &lt;chr&gt; &quot;MANUEL A. MONTES DE OCA 40&quot;, &quot;GALLO 1330&quot;, &quot;SANCHEZ DE BUSTAMANTE 2529&quot;, &quot;B...
+## $ dom_geo                 &lt;chr&gt; &quot;40 MONTES DE OCA, MANUEL AV.&quot;, &quot;1330 GALLO&quot;, &quot;2529 SANCHEZ DE BUSTAMANTE&quot;, ...
+## $ telefono                &lt;chr&gt; &quot;4307-5842 / 5844&quot;, &quot;4962-9247 / 9248 / 9280&quot;, &quot;4805-5521 / 7533&quot;, &quot;4301-365...
+## $ guardia                 &lt;chr&gt; &quot;4307-5442 / 4300-1700&quot;, &quot;4962-9232&quot;, &quot;4805-6407&quot;, &quot;4301-4522&quot;, &quot;4306-4641 a...
+## $ fax                     &lt;chr&gt; &quot;4302-7400&quot;, &quot;4962-3762&quot;, &quot;4805-7533&quot;, &quot;4303-3655/59&quot;, &quot;4306-3013&quot;, &quot;4983-73...
+## $ web                     &lt;chr&gt; &quot;www.elizalde.gov.ar&quot;, &quot;www.guti.gov.ar&quot;, NA, &quot;www.moyano.org.ar&quot;, NA, NA, N...
+## $ tipo                    &lt;chr&gt; &quot;Hospital de niños&quot;, &quot;Hospital de niños&quot;, &quot;Hospital especializado&quot;, &quot;Hospita...
+## $ tipo_espec              &lt;chr&gt; &quot;PEDIATRIA&quot;, &quot;PEDIATRIA&quot;, &quot;ODONTOLOGIA&quot;, &quot;SALUD MENTAL&quot;, &quot;ENF. APAR. DIGESTI...
+## $ mod_at_1                &lt;chr&gt; &quot;AT. AMB./INTERNACION&quot;, &quot;AT. AMB./INTERNACION&quot;, &quot;AT. AMBULATORIA&quot;, &quot;AT. AMB....
+## $ mod_at_2                &lt;chr&gt; &quot;DIAG./TRATAM.&quot;, &quot;DIAG./TRATAM.&quot;, &quot;DIAG./TRATAM.&quot;, &quot;DIAG./TRATAM.&quot;, &quot;DIAG./T...
+## $ depend_adm              &lt;chr&gt; &quot;Ministerio de Salud GCBA&quot;, &quot;Ministerio de Salud GCBA&quot;, &quot;Ministerio de Salud...
+## $ director                &lt;chr&gt; &quot;Dr. Javier Indart&quot;, &quot;Dra. María Cristina Galoppo&quot;, &quot;Dra. Susana Rita Lisant...
+## $ dom_norma               &lt;chr&gt; &quot;MONTES DE OCA, MANUEL AV. 40&quot;, &quot;GALLO 1330&quot;, &quot;SANCHEZ DE BUSTAMANTE 2529&quot;, ...
+## $ calle_altura_2          &lt;dbl&gt; 40, 1330, 2529, 2570, 2061, 4821, 849, 315, 375, 1795, 955, 2151, 4151, 15, ...
+## $ calle_altura_3          &lt;chr&gt; &quot;MANUEL A. MONTES DE OCA 40&quot;, &quot;GALLO 1330&quot;, &quot;SANCHEZ DE BUSTAMANTE 2529&quot;, &quot;B...
+## $ barrio                  &lt;chr&gt; &quot;Barracas&quot;, &quot;Recoleta&quot;, &quot;Recoleta&quot;, &quot;Barracas&quot;, &quot;Parque Patricios&quot;, &quot;Caballi...
+## $ comuna                  &lt;chr&gt; &quot;Comuna 4&quot;, &quot;Comuna 2&quot;, &quot;Comuna 2&quot;, &quot;Comuna 4&quot;, &quot;Comuna 4&quot;, &quot;Comuna 6&quot;, &quot;Com...
+## $ codigo_postal           &lt;dbl&gt; 1270, 1425, 1425, 1287, 1264, 1405, 1272, 1275, 1275, 1169, 1428, 1246, 1416...
+## $ codigo_postal_argentino &lt;chr&gt; &quot;C1270AAN&quot;, &quot;C1425EFD&quot;, &quot;C1425DUY&quot;, &quot;C1287ABJ&quot;, &quot;C1264AAA&quot;, &quot;C1405DCD&quot;, &quot;C12...
+## $ camas_medicina          &lt;dbl&gt; 7.336986, 169.665753, NA, 865.950685, 38.893151, NA, 10.575342, NA, 678.0273...
+## $ camas_cirugía           &lt;dbl&gt; NA, 119.347945, NA, 32.000000, 33.079452, NA, NA, NA, 9.972603, NA, 26.40547...
+## $ camas_pediatría         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 64.00000, NA, NA, NA, 149.89041, NA, NA, NA, 18....
+## $ camas_tocoginecología   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 96.57260, NA, NA, NA, NA, NA, NA...
+## $ camas_urgencia          &lt;dbl&gt; NA, 24.619178, NA, NA, 6.082192, NA, 7.652055, NA, NA, NA, NA, 2.002740, NA,...
+## $ camas_otra              &lt;dbl&gt; 210.92055, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+## $ camas_totales           &lt;dbl&gt; 218.25753, 313.63288, NA, 897.95068, 78.05479, NA, 18.22740, 64.00000, 688.0...</code></pre>
+<p>Entre todas las variables, <strong>long</strong> y <strong>lat</strong> tienen las variables espaciales. Podemos convertir este data.frame en un objeto sf, es decir espacial, de la siguiente manera:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="datos-espaciales-en-r.html#cb17-1"></a>hospitales &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(hospitales,<span class="dt">coords=</span><span class="kw">c</span>(<span class="st">&quot;long&quot;</span>,<span class="st">&quot;lat&quot;</span>), <span class="dt">crs=</span><span class="dv">4326</span>)</span></code></pre></div>
+<p>Nos falta el último de nuestros datos: las manzanas. Pueden <a href="https://data.buenosaires.gob.ar/dataset/manzanas">descargar el geojson de acá</a></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="datos-espaciales-en-r.html#cb18-1"></a>manzanas &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;manzanas.geojson&quot;</span>)</span></code></pre></div>
+<p>Ahora sí ya podemos aplicar las distintas herramientas de análisis espacial para elegir las mejores ubicaciones para el nuevo centro de salud.</p>
+</div>
+<div id="detectando-la-cobertura-actual." class="section level3">
+<h3><span class="header-section-number">1.4.2</span> Detectando la cobertura actual.</h3>
+<p>Una de las variables que dijimos que ibamos a tomar para detectar un espacio para un nuevo centro de salud iba a ser que la zona no estuviera atendida por un hospital. Existen distintas maneras de cubrir esta atención existente, pero vamos a usar una herramienta en particular: <strong>st_buffer()</strong>. Lo que hace esta función de sf es generar un polígono a una distancia fija desde cualquiera de los puntos de nuestros objetos espaciales. En el caso de puntos - como nuestros hospitales - esto significa un círculo del radio que nosotros querramos.</p>
+<p>Una recomendación cuando trabajemos con funciones que requieren medir distancias y relaciones entre distintos objetos espaciales es que trabajemos con CRS que se encuentren proyectados en dos dimensiones, en lugar del ESPG 4326 que se encuentra no proyectado. Usemos la proyección oficial del GCBA, cuya definición podemos encontrar acá <a href="https://spatialreference.org/ref/sr-org/8333/" class="uri">https://spatialreference.org/ref/sr-org/8333/</a>.</p>
+<p>Vamos a usar la función <strong>st_transform()</strong>, que es la que nos permite transformar entre sistemas de coordenadas de referncia. No vamos a usar los códigos de EPSG, sino la representación proj4string, que la pueden ver en el link que puse anteriormente.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="datos-espaciales-en-r.html#cb19-1"></a>hospitales &lt;-<span class="st"> </span><span class="kw">st_transform</span>(hospitales, <span class="dt">crs=</span><span class="st">&quot;+proj=tmerc +lat_0=-34.6297166 +lon_0=-58.4627 +k=1 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs&quot;</span>)</span></code></pre></div>
+<p>Si usan <strong>st_crs(hospitales)</strong> van a ver que es distinto ¿Ven la parte de +units=m? Bueno, eso implica que ahora todo lo que hagamos en términos espaciales será tomado en metros, por lo cual podemos encontrar círculos a una distancia fija, por ejemplo, 1000 metros, de cada hospital</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="datos-espaciales-en-r.html#cb20-1"></a>coberturaHospitales &lt;-<span class="st"> </span><span class="kw">st_buffer</span>(hospitales,<span class="dt">dist =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<p>Como alguno de los circulos se van a solapar, mejor juntemos todo en un gran polígono que diga que en esa zona hay cobertura, con herramientas de tidyverse</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="datos-espaciales-en-r.html#cb21-1"></a>coberturaHospitales &lt;-<span class="st"> </span>coberturaHospitales <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">cobertura=</span><span class="ot">TRUE</span>) </span></code></pre></div>
+<p>Dejemos por este dataset cargado en nuestra sesión de R por un rato, ya vamos a volver a él</p>
+</div>
+<div id="distancia-contra-la-avenida-más-cercana" class="section level3">
+<h3><span class="header-section-number">1.4.3</span> Distancia contra la avenida más cercana</h3>
+<p>Definitivamente es importante tener una buena conexión con la red de transporte para poder mover mejor a los eventuales pacientes. Teniendo nuestras calles, podemos seleccionar solo las avenidas y despues usar <strong>st_distance()</strong> para estimar la distancia entre cada una de nuestras manzanas y las avenidas.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="datos-espaciales-en-r.html#cb22-1"></a>avenidas &lt;-<span class="st"> </span>calles <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(tipo_c <span class="op">==</span><span class="st"> &quot;AVENIDA&quot;</span>)</span></code></pre></div>
+<p>Antes de usar las avenidas, lo que vamos a hacer es quedarnos con los centroides de las manzanas. Los centroides son el punto central dentro de un polígono. Hacemos esto especialmente por las manzanas que son muy grandes, para tener un “promedio” en lugar de uno solo de sus puntos externos. Es muy fácil tener los centroides, utlizando st_centroid(). Antes de hacerlo, vamos a convertir a manzanas al crs de hospitales, es decir el de la ciudad de buenos aires:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="datos-espaciales-en-r.html#cb23-1"></a>manzanas &lt;-<span class="st"> </span><span class="kw">st_transform</span>(manzanas,<span class="dt">crs =</span> <span class="kw">st_crs</span>(hospitales))</span></code></pre></div>
+<p>Ahora vamosa extraer los centroides de cada una de las manzanas y hacemos un gráfico para verlo en detalle:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="datos-espaciales-en-r.html#cb24-1"></a>manzanasCentroides &lt;-<span class="st"> </span><span class="kw">st_centroid</span>(manzanas)</span>
+<span id="cb24-2"><a href="datos-espaciales-en-r.html#cb24-2"></a><span class="kw">ggplot</span>() <span class="op">+</span></span>
+<span id="cb24-3"><a href="datos-espaciales-en-r.html#cb24-3"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data =</span> manzanas) <span class="op">+</span></span>
+<span id="cb24-4"><a href="datos-espaciales-en-r.html#cb24-4"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data =</span> manzanasCentroides,<span class="dt">color=</span><span class="st">&quot;red&quot;</span>, <span class="dt">size=</span> <span class="fl">0.001</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p>Si no se distinguen los puntos en este gráfico, hagánlo en su computadoras y van a poder cambiar el zoom para ver cómo cada punto está en el centro de cada manzana. Ahora midamos la distancia entre cada uno de estos puntos y todas las avenidas, pero tienen que estar en el mismo Sistema de Coordenadas de Referencia:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="datos-espaciales-en-r.html#cb25-1"></a>avenidas &lt;-<span class="st"> </span><span class="kw">st_transform</span>(avenidas,<span class="dt">crs =</span> <span class="kw">st_crs</span>(hospitales))</span></code></pre></div>
+<p>Ahora sí, solo hay que esperar un poco, puede tardar unos minutos:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="datos-espaciales-en-r.html#cb26-1"></a>distanciaAvenidas &lt;-<span class="st"> </span><span class="kw">st_distance</span>(manzanasCentroides,avenidas)</span></code></pre></div>
+<p>Lo que acaba de hacer es computar la distancia, en metros, entre cada uno de los centroides y las avenidas, con dim podemos ver que efectivamente esto es lo que sucedió</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="datos-espaciales-en-r.html#cb27-1"></a><span class="co"># 12.520 filas (centroides de manzanas) y 6,758 columnas (tramos de avenidas)</span></span>
+<span id="cb27-2"><a href="datos-espaciales-en-r.html#cb27-2"></a><span class="kw">dim</span>(distanciaAvenidas)</span></code></pre></div>
+<pre><code>## [1] 12520  6758</code></pre>
+<p>Sin embargo, nuestro objetivo es tener la distancia mínima por lo cual podemos hacer uso de <strong>apply</strong>. Es una función muy poderosa que recorre nuestra matriz en filas o culmnas haciendo algo que queremos. Por ejemplo, podemos recorrer todas las filas y tomar el valor mínimo, con lo cual nos quedaríamos con el valor mínimo para cada uno de los centroides de manzanas.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="datos-espaciales-en-r.html#cb29-1"></a><span class="co"># 1 significa filas, 2 columnas. functon(x) min(x) significa que para cada fila devuelva el valor mínimo</span></span>
+<span id="cb29-2"><a href="datos-espaciales-en-r.html#cb29-2"></a>avenidaMasCercana &lt;-<span class="st"> </span><span class="kw">apply</span>(distanciaAvenidas,<span class="dv">1</span>,<span class="cf">function</span>(x) <span class="kw">min</span>(x))</span>
+<span id="cb29-3"><a href="datos-espaciales-en-r.html#cb29-3"></a><span class="co"># Rendondeamos</span></span>
+<span id="cb29-4"><a href="datos-espaciales-en-r.html#cb29-4"></a>avenidaMasCercana &lt;-<span class="st"> </span><span class="kw">round</span>(avenidaMasCercana,<span class="dv">0</span>)</span></code></pre></div>
+<p>Agregamos esta distancia a cada una de las manzanas</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="datos-espaciales-en-r.html#cb30-1"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">distanciaAvenida=</span>avenidaMasCercana)</span></code></pre></div>
+</div>
+<div id="incorporando-el-resto-de-las-variables" class="section level3">
+<h3><span class="header-section-number">1.4.4</span> Incorporando el resto de las variables</h3>
+<p>Ahora ya podemos agregar a los centroides, y luego a las manzanas, la información que nos falta para la construcción del índice. Para empezar, podemos hacer lo más fácil, que es marcar si el centroide está dentro de los radios de cobertura que dijimos anteriormente. Para esto, usamos <strong>st_join()</strong>, es decir la <strong>herramienta de unión espacial</strong>. Lo que hace es unir la información de dos <strong>datasets espaciales distintos</strong> en base a algún criterio espacial. De manera predeterminada, utiliza el criterio <strong>st_intersects()</strong>, es decir si existe algún tipo de intersección entre cada una de los puntos, lineas o polígonos que están en cada uno de nuestros objetos <strong>sf</strong>.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="datos-espaciales-en-r.html#cb31-1"></a>manzanasCentroides &lt;-<span class="st"> </span><span class="kw">st_join</span>(manzanasCentroides,coberturaHospitales)</span></code></pre></div>
+<p>Igual que el <strong>left_join()</strong>, cuando no encuentra ningun matcheo entre las unidades devuelve <strong>NA</strong>, por lo que todos los valores que están en cobertura como NA en rigor no están cubiertos por la oferta de hospitales actual. Dejamos eso en claro:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="datos-espaciales-en-r.html#cb32-1"></a>manzanasCentroides &lt;-<span class="st"> </span>manzanasCentroides <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">cobertura=</span><span class="kw">ifelse</span>(<span class="kw">is.na</span>(cobertura),<span class="ot">FALSE</span>,cobertura))</span></code></pre></div>
+<p>Ahora tenemos que hacer algo muy similar con los datos del censo 2010, que lo tenemos en el objeto <strong>radiosCensales</strong>.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="datos-espaciales-en-r.html#cb33-1"></a>radiosCensales &lt;-<span class="st"> </span>radiosCensales <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">densidadPob=</span>POBLACION<span class="op">/</span>AREA_KM2)</span>
+<span id="cb33-2"><a href="datos-espaciales-en-r.html#cb33-2"></a>radiosCensales &lt;-<span class="st"> </span>radiosCensales <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">st_transform</span>(radiosCensales,<span class="dt">crs=</span><span class="kw">st_crs</span>(hospitales))</span>
+<span id="cb33-3"><a href="datos-espaciales-en-r.html#cb33-3"></a>manzanasCentroides &lt;-<span class="st"> </span><span class="kw">st_join</span>(manzanasCentroides,radiosCensales)</span></code></pre></div>
+<p>Nos queda agregar toda esta información a los polígonos de las manzanas y ya podemos ponernos a construir, finalmente,nuestro índice</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="datos-espaciales-en-r.html#cb34-1"></a><span class="co"># Elegimos solo las variables que queremos unir, antes lo convertimos en data frame para poder perder la columna geometry</span></span>
+<span id="cb34-2"><a href="datos-espaciales-en-r.html#cb34-2"></a>manzanasCentroides &lt;-<span class="st"> </span>manzanasCentroides <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb34-3"><a href="datos-espaciales-en-r.html#cb34-3"></a><span class="st">                      </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span></span>
+<span id="cb34-4"><a href="datos-espaciales-en-r.html#cb34-4"></a><span class="st">                      </span><span class="kw">select</span>(SM,densidadPob,HOGARES_NBI,cobertura)</span>
+<span id="cb34-5"><a href="datos-espaciales-en-r.html#cb34-5"></a>manzanas &lt;-<span class="st">  </span><span class="kw">left_join</span>(manzanas,manzanasCentroides,<span class="dt">by=</span><span class="st">&quot;SM&quot;</span>)</span></code></pre></div>
+</div>
+<div id="creando-nuestro-índice-de-demanda-de-salud" class="section level3">
+<h3><span class="header-section-number">1.4.5</span> Creando nuestro índice de demanda de salud</h3>
+<p>Nuestro índice de demanda de salud va a estar compuesto por un promedio ponderado de variables que construimos, pero anteriormente deberíamos normalizarlas. Lo que vamos a hacer es ponerle un valor del 1 al 5 si está entre el 0%-20%, 20%-40%, 40%-60%, 60%-80% u 80%-100% de esa variable. Esto lo podemos hacer fácilmente con la función <strong>quantile()</strong>, que calcula justamente estos quiebres, veamos:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="datos-espaciales-en-r.html#cb35-1"></a><span class="co"># Queremos que nos muestre en que porcentaje de estos está cada observación...</span></span>
+<span id="cb35-2"><a href="datos-espaciales-en-r.html#cb35-2"></a>quiebres &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">0.2</span>,<span class="fl">0.4</span>,<span class="fl">0.6</span>,<span class="fl">0.8</span>,<span class="dv">1</span>)</span>
+<span id="cb35-3"><a href="datos-espaciales-en-r.html#cb35-3"></a></span>
+<span id="cb35-4"><a href="datos-espaciales-en-r.html#cb35-4"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
+<span id="cb35-5"><a href="datos-espaciales-en-r.html#cb35-5"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">cat_densidad=</span><span class="kw">cut</span>(densidadPob,<span class="dt">breaks =</span> <span class="kw">quantile</span>(densidadPob,quiebres,<span class="dt">na.rm =</span> <span class="ot">TRUE</span> ),<span class="dt">include.lowest =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb35-6"><a href="datos-espaciales-en-r.html#cb35-6"></a>                   <span class="dt">cat_NBI=</span><span class="kw">cut</span>(HOGARES_NBI,<span class="dt">breaks =</span> <span class="kw">quantile</span>(HOGARES_NBI,quiebres,<span class="dt">na.rm =</span> <span class="ot">TRUE</span> ),<span class="dt">include.lowest =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb35-7"><a href="datos-espaciales-en-r.html#cb35-7"></a>                   <span class="dt">cat_distanciaAv=</span><span class="kw">cut</span>(<span class="op">-</span>distanciaAvenida,<span class="dt">breaks =</span> <span class="kw">quantile</span>(<span class="op">-</span>distanciaAvenida,quiebres,<span class="dt">na.rm =</span> <span class="ot">TRUE</span> ),<span class="dt">include.lowest =</span> <span class="ot">TRUE</span>))</span></code></pre></div>
+<p>Vamos parte por parte. La función <strong>cut()</strong> corta a una variable númerica por los cortes que nosotros le indiquemos en el parámetro <em>breaks</em>. Por otro lado, la función <strong>quantile()</strong> nos devuelve los valores de una variable numérica que alcanza a un determinado porcentaje cuando se ordena de mayor a menor (es decir, calcula el percentil). Como buscamos los puntos que acumulan 0%, 20%, 40%, 60%, 80% y 100%, por los valores que le ponemos al vector quiebres, entonces nos va a devolver esos valores. <strong>na.rm=TRUE</strong> dentro de quantile() es para que ignore los casos donde hay NA en la variable, mientras que <strong>include.lowest = TRUE</strong> es para que cut tome al primer valor, 0, y no lo excluya de la nueva variable categórica.</p>
+<p>Además, ponemos <strong>-distanciaAvenida</strong> porque es un truco para que nos quede como valor más alto (5) cuando la distancia es menor a la avenida y más bajo (1) cuando la distancia es mayor a la avenida.</p>
+<p>Si todavía no quedó del todo claro, un gráfico habla más que mil palabras</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="datos-espaciales-en-r.html#cb36-1"></a><span class="kw">ggplot</span>() <span class="op">+</span></span>
+<span id="cb36-2"><a href="datos-espaciales-en-r.html#cb36-2"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>manzanas <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(cat_NBI)) ,<span class="kw">aes</span>(<span class="dt">fill=</span>cat_NBI), <span class="dt">color=</span><span class="ot">NA</span>) <span class="op">+</span></span>
+<span id="cb36-3"><a href="datos-espaciales-en-r.html#cb36-3"></a><span class="st">  </span><span class="kw">scale_fill_viridis_d</span>() <span class="op">+</span></span>
+<span id="cb36-4"><a href="datos-espaciales-en-r.html#cb36-4"></a><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></span>
+<span id="cb36-5"><a href="datos-espaciales-en-r.html#cb36-5"></a><span class="st">  </span><span class="kw">coord_sf</span>(<span class="dt">datum=</span><span class="ot">NA</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p>Bien, ahora una última vuelta de tuerca: podemos convertir estas categorías a números con la función <strong>as.numeric()</strong>, y estarán ordenados de 1, menor valor, a 5, mayor valor ¡Exactamente lo que queríamos! Esto es por cómo funcionan los <strong>factores</strong> en R</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="datos-espaciales-en-r.html#cb37-1"></a><span class="co"># En el caso de cobertura convertira 0 cuando era FALSE y 1 cuando era TRUE</span></span>
+<span id="cb37-2"><a href="datos-espaciales-en-r.html#cb37-2"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
+<span id="cb37-3"><a href="datos-espaciales-en-r.html#cb37-3"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">cat_densidad=</span><span class="kw">as.numeric</span>(cat_densidad),</span>
+<span id="cb37-4"><a href="datos-espaciales-en-r.html#cb37-4"></a>                   <span class="dt">cat_NBI=</span><span class="kw">as.numeric</span>(cat_NBI),</span>
+<span id="cb37-5"><a href="datos-espaciales-en-r.html#cb37-5"></a>                   <span class="dt">cat_distanciaAv=</span><span class="kw">as.numeric</span>(cat_distanciaAv),</span>
+<span id="cb37-6"><a href="datos-espaciales-en-r.html#cb37-6"></a>                   <span class="dt">cat_cobertura=</span><span class="kw">as.numeric</span>(<span class="op">!</span>cobertura))</span></code></pre></div>
+<p>Ya podemos crear nuestro índice con las ponderaciones que queramos. Usemos un 10% para la densidad, un 30% para los NBI, un 10% para la distancia con la avenida más cercana y un 50% sobre si en el lugar falta o no cobertura.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="datos-espaciales-en-r.html#cb38-1"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
+<span id="cb38-2"><a href="datos-espaciales-en-r.html#cb38-2"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">IDS=</span>cat_densidad<span class="op">*</span><span class="fl">0.1</span><span class="op">+</span>cat_NBI<span class="op">*</span><span class="fl">0.3</span><span class="op">+</span>cat_distanciaAv<span class="op">*</span><span class="fl">0.1</span><span class="op">+</span>cat_cobertura<span class="op">*</span><span class="fl">0.5</span>,</span>
+<span id="cb38-3"><a href="datos-espaciales-en-r.html#cb38-3"></a>                   <span class="dt">IDS=</span><span class="kw">ifelse</span>(IDS<span class="op">&gt;</span><span class="kw">quantile</span>(IDS,<span class="dt">probs =</span> <span class="fl">0.9</span>,<span class="dt">na.rm =</span> <span class="ot">TRUE</span>),<span class="ot">TRUE</span>,<span class="ot">FALSE</span>))</span></code></pre></div>
+<p>Hagamos nuestro gráfico:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="datos-espaciales-en-r.html#cb39-1"></a><span class="co"># Podemos agrupar a los radioscensales por barrio para que nos queden los polígonos de los barrios.</span></span>
+<span id="cb39-2"><a href="datos-espaciales-en-r.html#cb39-2"></a><span class="co"># Tambien es posible bajarlos directamente desde la página del GCBA</span></span>
+<span id="cb39-3"><a href="datos-espaciales-en-r.html#cb39-3"></a>barrios &lt;-<span class="st"> </span>radiosCensales <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(BARRIO) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="kw">n</span>())</span></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="datos-espaciales-en-r.html#cb41-1"></a><span class="kw">ggplot</span>() <span class="op">+</span></span>
+<span id="cb41-2"><a href="datos-espaciales-en-r.html#cb41-2"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>barrios) <span class="op">+</span></span>
+<span id="cb41-3"><a href="datos-espaciales-en-r.html#cb41-3"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>manzanas <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(IDS)) ,<span class="kw">aes</span>(<span class="dt">fill=</span>IDS), <span class="dt">color=</span><span class="ot">NA</span>) <span class="op">+</span></span>
+<span id="cb41-4"><a href="datos-espaciales-en-r.html#cb41-4"></a><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="ot">NA</span>,<span class="st">&quot;#f03b20&quot;</span>)) <span class="op">+</span></span>
+<span id="cb41-5"><a href="datos-espaciales-en-r.html#cb41-5"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill=</span><span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb41-6"><a href="datos-espaciales-en-r.html#cb41-6"></a><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></span>
+<span id="cb41-7"><a href="datos-espaciales-en-r.html#cb41-7"></a><span class="st">  </span><span class="kw">coord_sf</span>(<span class="dt">datum=</span><span class="ot">NA</span>) <span class="op">+</span></span>
+<span id="cb41-8"><a href="datos-espaciales-en-r.html#cb41-8"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Índice de Demanda de Salud&quot;</span>,</span>
+<span id="cb41-9"><a href="datos-espaciales-en-r.html#cb41-9"></a>       <span class="dt">subtitle=</span><span class="st">&quot;Ciudad de Buenos Aires&quot;</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+</div>
+</div>
+<div id="ejercicio" class="section level2">
+<h2><span class="header-section-number">1.5</span> Ejercicio</h2>
+<p>La Ciudad de Buenos Aires cuenta con otras alternativas a los hospitales, por ejemplo los CESAC. Descargá los datos de los CESAC y agregalos al gráfico donde se encuentran las áreas más acuciantes del IDS ¿Coinciden las zonas? ¿No? ¿Dónde construirían el próximo CESAC, ahora que saben dónde están emplazados los actuales?</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
