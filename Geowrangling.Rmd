@@ -107,19 +107,20 @@ El equipo más grande de la Argentina tiene su estadio en Avenida Presidente Fig
 Lo primero que tenemos que hacer es generar un data frame con la información que sí tenemos:
 
 ```{r}
-# Esta key es falsa, por obvias razones. Reemplacen este valor por uno que funcione
 direcciones <- data.frame(lugar=c("Casa","Monumental"),
                           direccion=c("Charcas 3591, Ciudad de Buenos Aires, Argentina","Avenida Presidente Figueroa Alcorta 7597, Ciudad de Buenos Aires, Argentina"))
 
 ```
 
-Luego, usamos la función de **geocode()** de hereR, que solo nos pide un vector con las direcciones a geolocalizar:
+Luego, usamos la función de **geocode()** de hereR, que solo nos pide un vector con las direcciones a geolocalizar. Para esto, antes deben usar **set_key()** para que here maps sea capaz de asociar las consultas con su cuenta
 
 ```{r echo=FALSE}
 load(file = 'data/ubicacionRiver.RData')
 ```
 
 ```{r eval=FALSE}
+# Esta key es falsa, por obvias razones. Reemplacen este valor por uno que funcione
+set_key("<YOUR API KEY>")
 ubicaciones <- geocode(direcciones %>% pull(direccion))
 ```
 
