@@ -112,7 +112,7 @@ direcciones <- data.frame(lugar=c("Casa","Monumental"),
 
 ```
 
-Luego, usamos la función de **geocode()** de hereR, que solo nos pide un vector con las direcciones a geolocalizar. Para esto, antes deben usar **set_key()** para que here maps sea capaz de asociar las consultas con su cuenta
+Luego, usamos la función de **geocode()** de hereR, que solo nos pide un vector con las direcciones a geolocalizar. Para esto, antes deben usar **set_key()** para que here maps sea capaz de asociar las consultas que hacemos desde R con nuestra cuenta en HERE Maps.
 
 ```{r echo=FALSE}
 load(file = 'data/ubicacionRiver.RData')
@@ -140,8 +140,7 @@ load("data/viajeRiver.RData")
 ```{r eval=FALSE}
 viaje <- route(origin = ubicaciones[1,],
                destination = ubicaciones[2,],
-               mode = "pedestrian",
-               datetime = as.POSIXct(x = "17/01/2020 18:00:00",format="%d/%m/%Y %H:%M:%S"))
+               mode = "pedestrian")
 ```
 ```{r}
 glimpse(viaje)

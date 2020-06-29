@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5 El ritual del aprendizaje automático (Parte 2) | Herramientas de análisis espacial en R</title>
+  <meta name="description" content="Usando R para analizar datos espaciales" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5 El ritual del aprendizaje automático (Parte 2) | Herramientas de análisis espacial en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Usando R para analizar datos espaciales" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5 El ritual del aprendizaje automático (Parte 2) | Herramientas de análisis espacial en R" />
+  
+  <meta name="twitter:description" content="Usando R para analizar datos espaciales" />
+  
+
+<meta name="author" content="Martin Montane" />
+
+
+<meta name="date" content="2020-06-29" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="el-ritual-del-aprendizaje-automático-parte-1.html"/>
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3.9000/leaflet-providers-plugin.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-necesitamos-para-arrancar"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html"><i class="fa fa-check"></i><b>1</b> Datos espaciales en R</a><ul>
+<li class="chapter" data-level="1.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#qué-es-un-dato-espacial"><i class="fa fa-check"></i><b>1.1</b> ¿Qué es un dato espacial?</a></li>
+<li class="chapter" data-level="1.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#dónde-estamos-en-la-tierra"><i class="fa fa-check"></i><b>1.2</b> ¿Dónde estamos en la Tierra?</a></li>
+<li class="chapter" data-level="1.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#coordinate-reference-systems"><i class="fa fa-check"></i><b>1.3</b> Coordinate Reference Systems</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#elipsoides-sistemas-de-coordenadas-y-datums"><i class="fa fa-check"></i><b>1.3.1</b> Elipsoides, sistemas de coordenadas y datums</a></li>
+<li class="chapter" data-level="1.3.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#proyecciones"><i class="fa fa-check"></i><b>1.3.2</b> Proyecciones</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud"><i class="fa fa-check"></i><b>1.4</b> Manos a la obra ¿Dónde construir el próximo centro de salud?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#cargando-los-datos-espaciales"><i class="fa fa-check"></i><b>1.4.1</b> Cargando los datos espaciales</a></li>
+<li class="chapter" data-level="1.4.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#detectando-la-cobertura-actual."><i class="fa fa-check"></i><b>1.4.2</b> Detectando la cobertura actual.</a></li>
+<li class="chapter" data-level="1.4.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#distancia-contra-la-avenida-más-cercana"><i class="fa fa-check"></i><b>1.4.3</b> Distancia contra la avenida más cercana</a></li>
+<li class="chapter" data-level="1.4.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#incorporando-el-resto-de-las-variables"><i class="fa fa-check"></i><b>1.4.4</b> Incorporando el resto de las variables</a></li>
+<li class="chapter" data-level="1.4.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#creando-nuestro-índice-de-demanda-de-salud"><i class="fa fa-check"></i><b>1.4.5</b> Creando nuestro índice de demanda de salud</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#ejercicio"><i class="fa fa-check"></i><b>1.5</b> Ejercicio</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><i class="fa fa-check"></i><b>2</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="2.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#qué-es-la-geocodificación-o-geocoding"><i class="fa fa-check"></i><b>2.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="2.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#api-interfaz-de-programación-de-aplicaciones"><i class="fa fa-check"></i><b>2.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="2.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#servicio-de-normalización-de-datos-geográficos-de-argentina"><i class="fa fa-check"></i><b>2.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="2.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#google-geocode-api"><i class="fa fa-check"></i><b>2.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="2.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#diferencias-entre-las-dos-apis"><i class="fa fa-check"></i><b>2.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="2.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#una-tercera-alternativa-herer"><i class="fa fa-check"></i><b>2.6</b> Una tercera alternativa: hereR</a></li>
+<li class="chapter" data-level="2.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#comparando-todos-los-métodos"><i class="fa fa-check"></i><b>2.7</b> Comparando todos los métodos</a></li>
+<li class="chapter" data-level="2.8" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#ejercicios"><i class="fa fa-check"></i><b>2.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><i class="fa fa-check"></i><b>3</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="3.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#la-distancia-espacial-y-la-distancia-de-viaje"><i class="fa fa-check"></i><b>3.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="3.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-paquetes-que-vamos-a-utilizar"><i class="fa fa-check"></i><b>3.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cómo-usar-los-servicios-de-here"><i class="fa fa-check"></i><b>3.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-datos-repositorio-de-datos-del-gcba"><i class="fa fa-check"></i><b>3.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="3.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#transformando-nuestros-datos"><i class="fa fa-check"></i><b>3.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="3.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cuánto-tardo-en-llegar-al-monumental"><i class="fa fa-check"></i><b>3.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="3.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#midiendo-la-cobertura-de-los-parques"><i class="fa fa-check"></i><b>3.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="3.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba"><i class="fa fa-check"></i><b>3.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="3.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#ejercicios-1"><i class="fa fa-check"></i><b>3.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html"><i class="fa fa-check"></i><b>4</b> El ritual del aprendizaje automático (Parte 1)</a><ul>
+<li class="chapter" data-level="4.1" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-1-carga-de-los-datos"><i class="fa fa-check"></i><b>4.1</b> Paso 1: Carga de los datos</a></li>
+<li class="chapter" data-level="4.2" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-2-análisis-exploratorio-y-corrección-de-errores"><i class="fa fa-check"></i><b>4.2</b> Paso 2: análisis exploratorio y corrección de errores</a></li>
+<li class="chapter" data-level="4.3" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-3-crear-nuevas-variables-o-feature-engineering"><i class="fa fa-check"></i><b>4.3</b> Paso 3: crear nuevas variables (o <em>feature engineering</em>)</a></li>
+<li class="chapter" data-level="4.4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-4-criterio-de-selección-y-optimización-de-los-parámetros"><i class="fa fa-check"></i><b>4.4</b> Paso 4: criterio de selección y optimización de los parámetros</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html"><i class="fa fa-check"></i><b>5</b> El ritual del aprendizaje automático (Parte 2)</a><ul>
+<li class="chapter" data-level="5.1" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#separando-dataset-de-entrenamiento-y-de-testing"><i class="fa fa-check"></i><b>5.1</b> Separando dataset de entrenamiento y de testing</a></li>
+<li class="chapter" data-level="5.2" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#nuestra-receta-y-su-preparación"><i class="fa fa-check"></i><b>5.2</b> Nuestra receta y su preparación</a></li>
+<li class="chapter" data-level="5.3" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#selección-de-modelo-y-espacio-de-búsqueda-de-los-parámetros"><i class="fa fa-check"></i><b>5.3</b> Selección de modelo y espacio de búsqueda de los parámetros</a></li>
+<li class="chapter" data-level="5.4" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#entrenando-los-modelos-en-nuestro-espacio-de-búsqueda"><i class="fa fa-check"></i><b>5.4</b> Entrenando los modelos en nuestro espacio de búsqueda</a></li>
+<li class="chapter" data-level="5.5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#seleccionando-el-mejor-modelo-y-analizando-los-resultados"><i class="fa fa-check"></i><b>5.5</b> Seleccionando el mejor modelo y analizando los resultados</a></li>
+<li class="chapter" data-level="5.6" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#importancia-de-las-variables"><i class="fa fa-check"></i><b>5.6</b> Importancia de las variables</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Herramientas de análisis espacial en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="el-ritual-del-aprendizaje-automático-parte-2" class="section level1">
+<h1><span class="header-section-number">5</span> El ritual del aprendizaje automático (Parte 2)</h1>
+<p>En el capítulo anterior dejamos pendiente el último tramo en un típico proyecto para predecir o clasificar usando modelos de aprendizaje automático: la <strong>optimización de parámetros y selección de modelo</strong>. Esta parte suele consistir en establecer uno o más <strong>criterios de selección</strong> y probar distintas combinaciones de parámetros de nuestros modelos para ver cuál es el que mejor predice <strong>nuevos datos</strong>. Adicionalmente, vamos a investigar un poco cómo podemos obtener información sobre las variables más importante para los modelos.</p>
+<p>Para este capítulo vamos a usar las funciones de los paquetes que componen <strong>tidymodels</strong>, que buscan simplificar muchas etapas de este último paso de optimización de parámetros y selección de modelo, aunque también brinda funciones para incoporporar el resto de las etapas que estuvimos haciendo en el capítulo anterior. Ya quedará todo más claro hacia el final de este capítulo.</p>
+<p>La figura que se muestra debajo de este párrafo muestra, en naranja, las tareas que haremos en este capítulo y que completan una parte muy importante de un proyecto de ciencia de datos en el cual se usan modelos de aprendizaje automático para tareas de predicción o clasificación. Noten que lo que tenemos que hacer es optimizar los parámetros y, en base a alguna medida de <em>performance</em>, seleccionar el mejor modelo e intentar explorar la importancia de las variables y resumir su capacidad predictiva ¿Ven esas flechas de ida y vuelta entre la creación de nuevas variables y la optimización de los parámetros? Muchas veces creamos nuevas variables o modificamos las existentes para mejorar alguno de los resultados que nos arroja la optimización de los parámetros. En este caso no vamos a hacerlo, pero vale la pena aclararlo.</p>
+<div class="figure">
+<img src="" alt="" />
+<p class="caption">DiagramaMachineLearningParte2.png</p>
+</div>
+<p>Finalmente, para lo que sigue de este capítulo vamos a tener que tener instalado el paquete <strong>tidymodels</strong> y cargados los datos del capítulo anterior:</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb164-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb164-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb164-2"></a><span class="kw">library</span>(tidymodels)</span>
+<span id="cb164-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb164-3"></a><span class="co"># Carga de datos</span></span>
+<span id="cb164-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb164-4"></a>datosCordoba &lt;-<span class="st"> </span><span class="kw">read_delim</span>(<span class="st">&quot;data/datosMachineLearning2.csv&quot;</span>, <span class="dt">delim=</span><span class="st">&quot;;&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span>precioM2)</span></code></pre></div>
+<div id="separando-dataset-de-entrenamiento-y-de-testing" class="section level2">
+<h2><span class="header-section-number">5.1</span> Separando dataset de entrenamiento y de testing</h2>
+<p>En <strong>tidymodels</strong> podemos separar a los datos en un conjunto de entrenamiento y de testing de una manera muy simple usando la función <strong>initial_split()</strong>. Recuerden que esto es necesario porque nos interesa conocer la capacidad predictiva de nuestros modelos cuando le presentamos datos con los que NO se entrenaron, no sobre aquellos con los que se entrenó. Esto es así porque si seleccionamos un modelo en base a qué tan bien ajusta a los datos con los que entrena podemos caer en el territorio del <strong>overfitting</strong>, es decir, cuando nuestro modelo se aprende “de memoria” los datos y extrae una mala aproximación de la relación que existe entre las variables, haciendo muy malas predicciones <strong>out-of-sample</strong>, es decir en nuevos datos.</p>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb165-1"></a><span class="co"># Esta primer línea es solo para que separemos los mismos casos en training y testing</span></span>
+<span id="cb165-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb165-2"></a><span class="kw">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb165-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb165-3"></a><span class="co"># Guardamos un 10% de los datos para después de haber entrenado el modelo</span></span>
+<span id="cb165-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb165-4"></a>cordobaSplit &lt;-<span class="st"> </span><span class="kw">initial_split</span>(datosCordoba,<span class="dt">prop =</span> <span class="fl">0.7</span>)</span></code></pre></div>
+<p>Con el parámetro <strong>prop</strong> indicamos cuál es la proporción de los datos que queremos que nos quede en el dataset de entrenamiento. En este caso, elegimos que el 70% de todos nuestros datos sean utilizados para entrenar a nuestro modelo de aprendizaje automático. Pueden verlo usando el método de print() de cordobaSplit:</p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb166-1"></a>cordobaSplit</span></code></pre></div>
+<pre><code>## &lt;Analysis/Assess/Total&gt;
+## &lt;10653/4565/15218&gt;</code></pre>
+<p>Aunque los nombra un poco distinto, lo que nos dice es que hay 10.653 observaciones para entrenar a nuestro modelo y 4.565 para evaluar su capacidad predictiva sobre nuevos datos. cordobaSplit es un objeto de rsplit, para efectivamente tener a los data.frames podemos usar las funciones training() y testing() que nos generan estos datasets a partir del split. Presten atención al largo de cada uno de estos objetos.</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb168-1"></a>cordobaTrain &lt;-<span class="st"> </span><span class="kw">training</span>(cordobaSplit)</span>
+<span id="cb168-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb168-2"></a>cordobaTesting &lt;-<span class="st"> </span><span class="kw">testing</span>(cordobaSplit)</span></code></pre></div>
+</div>
+<div id="nuestra-receta-y-su-preparación" class="section level2">
+<h2><span class="header-section-number">5.2</span> Nuestra receta y su preparación</h2>
+<p>En el framework de tidymodels, existen <strong>recetas</strong> (recipes) que escribimos para nuestros modelos. Pueden incluir transformaciones a los datos y formulas de predicción, entre otras cosas. En este caso, ya hicimos toda la transformación en el capítulo anterior, así que lo que vamos a marcar simplemente la fórmula de lo que queremos predecir: el precio de las propiedades. Como siempre, pueden usar el menú de ayuda de R , <strong>?recipe</strong> en este caso, para conocer específicamente lo que podemos incluir en esta función.</p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb169-1"></a>cordobaRecipe &lt;-<span class="st"> </span><span class="kw">recipe</span>(<span class="dt">formula =</span> property.price <span class="op">~</span>.,</span>
+<span id="cb169-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb169-2"></a>                        <span class="dt">data=</span>cordobaTrain)</span>
+<span id="cb169-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb169-3"></a>cordobaRecipe</span></code></pre></div>
+<pre><code>## Data Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          1
+##  predictor         10</code></pre>
+<p>Como podemos ver, creamos una “Data Recipe”, y lo que nos indica es que existe 1 variable que queremos predecir y 10 predictores. Ahora, debemos indicar que queremos “preparar” esta receta, es decir evaluar si esta receta puede ser aplicada a nuestros datos y dejarla lista para los siguientes pasos.</p>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb171-1"></a>treePrep &lt;-<span class="st"> </span><span class="kw">prep</span>(cordobaRecipe)</span>
+<span id="cb171-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb171-2"></a>treePrep</span></code></pre></div>
+<pre><code>## Data Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          1
+##  predictor         10
+## 
+## Training data contained 10653 data points and no missing data.</code></pre>
+</div>
+<div id="selección-de-modelo-y-espacio-de-búsqueda-de-los-parámetros" class="section level2">
+<h2><span class="header-section-number">5.3</span> Selección de modelo y espacio de búsqueda de los parámetros</h2>
+<p>Ahora lo que nos queda para definir es el modelo a estimar, y esto requiere el uso de algunas funciones debido a que existen diversas decisiones que tenemos que hacer. La primera de ellas es básicamente elegir el modelo con el queremos trabajar. Ya hemos aclarado anteriormente que vamos a usar <strong>random forest</strong>, un modelo basado en árboles y <strong>bagging</strong>, es decir la creación de muchos árboles sumamente especializados que luego hacen una predicción conjunta. Podemos elegir este tipo de modelos con <strong>rand_forest()</strong>.</p>
+<p>Dentro de esta función podemos especificar los valores de los parámetros y, más importante, aclarar cuales son los que queremos “tunear”, es decir, optimizar. Esto lo declaramos con la función <strong>tune()</strong>. En el caso de los random forests, dos de los parámetros que suelen optimizarse son <strong>mtry</strong> y <strong>min_n</strong>. El primero determina la cantidad de variables que, al azar, pueden usarse en cada uno de los nodos de los árboles. Recuerden que random forest no elige a todos los predictores en cada nodo, sino que solo candidatea al azar a una cantidad fija de columnas, y esto es lo que marcamos con <strong>mtry</strong>. Por otro lado, <strong>min_n</strong> establece una cantidad mínima de valores que tiene que haber en un nodo como para poder seguir profundizando el árbol.</p>
+<p>Por otro lado, con la función <strong>set_mode()</strong> debemos identificar si queremos hacer una regressión (para predecir valores númericos) o una clasificación (para predecir valores categóricos). Finalmente, en <strong>set_engine</strong> indicamos el paquete que tiene la implementación de random forest. Existen muchas librerías en R para hacerlo, vamos a usar la que brinda el paquete <em>ranger</em></p>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-1"></a>tuneSpec &lt;-<span class="st"> </span><span class="kw">rand_forest</span>(</span>
+<span id="cb173-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-2"></a>  <span class="dt">mtry =</span> <span class="kw">tune</span>(),</span>
+<span id="cb173-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-3"></a>  <span class="dt">trees =</span> <span class="dv">1000</span>,</span>
+<span id="cb173-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-4"></a>  <span class="dt">min_n =</span> <span class="kw">tune</span>()</span>
+<span id="cb173-5"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-5"></a>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb173-6"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-6"></a><span class="st">  </span><span class="kw">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb173-7"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-7"></a><span class="st">  </span><span class="kw">set_engine</span>(<span class="st">&quot;ranger&quot;</span>)</span>
+<span id="cb173-8"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb173-8"></a>tuneSpec</span></code></pre></div>
+<pre><code>## Random Forest Model Specification (regression)
+## 
+## Main Arguments:
+##   mtry = tune()
+##   trees = 1000
+##   min_n = tune()
+## 
+## Computational engine: ranger</code></pre>
+<p>Ya tenemos la especificación de nuestro modelo. Ahora nos queda establecer un <strong>workflow</strong>, que no es otra cosa que un conjunto de instrucciones secuenciales que hay que hacer para entrenar los modelos. En este caso, le decimos que tome la receta ya preparada que declaramos anteriormente, y luego entrene el modelo que especificamos recién.</p>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb175-1"></a>tuneWf &lt;-<span class="kw">workflow</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb175-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb175-2"></a><span class="st">  </span><span class="kw">add_recipe</span>(treePrep) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb175-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb175-3"></a><span class="st">  </span><span class="kw">add_model</span>(tuneSpec)</span>
+<span id="cb175-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb175-4"></a>tuneWf</span></code></pre></div>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: rand_forest()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 0 Recipe Steps
+## 
+## -- Model -----------------------------------------------------------------------
+## Random Forest Model Specification (regression)
+## 
+## Main Arguments:
+##   mtry = tune()
+##   trees = 1000
+##   min_n = tune()
+## 
+## Computational engine: ranger</code></pre>
+<p>Ahora lo que vamos a hacer es crear conjuntos de entrenamiento para realizar <strong>cross validation</strong> o validación cruzada. Este concepto que puede sonar complejo es realmente simple. Lo que hacemos es cortar nuestros datos al azar grupos de igual tamaño. Para cada combinación de parámetros, entrenamos el modelo en todos los grupos menos uno, y predecimos sobre el que no entrenamos. Promediamos el valor de todos los errores y ese es el valor por el cual vamos a juzgar la <em>performance</em> de nuestro modelo. El gráfico que sigue es muy ilustrativo sobre cómo funciona</p>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb177-1"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="st">&quot;data/kfolds.png&quot;</span>)</span></code></pre></div>
+<p><img src="data/kfolds.png" width="573" /></p>
+<p>Podemos crear estos grupos, en base a nuestro conjunto de entrenamiento, con la función <strong>vfold_cv()</strong></p>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb178-1"></a><span class="co"># Hacemos esto para que tengamos los mismos grupos</span></span>
+<span id="cb178-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb178-2"></a><span class="kw">set.seed</span>(<span class="dv">234</span>)</span>
+<span id="cb178-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb178-3"></a><span class="co"># Creamos los grupos</span></span>
+<span id="cb178-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb178-4"></a>trees_folds &lt;-<span class="st"> </span><span class="kw">vfold_cv</span>(cordobaTrain, <span class="dt">v =</span> <span class="dv">5</span>)</span></code></pre></div>
+<p>Ya casi estamos listos para entrenar los modelos. Lo que nos falta es fundamental: específicar cual es el espacio de búsqueda de nuestros parámetros. Hay muchas formas de hacer esto en <strong>tidymodels</strong>, pero lo que vamos a usar en esta clase es <strong>grid_regular()</strong>. Le pasamos un valor mínimo y máximo de valores posibles para cada uno de los parámetros que queremos optimizar, y luego una cantidad de valores únicos para cada uno de los parámetros. Obviamente, cómo mtry va entre 2 y 8, vamos a tener solo 7 valores, pero en el caso de <strong>min_n</strong> tomára 10 valores espaciados entre 5 y 200. Pueden ver por ustedes mismos la grilla, ya que es simplemente un tibble.</p>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb179-1"></a>rf_grid &lt;-<span class="st"> </span><span class="kw">grid_regular</span>(</span>
+<span id="cb179-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb179-2"></a>  <span class="kw">mtry</span>(<span class="dt">range =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">8</span>)),</span>
+<span id="cb179-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb179-3"></a>  <span class="kw">min_n</span>(<span class="dt">range =</span> <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">200</span>)),</span>
+<span id="cb179-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb179-4"></a>       <span class="dt">levels=</span><span class="dv">10</span></span>
+<span id="cb179-5"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb179-5"></a>)</span></code></pre></div>
+</div>
+<div id="entrenando-los-modelos-en-nuestro-espacio-de-búsqueda" class="section level2">
+<h2><span class="header-section-number">5.4</span> Entrenando los modelos en nuestro espacio de búsqueda</h2>
+<p>Entrenar 70 modelos con cross validation de 5 grupos implica entrenar 5x70 = 350 modelos… esto puede llevar un buen rato. Usemos al paquete <strong>doParallel</strong> para aprovechar el procesamiento en paralelo en R. Pueden hacerlo simplemente en una línea:</p>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb180-1"></a>doParallel<span class="op">::</span><span class="kw">registerDoParallel</span>()</span></code></pre></div>
+<p>Ahora ya podemos entrenar todos los parámetros de nuestra grilla con la función <strong>tune_grid()</strong>. Lo único que hacemos es pasarle objetos que ya creamos anteriormente. Tengan paciencia cuando corran este código, que puede tardar un rato.</p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb181-1"></a><span class="kw">set.seed</span>(<span class="dv">345</span>)</span>
+<span id="cb181-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb181-2"></a>resultadoBusqueda &lt;-<span class="st"> </span><span class="kw">tune_grid</span>(</span>
+<span id="cb181-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb181-3"></a>  tuneWf,</span>
+<span id="cb181-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb181-4"></a>  <span class="dt">resamples=</span>trees_folds,</span>
+<span id="cb181-5"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb181-5"></a>  <span class="dt">grid=</span>rf_grid</span>
+<span id="cb181-6"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb181-6"></a>)</span></code></pre></div>
+<p>Como siempre, dejo a disposición el resultado de este proceso para que no tengan que esperar a correrlo para entender qué es lo que hicimos.</p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb182-1"></a><span class="kw">load</span>(<span class="st">&quot;data/resultadoBusqueda.RData&quot;</span>)</span>
+<span id="cb182-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb182-2"></a>resultadoBusqueda</span></code></pre></div>
+<pre><code>## #  5-fold cross-validation 
+## # A tibble: 5 x 4
+##   splits              id    .metrics           .notes          
+##   &lt;list&gt;              &lt;chr&gt; &lt;list&gt;             &lt;list&gt;          
+## 1 &lt;split [8.5K/2.1K]&gt; Fold1 &lt;tibble [140 x 5]&gt; &lt;tibble [0 x 1]&gt;
+## 2 &lt;split [8.5K/2.1K]&gt; Fold2 &lt;tibble [140 x 5]&gt; &lt;tibble [0 x 1]&gt;
+## 3 &lt;split [8.5K/2.1K]&gt; Fold3 &lt;tibble [140 x 5]&gt; &lt;tibble [0 x 1]&gt;
+## 4 &lt;split [8.5K/2.1K]&gt; Fold4 &lt;tibble [140 x 5]&gt; &lt;tibble [0 x 1]&gt;
+## 5 &lt;split [8.5K/2.1K]&gt; Fold5 &lt;tibble [140 x 5]&gt; &lt;tibble [0 x 1]&gt;</code></pre>
+<p><strong>resultadoBusqueda</strong> tiene para cada uno de nuestros grupos de cross validation el resultado de RMSE y R2, dos indicadores que pueden ser utilizados para medir la capacidad predicitiva de nuetro modelo. Nosotros necesitamos el promedio de estos grupos, y para eso usaremos <strong>collect_metrics()</strong></p>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb184-1"></a>metricasPerformance &lt;-<span class="st"> </span><span class="kw">collect_metrics</span>(resultadoBusqueda)</span>
+<span id="cb184-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb184-2"></a><span class="kw">glimpse</span>(metricasPerformance)</span></code></pre></div>
+<pre><code>## Rows: 140
+## Columns: 7
+## $ mtry       &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3...
+## $ min_n      &lt;int&gt; 5, 5, 26, 26, 48, 48, 70, 70, 91, 91, 113, 113, 135, 135, 156, 156, 178, 178, 200, 200, ...
+## $ .metric    &lt;chr&gt; &quot;rmse&quot;, &quot;rsq&quot;, &quot;rmse&quot;, &quot;rsq&quot;, &quot;rmse&quot;, &quot;rsq&quot;, &quot;rmse&quot;, &quot;rsq&quot;, &quot;rmse&quot;, &quot;rsq&quot;, &quot;rmse&quot;, &quot;rsq&quot;...
+## $ .estimator &lt;chr&gt; &quot;standard&quot;, &quot;standard&quot;, &quot;standard&quot;, &quot;standard&quot;, &quot;standard&quot;, &quot;standard&quot;, &quot;standard&quot;, &quot;sta...
+## $ mean       &lt;dbl&gt; 1.704274e+05, 3.887610e-01, 1.707934e+05, 3.871747e-01, 1.714937e+05, 3.835223e-01, 1.72...
+## $ n          &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5...
+## $ std_err    &lt;dbl&gt; 4.133305e+04, 1.232524e-01, 4.101059e+04, 1.210491e-01, 4.084192e+04, 1.198834e-01, 4.06...</code></pre>
+<p>Se trata de un dataset con 140 filas, dado que entrenamos 70 modelos y tenemos 2 indicadores de performance para cada uno de ellos. Refrescemos un poco la memoría sobre qué es lo que hace cada uno de ellos.</p>
+<p>Por un lado, la raíz del error cuadrático medio (RMSE, por su sigla en inglés) tiene la siguiente fórmula</p>
+<p><span class="math display">\[ \color{#E7298A}{RMSE} = \sqrt{(1/\color{olive}{n})\sum_{i=1}^{\color{olive}{n}}(\color{purple}{y_i} - \color{orange}{\hat{f}(x_i)})^2}=\]</span></p>
+<p>Donde <span class="math inline">\(\color{olive}{n}\)</span> es la cantidad de observaciones, <span class="math inline">\(\color{purple}{y_i}\)</span> es el valor observado para la observación i; y <span class="math inline">\(\color{orange}{\hat{f}(x_i)}\)</span> es el valor predicho dada la aproximación y los valores de las variables para la observación i. En otras palabras, el RMSE es cuanto nos confundimos en promedio al predecir los datos.</p>
+<p>Por otro lado, el R2 o “Rsquared” puede explicitarse de la siguiente manera:</p>
+<p><span class="math display">\[ \color{#e41a1c}{R^2} = 1 - \frac{\color{#377eb8}{SS_{res}}} {\color{#4daf4a}{SS_{tot}}} \]</span>,</p>
+<p>donde <span class="math inline">\(\color{#377eb8}{SS_{res}}\)</span> es la suma al cuadrado de los residuos, es decir <span class="math inline">\(\color{#377eb8}{SS_{res}} = \sum_{i}^{N}(y_i-\hat{y})^2\)</span>: cuanto de la variabilidad queda plara explicar luego de que hacemos la predicción, mientras que <span class="math inline">\(\color{#4daf4a}{SS_{tot}} = \sum_{i}^{N}(y_i-\bar{y})^2\)</span>, es decir la diferencia entre el valor observado y el promedio.</p>
+<p>Estas son dos de las métricas más utilizadas para seleccionar los modelos. Veamos cómo dan los resultados para la combinación de los parámetros que hemos usado:</p>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb186-1"></a><span class="kw">ggplot</span>(metricasPerformance) <span class="op">+</span></span>
+<span id="cb186-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb186-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x=</span>mtry,<span class="dt">color=</span><span class="kw">factor</span>(min_n),<span class="dt">y=</span>mean)) <span class="op">+</span></span>
+<span id="cb186-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb186-3"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>.metric,<span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-148-1.png" width="672" /></p>
+<p>En ambos casos podemos ver que el RMSE mínimo y el R2 máximo se alcanzan con los parámetros <strong>min_n = 5</strong> y <strong>mtry = 2</strong>. Además podemos ver que cuanto más aumenta mtry, el modelo empeora, señalando una de las ventajas de random forest. Parece contrar un mínimo cercano al valor 2 o 3.</p>
+</div>
+<div id="seleccionando-el-mejor-modelo-y-analizando-los-resultados" class="section level2">
+<h2><span class="header-section-number">5.5</span> Seleccionando el mejor modelo y analizando los resultados</h2>
+<p>Ya estamos en condiciones de elegir el mejor modelo y medir su capacidad predictiva en el conjunto de testing - o validación, en rigor - que separamos al principio de la clase. Para elegir el mejor modelo tenemos que usar <strong>select_best()</strong>, función a la cual solo tenemos que pasarle el resultado de la búsqueda de parámetros y una métrica para elegir al modelo:</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb187-1"></a><span class="kw">select_best</span>(resultadoBusqueda, <span class="dt">metric=</span><span class="st">&quot;rmse&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 2
+##    mtry min_n
+##   &lt;int&gt; &lt;int&gt;
+## 1     2     5</code></pre>
+<p>Nos dice algo que ya podíamos ver anteriormente, que el mejor modelo dentro de los que buscamos es el que tiene mtry 2 y min_n 5. Veamos si r2 elige al mismo modelo:</p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb189-1"></a><span class="kw">select_best</span>(resultadoBusqueda, <span class="dt">metric=</span><span class="st">&quot;rsq&quot;</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 2
+##    mtry min_n
+##   &lt;int&gt; &lt;int&gt;
+## 1     2     5</code></pre>
+<p>Ambos criterios eligen exactamente al mismo modelo. Ahora estimamos ese modelo para esos parámetros, será nuestro modelo final con el que probaremos la capacidad predictiva sobre los datos nuevos. Para seleccionar al modelo ganador solo tenemos que usar <strong>finalize_model()</strong></p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb191-1"></a>rfWinner &lt;-<span class="st"> </span><span class="kw">finalize_model</span>(</span>
+<span id="cb191-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb191-2"></a>  tuneSpec,</span>
+<span id="cb191-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb191-3"></a>  <span class="kw">select_best</span>(resultadoBusqueda, <span class="dt">metric=</span><span class="st">&quot;rmse&quot;</span>)</span>
+<span id="cb191-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb191-4"></a>)</span></code></pre></div>
+<p>Y ya podemos entrenar al modelo con esos parámetros sobre todos los datos de training</p>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb192-1"></a><span class="kw">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb192-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb192-2"></a>modeloGanador &lt;-rfWinner <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb192-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb192-3"></a><span class="st">  </span><span class="kw">set_engine</span>(<span class="st">&quot;ranger&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb192-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb192-4"></a><span class="st">  </span><span class="kw">fit</span>(property.price <span class="op">~</span>., <span class="dt">data=</span>cordobaTrain)</span></code></pre></div>
+<p>Y predecir sobre nuevos datos</p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb193-1"></a><span class="co"># R2</span></span>
+<span id="cb193-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb193-2"></a><span class="kw">rsq_vec</span>(<span class="dt">truth =</span>  <span class="kw">predict</span>(modeloGanador,<span class="dt">new_data =</span> cordobaTesting) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(.pred),</span>
+<span id="cb193-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb193-3"></a>         <span class="dt">estimate =</span> cordobaTesting <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(property.price))</span></code></pre></div>
+<pre><code>## [1] 0.6737393</code></pre>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb195-1"></a><span class="co">#RMSE</span></span>
+<span id="cb195-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb195-2"></a><span class="kw">rmse_vec</span>(<span class="dt">truth =</span> <span class="kw">predict</span>(modeloGanador,<span class="dt">new_data =</span> cordobaTesting) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(.pred),</span>
+<span id="cb195-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb195-3"></a>         <span class="dt">estimate =</span> cordobaTesting <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(property.price))</span></code></pre></div>
+<pre><code>## [1] 90609.13</code></pre>
+</div>
+<div id="importancia-de-las-variables" class="section level2">
+<h2><span class="header-section-number">5.6</span> Importancia de las variables</h2>
+<p>Cerremos este ejercicio teniendo alguna idea de la importancia que tienen cada una de las variables en nuestro modelo ganador. Usemos el paquete <strong>vip</strong> para esta tarea. Fijense que tenemos que elegir el método para elegir la importancia de las variables, algo que está fuera del objetivo de este libro, aunque merece una breve introducción. “Permutation” lo que hace es calcular la contribución promedio de una variable a la capacidad predictiva del modelo comparando el MSE (Mean squared error) obtenido cuando se “mezcla” la variable con respecto al valor cuando se usa como se observa en los datos. La idea es que si una variable no es muy importante, entonces la diferencia en la capacidad predictiva de la variable observada y de la “mezcla” debería ser baja y viceversa.</p>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb197-1"></a><span class="kw">library</span>(vip)</span>
+<span id="cb197-2"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb197-2"></a><span class="kw">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb197-3"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb197-3"></a>modeloGanador &lt;-rfWinner <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb197-4"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb197-4"></a><span class="st">  </span><span class="kw">set_engine</span>(<span class="st">&quot;ranger&quot;</span>, <span class="dt">importance=</span><span class="st">&quot;permutation&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb197-5"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb197-5"></a><span class="st">  </span><span class="kw">fit</span>(property.price <span class="op">~</span>., <span class="dt">data=</span>cordobaTrain)</span>
+<span id="cb197-6"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#cb197-6"></a><span class="kw">vip</span>(modeloGanador,<span class="dt">geom=</span><span class="st">&quot;point&quot;</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-154-1.png" width="672" /></p>
+<p>¿Qué observamos? Que la información espacial importa para este modelo. Más allá de que las primeras dos variables más importantes para explicar este modelo son <strong>property.surface_covered</strong> y <strong>property.surface_total</strong>, las variables Y, precioM2Vecino y X son la tercera, cuarta y quinta variable más importantes según esta medida de importancia.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="el-ritual-del-aprendizaje-automático-parte-1.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

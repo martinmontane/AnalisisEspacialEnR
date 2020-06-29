@@ -1,15 +1,15 @@
 # Geocoding: de la representación humana al sistema de coordenadas
 
-En capítulos anteriores ya descubrimos la particularidad de la representación de los datos espaciales: los ubicamos en base a un modelo de la tierra en lo qu se conoce como Coordinate Reference System (CRS). Esta forma de representación es muy distinta a la que tenemos en nuestras cabezas cuando nos dicen que tenemos que ir a cursar a Figueroa Alcorta 7350. En diversas circunstancias vamos a necesitar convertir esta direcciones a puntos espaciales para poder agregar información relevante para nuestros análisis y encontrar nuevos patrones en nuestros datos.
+En capítulos anteriores ya descubrimos la particularidad de la representación de los datos espaciales: los ubicamos en base a un modelo de la tierra en lo que se conoce como Coordinate Reference System (CRS). Esta forma de representación es muy distinta a la que tenemos en nuestras cabezas cuando nos dicen que tenemos que ir a cursar a Figueroa Alcorta 7350. En diversas circunstancias vamos a necesitar convertir esta direcciones a puntos espaciales para poder agregar información relevante para nuestros análisis y encontrar nuevos patrones en nuestros datos.
 Veamos cómo podemos hacerlo usando servicios del Estado de Argentina y también de Google.
 
 ## ¿Qué es la geocodificación o geocoding?
 
-Geocoding no es otra cosa que la transformación de una ubicación en el formato que manejamos a diario hacia una coordenada en un sistema de coordenadas de referencia (CRS, en inglés). Esta simple operación es sumamente útil para muchos de nuestros objetivos. Imaginemos que queremos tener alguna medida de la cobertura de atención para la salud en la Ciudad de Buenos Aires. Tenemos la dirección de distintos hospitales y centros de salud, pero no conocemos cómo se distribuyen en el espacio. Carguemos primero estos datos
+Geocoding no es otra cosa que la transformación de una ubicación en el formato que manejamos a diario hacia una coordenada en un sistema de coordenadas de referencia (CRS, en inglés). Esta simple operación es sumamente útil para muchos de nuestros objetivos. Imaginemos que queremos tener alguna medida de la cobertura de atención para la salud en la Ciudad de Buenos Aires. Tenemos la dirección de distintos hospitales y centros de salud, pero no conocemos cómo se distribuyen en el espacio. Carguemos primero estos datos [desde aquí](https://raw.githubusercontent.com/martinmontane/AnalisisEspacialEnR/master/data/HospitalesYCentrosSalud.csv)
 
 ```{r eval=TRUE, message=FALSE}
 library(tidyverse)
-salud <- read_csv("data/HospitalesYCentrosSalud.csv")
+salud <- read_csv("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/HospitalesYCentrosSalud.csv")
 ```
 
 Y veamos un poco las variables que tenemos
@@ -157,7 +157,7 @@ Veamosla en función. **Este código, así como está, no debería funcionar por
 
 ```{r message=FALSE,error=TRUE}
 # Mismas operaciones que anteriormente, pero esta vez agregamos una columna con la key y de region AR
-salud <- read_csv("data/HospitalesYCentrosSalud.csv")
+salud <- read_csv("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/HospitalesYCentrosSalud.csv")
 salud <- salud %>%
          mutate(id=row_number(),
                 provincia="CABA",
@@ -175,8 +175,10 @@ saludGoogle <- geocodeGoogle(datos = salud,
                              col_region = "region")
 ```
 
-```{r eval=TRUE,echo=FALSE}
-load("geocodingSaludExample.RData")
+Carguemos los datos de la geolocalización, si hubieran ejecutado el código de Google
+
+```{r }
+load("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/geocodingSaludExample.RData")
 ```
 
 Un mapa rápido en leaflet para ver qué encontró:
@@ -213,7 +215,7 @@ View(saludGoogle[saludGoogle$id %in% idsDuplicados,])
 
 En "results.types" van a ver que los ids 78 y 79 son rutas en lugar de puntos, por lo cual no nos sirve: no pudo encontrar un punto que se parezca a la dirección que le pasamos. Vamos a tener que filtrar esos casos. Finalmente, el id 62 nos devuelve dos casos para la misma dirección, uno pareciera ser el hospital y otro la policía (en la misma dirección): eso es algo que no nos interesa. Entonces lo que vamos a hacer es sacar a 78 y 79 y quedarnos solo con uno de los dos del 62. Lo hacemos así:
 
-```{r, eval=FALSE}
+```{r}
 # Filtramos los ids y cualquier caso duplicado en id
 saludGoogle <- saludGoogle %>%
                filter(!id %in% c(78,79)) %>%
@@ -229,9 +231,9 @@ La función duplicated nos elimina a todas las filas que aparecen por segunda ve
 st_crs(saludGoogle) <- 4326
 # Convertimos a los dos a la proyección que usa el GCBA
 manzanas <- st_transform(manzanas,
-                         crs="+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs ")
+                         crs="+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs")
 saludGoogle <- st_transform(saludGoogle,
-                         crs="+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs ")
+                         crs="+proj=tmerc +lat_0=-34.629269 +lon_0=-58.4633 +k=0.9999980000000001 +x_0=100000 +y_0=100000 +ellps=intl +units=m +no_defs")
 # Tomamos las distancias
 distanciaManzanas <- st_distance(x = manzanas, y=saludGoogle)
 # Nos quedamos con el valor mínimo de distancia entre cada punto y cada manzana
@@ -271,28 +273,90 @@ ggplot(distancias) +
 
 La diferencia es baja en casi todos los casos, menos uno que está en aproximadamente 900 metros. Si aceptamos una tolerancia de 200 metros de diferencia, la coincidencia es casi total, nada mal. Google tiene una ventaja, igual: devolvió todos menos dos puntos.
 
-## Una tercera alternativa: geocode_OSM()
+## Una tercera alternativa: hereR
 
-En general, la tarea de geocodificación requiere cierta prueba y error. No todos los servicios de geocodificación saben interpretar de la misma manera a las direcciones, y muchas veces las asignan a distintas coordenadas (este problema puede ser especialmente importante al trabajar con Google Maps, que siempre intenta devolver algún resultado). **Open Street Map (OSM)** nos brinda otra alternativa para poder hacer geocoding, y esta vez de manera gratuita y sin restricciones geográficas (es decir, funciona para distintos países).
+En general, la tarea de geocodificación requiere cierta prueba y error. No todos los servicios de geocodificación saben interpretar de la misma manera a las direcciones, y muchas veces las asignan a distintas coordenadas (este problema puede ser especialmente importante al trabajar con Google Maps, que siempre intenta devolver algún resultado). El paquete **hereR** nos brinda una alternativa muy interesante para geocodificar direcciones. 
 
-Para usar este servicio, deben tener instalado **tmaptools** y su uso es realmente simple. Solo debemos generar una variable que tenga la dirección que vamos a consultar y luego usar **geocode_OSM()**
+El servicio de Here Maps permite hasta 250.000 consultas mensuales de manera gratuita, lo cual puede ser suficiente para muchos de nuestros proyectos. Lo único que precisan para poder hacer uso del sistema de mapas de HERE Maps es simplemente instalar el paquete **hereR**, y vincular a nuestra sesión de R con la **API Key** correspondiente a nuestra cuenta de HERE Maps.
 
-```{r message=FALSE, warning=FALSE}
-library(tmaptools)
+
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+library(hereR)
+set_key("<YOUR API KEY>")
 salud <- salud %>%
-         mutate(consultaOSM=paste(Dirección,", Ciudad de Buenos Aires, Argentina",sep=""))
-saludOSM <- geocode_OSM(salud %>% pull(consultaOSM),projection = 4326,return.first.only = TRUE,as.sf = TRUE)
+         mutate(consultaHERE=paste(Dirección,", Ciudad de Buenos Aires, Argentina",sep=""))
+saludHERE <- geocode(salud %>% pull(consultaHERE))
+```
+```{r eval=TRUE, echo=FALSE}
+load("geocodingSaludHereCapitulo2.RData")
 ```
 
 A diferencia de lo que hicimos con **wrapar**, en este caso ya nos devolvió un objeto sf, podemos usar leaflet para hacer un control de que, al menos, nuestros puntos están en la Ciudad de Buenos Aires
 
 ```{r}
-leaflet(saludOSM) %>% 
+leaflet(saludHERE) %>% 
   addTiles() %>%
   addMarkers()
 ```
 
-Puede fallar... algunos están afuera de la Ciudad de Buenos Aires ¿Tienen idea de como detectarlos ? Les doy una pista: pueden bajarse un mapa de argentina por provincia (por ejemplo de acá)[https://www.indec.gob.ar/indec/web/Institucional-Indec-Codgeo] y hacer un **st_join()** y luego filtrar solo a los que están en CABA.
+## Comparando todos los métodos 
+
+Llegó el momento de comparar todos los métodos que usamos en la clase. Una primera aproximación para evaluar qué tan efectivos han sido para geolocalizar las direcciones sin ningún tipo de normalización es analizar la cantidad de respuestas a las consultas que le envíamos. Si revisamos la cantidad de respuestas, HERE devolvió una posición para cada una de las direcciones, google también - aunque luego de hacer una limpieza nos quedamos con 113 -, mientras que la API de georreferenciación de Argentina devolvió 97.
+
+Ahora bien, estas diferencias en la cantidad de respuestas solo miden la cobertura, no la precisión. Para testear esto vamos a aprovechar que el GCBA ya geolocalizó estas direcciones. Vamos a cargar un dataset que tiene la longitud y latitud según el Gobierno de la Ciudad de Buenos Aires de 88 de estos puntos de salud
+
+```{r}
+load("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/saludGCBA.RData")
+```
+
+El objeto *saludGCBA* cuenta con esta información, pero si se fijan la clase verán que no es un objeto espacial. Vamos a hacer eso y, también a proyectarlo en el CRS que estuvimos trabajando para poder medir las distancias.
+
+```{r}
+# Acá va el código para poder cargar los datos del GCBA
+saludGCBA <- st_as_sf(saludGCBA,coords=c("longGCBA","latGCBA"),crs=4326)
+saludGCBA <- st_transform(saludGCBA,crs =  st_crs(saludSf))
+```
+
+Nos queda convertir el dataset de georeferenciación de HERE Maps también al sistema de coordenadas proyectado que usamos para el resto de los datos. Una vez que tenemos todo esto, ya podemos agregar como una columna la distancia - en metros - entre cada una de las metodologías que estuvimos aplicando y la ubicación asignada por el GCBA
+
+```{r}
+# Proyectamos los datos de HERE Maps
+saludHERE <- saludHERE %>% st_transform(st_crs(saludSf))
+# Agregamos los datos de distancia para cada uno de los 88 puntos de salud geocodificados por el GCBA
+# Creamos data frames que tengan el ID y la distancia usando st_distance()
+distanciaHERE <- data.frame(id=saludGCBA %>% filter(saludGCBA$id %in% saludHERE$id) %>% pull(id),
+                            distanciaHERE = st_distance(saludGCBA %>% filter(saludGCBA$id %in% saludHERE$id),
+                                              saludHERE %>% filter(saludHERE$id %in% saludGCBA$id),
+                                              by_element = TRUE) %>% as.numeric())
+
+distanciaARG <- data.frame(id=saludGCBA %>% filter(saludGCBA$id %in% saludSf$id) %>% pull(id),
+                            distanciaARG = st_distance(saludGCBA %>% filter(saludGCBA$id %in% saludSf$id),
+                                              saludSf %>% filter(saludSf$id %in% saludGCBA$id),
+                                              by_element = TRUE) %>% as.numeric())
+
+distanciaGoogle <- data.frame(id=saludGCBA %>% filter(saludGCBA$id %in% saludGoogle$id) %>% pull(id),
+                              distanciaGoogle = st_distance(saludGCBA %>% filter(saludGCBA$id %in% saludGoogle$id),
+                                              saludGoogle %>% filter(saludGoogle$id %in% saludGCBA$id),
+                                              by_element = TRUE) %>% as.numeric())
+# Unimos todas las distancias en un solo data frame
+distancias <- left_join(distanciaHERE,distanciaARG)
+distancias <- left_join(distancias,distanciaGoogle)
+# Incorporamos esta información al dataset de saludGCBA
+saludGCBA <- left_join(saludGCBA,distancias)
+# Eliminamos los objetos que ya no necesitamos más
+rm(distanciaARG,distanciaGoogle,distanciaHERE)
+# Nos quedamos solo con los casos donde hay información de distancia con todos los métodos
+saludGCBA <- saludGCBA %>%
+             filter(!is.na(distanciaARG) & !is.na(distanciaGoogle) & !is.na(distanciaHERE))
+```
+
+Finalmente, saludGCBA ahora cuenta con información sobre la ubicación de 72 puntos que ya habían sido geolocalizadas por el GCBA y que pudimos georeferrenciar mediante los tres métodos de este capítulo. Veamos cuales son las diferencias más comunes al observar los cuartiles de la distribución de cada uno de los métodos. Presten atención a **st_set_geometry(NULL)**, una función que nos permite eliminar la columna de geometría para hacer cálculos que no necesita de ellos.
+
+```{r}
+saludGCBA %>% 
+  st_set_geometry(NULL) %>% 
+  summarise_at(c("distanciaARG","distanciaGoogle","distanciaHERE"),function(x) quantile(x,probs = c(0,0.25,0.5,0.75,1)))
+```
 
 ## Ejercicios
 
