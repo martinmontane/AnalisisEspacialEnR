@@ -255,8 +255,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="datos-espaciales-en-r.html#cb7-1"></a><span class="kw">leaflet</span>(puntosEspaciales) <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb7-2"><a href="datos-espaciales-en-r.html#cb7-2"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb7-3"><a href="datos-espaciales-en-r.html#cb7-3"></a><span class="st">  </span><span class="kw">addMarkers</span>()</span></code></pre></div>
-<div id="htmlwidget-295d49f02f20a3d276ed" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-295d49f02f20a3d276ed">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[[-34.714656,51.532068],[-58.785999,-0.177305],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-34.714656,51.532068],"lng":[-58.785999,-0.177305]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-557b8ffbaee7e23a5cb9" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-557b8ffbaee7e23a5cb9">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[[-34.714656,51.532068],[-58.785999,-0.177305],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-34.714656,51.532068],"lng":[-58.785999,-0.177305]}},"evals":[],"jsHooks":[]}</script>
 <p>Vayamos paso por paso. En la siguiente sección veremos los distintos modelos de la tierra que usamos para poder representar estas ubicaciones espaciales.</p>
 </div>
 <div id="coordinate-reference-systems" class="section level2">
@@ -279,14 +279,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Hasta ahora hemos trabajado en la representación de la Tierra en tres dimensiones. Sin embargo, todos los mapas con los que hemos trabajado desde chicos tienen dos dimensiones ¿Cómo transformamos un objeto de tres dimensiones a uno de dos dimensiones? Debemos realizar <strong>proyecciones</strong> de ese objeto tridimensional que, como veremos en breve, involucra diversos <strong>tradeoffs</strong>[^1]. Piensen en la proyección como una tarea de traducción: algo se pierde en el proceso.</p>
 <p>La proyección hoy en día más famosa es <strong>MERCATOR</strong>, la proyección que usa, entre otros servicios, <strong>Google Maps</strong>. Diseñada hace ya varios siglos para la navegación marítima, esta transformación es relativamente buena en lo relativo preservar formas y útil para navegar.</p>
 <p>En lo que realmente falla este tipo de proyección es en definir el tamaño de las unidades geógraficas: los países que están cerca de los polos aparentan tener un tamaño mucho más grande del que realmente tienen, mientras que lo inverso sucede con los que están cerca de la línea del ecuador. Tal es así que existe una página web (<a href="https://thetruesize.com/" class="uri">https://thetruesize.com/</a>) que permite experimentar de manera interactiva con los tamaños de los países en diversas partes de la proyección. En la Figura 1 muestro un ejemplo: Groenlandia, Islandia, Noruega, Suecia, Finlandia y Reino Unido combinadas ocupan aproximadamente el 50% de Brasil (Figura 1).</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-4"></span>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-17"></span>
 <img src="data/Tutorial%203/projections.png" alt="La proyección MERCATOR distorsiona nuestra percepción de los tamaños" width="800px" />
 <p class="caption">
 Figure 1.1: La proyección MERCATOR distorsiona nuestra percepción de los tamaños
 </p>
 </div>
 <p>La oferta de proyecciones es prácticamente ilimitada. El paquete <code>mapproj</code> en R nos permite transformar el mundo en base a diversas proyecciones, incluyendo algunas que preservan el tamaño de los países. La Figura 2 muestra el mundo desde otra perspectiva: los países del norte son más chicos de lo que parecen en la proyección mercator.</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-5"></span>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-18"></span>
 <img src="data/Tutorial%203/mollyout.png" alt="La proyección MOLLWEIDE mantiene la representación de los tamaños" width="800px" />
 <p class="caption">
 Figure 1.2: La proyección MOLLWEIDE mantiene la representación de los tamaños
@@ -424,7 +424,7 @@ Figure 1.2: La proyección MOLLWEIDE mantiene la representación de los tamaños
 <span id="cb24-2"><a href="datos-espaciales-en-r.html#cb24-2"></a><span class="kw">ggplot</span>() <span class="op">+</span></span>
 <span id="cb24-3"><a href="datos-espaciales-en-r.html#cb24-3"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data =</span> manzanas) <span class="op">+</span></span>
 <span id="cb24-4"><a href="datos-espaciales-en-r.html#cb24-4"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data =</span> manzanasCentroides,<span class="dt">color=</span><span class="st">&quot;red&quot;</span>, <span class="dt">size=</span> <span class="fl">0.001</span>)</span></code></pre></div>
-<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
 <p>Si no se distinguen los puntos en este gráfico, hagánlo en su computadoras y van a poder cambiar el zoom para ver cómo cada punto está en el centro de cada manzana. Ahora midamos la distancia entre cada uno de estos puntos y todas las avenidas, pero tienen que estar en el mismo Sistema de Coordenadas de Referencia:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="datos-espaciales-en-r.html#cb25-1"></a>avenidas &lt;-<span class="st"> </span><span class="kw">st_transform</span>(avenidas,<span class="dt">crs =</span> <span class="kw">st_crs</span>(hospitales))</span></code></pre></div>
 <p>Ahora sí, solo hay que esperar un poco, puede tardar unos minutos:</p>
@@ -476,7 +476,7 @@ Figure 1.2: La proyección MOLLWEIDE mantiene la representación de los tamaños
 <span id="cb36-3"><a href="datos-espaciales-en-r.html#cb36-3"></a><span class="st">  </span><span class="kw">scale_fill_viridis_d</span>() <span class="op">+</span></span>
 <span id="cb36-4"><a href="datos-espaciales-en-r.html#cb36-4"></a><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></span>
 <span id="cb36-5"><a href="datos-espaciales-en-r.html#cb36-5"></a><span class="st">  </span><span class="kw">coord_sf</span>(<span class="dt">datum=</span><span class="ot">NA</span>)</span></code></pre></div>
-<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
 <p>Bien, ahora una última vuelta de tuerca: podemos convertir estas categorías a números con la función <strong>as.numeric()</strong>, y estarán ordenados de 1, menor valor, a 5, mayor valor ¡Exactamente lo que queríamos! Esto es por cómo funcionan los <strong>factores</strong> en R</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="datos-espaciales-en-r.html#cb37-1"></a><span class="co"># En el caso de cobertura convertira 0 cuando era FALSE y 1 cuando era TRUE</span></span>
 <span id="cb37-2"><a href="datos-espaciales-en-r.html#cb37-2"></a>manzanas &lt;-<span class="st"> </span>manzanas <span class="op">%&gt;%</span></span>
@@ -502,7 +502,7 @@ Figure 1.2: La proyección MOLLWEIDE mantiene la representación de los tamaños
 <span id="cb41-7"><a href="datos-espaciales-en-r.html#cb41-7"></a><span class="st">  </span><span class="kw">coord_sf</span>(<span class="dt">datum=</span><span class="ot">NA</span>) <span class="op">+</span></span>
 <span id="cb41-8"><a href="datos-espaciales-en-r.html#cb41-8"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Índice de Demanda de Salud&quot;</span>,</span>
 <span id="cb41-9"><a href="datos-espaciales-en-r.html#cb41-9"></a>       <span class="dt">subtitle=</span><span class="st">&quot;Ciudad de Buenos Aires&quot;</span>)</span></code></pre></div>
-<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
 </div>
 </div>
 <div id="ejercicio" class="section level2">
