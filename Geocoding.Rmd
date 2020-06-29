@@ -177,8 +177,8 @@ saludGoogle <- geocodeGoogle(datos = salud,
 
 Carguemos los datos de la geolocalización, si hubieran ejecutado el código de Google
 
-```{r }
-load("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/geocodingSaludExample.RData")
+```{r}
+load(file = url("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/geocodingSaludExample.RData"))
 ```
 
 Un mapa rápido en leaflet para ver qué encontró:
@@ -306,7 +306,7 @@ Llegó el momento de comparar todos los métodos que usamos en la clase. Una pri
 Ahora bien, estas diferencias en la cantidad de respuestas solo miden la cobertura, no la precisión. Para testear esto vamos a aprovechar que el GCBA ya geolocalizó estas direcciones. Vamos a cargar un dataset que tiene la longitud y latitud según el Gobierno de la Ciudad de Buenos Aires de 88 de estos puntos de salud
 
 ```{r}
-load("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/saludGCBA.RData")
+load(url("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/saludGCBA.RData"))
 ```
 
 El objeto *saludGCBA* cuenta con esta información, pero si se fijan la clase verán que no es un objeto espacial. Vamos a hacer eso y, también a proyectarlo en el CRS que estuvimos trabajando para poder medir las distancias.

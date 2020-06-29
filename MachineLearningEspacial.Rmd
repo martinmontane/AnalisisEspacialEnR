@@ -13,7 +13,7 @@ Los archivos .RData son objetos de R que ya han sido cargados y exportados desde
 Carguemos los datos de la Provincia de Córdoba:
 
 ```{r}
-load("data/datosCordoba.RData")
+load(url("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/datosCordoba.RData"))
 ```
 
 ## Paso 2: análisis exploratorio y corrección de errores

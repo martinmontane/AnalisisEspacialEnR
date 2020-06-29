@@ -137,7 +137,7 @@ resultadoBusqueda <- tune_grid(
 Como siempre, dejo a disposición el resultado de este proceso para que no tengan que esperar a correrlo para entender qué es lo que hicimos.
 
 ```{r}
-load("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/resultadoBusqueda.RData")
+load(url("https://github.com/martinmontane/AnalisisEspacialEnR/raw/master/data/resultadoBusqueda.RData"))
 resultadoBusqueda
 ```
 
