@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>9 Ejercicios | Herramientas de análisis espacial en R</title>
+  <meta name="description" content="Usando R para analizar datos espaciales" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="9 Ejercicios | Herramientas de análisis espacial en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Usando R para analizar datos espaciales" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="9 Ejercicios | Herramientas de análisis espacial en R" />
+  
+  <meta name="twitter:description" content="Usando R para analizar datos espaciales" />
+  
+
+<meta name="author" content="Martin Montane" />
+
+
+<meta name="date" content="2020-07-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="haciendo-visualizaciones.html"/>
+<link rel="next" href="making-polygons-comparable-again.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3.9000/leaflet-providers-plugin.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-necesitamos-para-arrancar"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html"><i class="fa fa-check"></i><b>1</b> Datos espaciales en R</a><ul>
+<li class="chapter" data-level="1.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#qué-es-un-dato-espacial"><i class="fa fa-check"></i><b>1.1</b> ¿Qué es un dato espacial?</a></li>
+<li class="chapter" data-level="1.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#dónde-estamos-en-la-tierra"><i class="fa fa-check"></i><b>1.2</b> ¿Dónde estamos en la Tierra?</a></li>
+<li class="chapter" data-level="1.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#coordinate-reference-systems"><i class="fa fa-check"></i><b>1.3</b> Coordinate Reference Systems</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#elipsoides-sistemas-de-coordenadas-y-datums"><i class="fa fa-check"></i><b>1.3.1</b> Elipsoides, sistemas de coordenadas y datums</a></li>
+<li class="chapter" data-level="1.3.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#proyecciones"><i class="fa fa-check"></i><b>1.3.2</b> Proyecciones</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud"><i class="fa fa-check"></i><b>1.4</b> Manos a la obra ¿Dónde construir el próximo centro de salud?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#cargando-los-datos-espaciales"><i class="fa fa-check"></i><b>1.4.1</b> Cargando los datos espaciales</a></li>
+<li class="chapter" data-level="1.4.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#detectando-la-cobertura-actual."><i class="fa fa-check"></i><b>1.4.2</b> Detectando la cobertura actual.</a></li>
+<li class="chapter" data-level="1.4.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#distancia-contra-la-avenida-más-cercana"><i class="fa fa-check"></i><b>1.4.3</b> Distancia contra la avenida más cercana</a></li>
+<li class="chapter" data-level="1.4.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#incorporando-el-resto-de-las-variables"><i class="fa fa-check"></i><b>1.4.4</b> Incorporando el resto de las variables</a></li>
+<li class="chapter" data-level="1.4.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#creando-nuestro-índice-de-demanda-de-salud"><i class="fa fa-check"></i><b>1.4.5</b> Creando nuestro índice de demanda de salud</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#ejercicio"><i class="fa fa-check"></i><b>1.5</b> Ejercicio</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><i class="fa fa-check"></i><b>2</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="2.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#qué-es-la-geocodificación-o-geocoding"><i class="fa fa-check"></i><b>2.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="2.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#api-interfaz-de-programación-de-aplicaciones"><i class="fa fa-check"></i><b>2.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="2.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#servicio-de-normalización-de-datos-geográficos-de-argentina"><i class="fa fa-check"></i><b>2.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="2.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#google-geocode-api"><i class="fa fa-check"></i><b>2.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="2.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#diferencias-entre-las-dos-apis"><i class="fa fa-check"></i><b>2.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="2.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#una-tercera-alternativa-herer"><i class="fa fa-check"></i><b>2.6</b> Una tercera alternativa: hereR</a></li>
+<li class="chapter" data-level="2.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#comparando-todos-los-métodos"><i class="fa fa-check"></i><b>2.7</b> Comparando todos los métodos</a></li>
+<li class="chapter" data-level="2.8" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#ejercicios"><i class="fa fa-check"></i><b>2.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><i class="fa fa-check"></i><b>3</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="3.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#la-distancia-espacial-y-la-distancia-de-viaje"><i class="fa fa-check"></i><b>3.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="3.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-paquetes-que-vamos-a-utilizar"><i class="fa fa-check"></i><b>3.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cómo-usar-los-servicios-de-here"><i class="fa fa-check"></i><b>3.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-datos-repositorio-de-datos-del-gcba"><i class="fa fa-check"></i><b>3.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="3.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#transformando-nuestros-datos"><i class="fa fa-check"></i><b>3.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="3.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cuánto-tardo-en-llegar-al-monumental"><i class="fa fa-check"></i><b>3.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="3.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#midiendo-la-cobertura-de-los-parques"><i class="fa fa-check"></i><b>3.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="3.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba"><i class="fa fa-check"></i><b>3.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="3.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#ejercicios-1"><i class="fa fa-check"></i><b>3.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html"><i class="fa fa-check"></i><b>4</b> El ritual del aprendizaje automático (Parte 1)</a><ul>
+<li class="chapter" data-level="4.1" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-1-carga-de-los-datos"><i class="fa fa-check"></i><b>4.1</b> Paso 1: Carga de los datos</a></li>
+<li class="chapter" data-level="4.2" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-2-análisis-exploratorio-y-corrección-de-errores"><i class="fa fa-check"></i><b>4.2</b> Paso 2: análisis exploratorio y corrección de errores</a></li>
+<li class="chapter" data-level="4.3" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-3-crear-nuevas-variables-o-feature-engineering"><i class="fa fa-check"></i><b>4.3</b> Paso 3: crear nuevas variables (o <em>feature engineering</em>)</a></li>
+<li class="chapter" data-level="4.4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-4-criterio-de-selección-y-optimización-de-los-parámetros"><i class="fa fa-check"></i><b>4.4</b> Paso 4: criterio de selección y optimización de los parámetros</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html"><i class="fa fa-check"></i><b>5</b> El ritual del aprendizaje automático (Parte 2)</a><ul>
+<li class="chapter" data-level="5.1" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#separando-dataset-de-entrenamiento-y-de-testing"><i class="fa fa-check"></i><b>5.1</b> Separando dataset de entrenamiento y de testing</a></li>
+<li class="chapter" data-level="5.2" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#nuestra-receta-y-su-preparación"><i class="fa fa-check"></i><b>5.2</b> Nuestra receta y su preparación</a></li>
+<li class="chapter" data-level="5.3" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#selección-de-modelo-y-espacio-de-búsqueda-de-los-parámetros"><i class="fa fa-check"></i><b>5.3</b> Selección de modelo y espacio de búsqueda de los parámetros</a></li>
+<li class="chapter" data-level="5.4" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#entrenando-los-modelos-en-nuestro-espacio-de-búsqueda"><i class="fa fa-check"></i><b>5.4</b> Entrenando los modelos en nuestro espacio de búsqueda</a></li>
+<li class="chapter" data-level="5.5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#seleccionando-el-mejor-modelo-y-analizando-los-resultados"><i class="fa fa-check"></i><b>5.5</b> Seleccionando el mejor modelo y analizando los resultados</a></li>
+<li class="chapter" data-level="5.6" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#importancia-de-las-variables"><i class="fa fa-check"></i><b>5.6</b> Importancia de las variables</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="mapas.html"><a href="mapas.html"><i class="fa fa-check"></i><b>6</b> Mapas</a></li>
+<li class="chapter" data-level="7" data-path="trabajando-con-el-censo-2010.html"><a href="trabajando-con-el-censo-2010.html"><i class="fa fa-check"></i><b>7</b> Trabajando con el censo 2010</a><ul>
+<li class="chapter" data-level="7.1" data-path="trabajando-con-el-censo-2010.html"><a href="trabajando-con-el-censo-2010.html#datos-del-censo-2010"><i class="fa fa-check"></i><b>7.1</b> Datos del censo 2010</a></li>
+<li class="chapter" data-level="7.2" data-path="trabajando-con-el-censo-2010.html"><a href="trabajando-con-el-censo-2010.html#polígonos-del-censo-2010"><i class="fa fa-check"></i><b>7.2</b> Polígonos del Censo 2010</a></li>
+<li class="chapter" data-level="7.3" data-path="trabajando-con-el-censo-2010.html"><a href="trabajando-con-el-censo-2010.html#uniendo-los-datos-con-sus-polígonos"><i class="fa fa-check"></i><b>7.3</b> Uniendo los datos con sus polígonos</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html"><i class="fa fa-check"></i><b>8</b> Haciendo visualizaciones</a><ul>
+<li class="chapter" data-level="8.1" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html#ggplot2"><i class="fa fa-check"></i><b>8.1</b> Ggplot2</a></li>
+<li class="chapter" data-level="8.2" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html#tmap"><i class="fa fa-check"></i><b>8.2</b> Tmap</a></li>
+<li class="chapter" data-level="8.3" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html#leaflet"><i class="fa fa-check"></i><b>8.3</b> Leaflet</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="ejercicios-2.html"><a href="ejercicios-2.html"><i class="fa fa-check"></i><b>9</b> Ejercicios</a></li>
+<li class="chapter" data-level="10" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html"><i class="fa fa-check"></i><b>10</b> Making polygons comparable again</a><ul>
+<li class="chapter" data-level="10.1" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#carga-de-los-datos"><i class="fa fa-check"></i><b>10.1</b> Carga de los datos</a></li>
+<li class="chapter" data-level="10.2" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#diferentes-radios-censales"><i class="fa fa-check"></i><b>10.2</b> Diferentes radios censales</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#breve-desvío-haciendo-lo-mismo-con-ggplot"><i class="fa fa-check"></i><b>10.2.1</b> Breve desvío: haciendo lo mismo con ggplot()</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#make-polygons-comparable-again"><i class="fa fa-check"></i><b>10.3</b> Make polygons comparable again</a></li>
+<li class="chapter" data-level="10.4" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#haciendo-mapas-de-nuestros-nuevos-datos"><i class="fa fa-check"></i><b>10.4</b> Haciendo mapas de nuestros nuevos datos</a></li>
+<li class="chapter" data-level="10.5" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#ejercicio-1"><i class="fa fa-check"></i><b>10.5</b> Ejercicio</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Herramientas de análisis espacial en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="ejercicios-2" class="section level1">
+<h1><span class="header-section-number">9</span> Ejercicios</h1>
+<p>En la carpeta de datos del censo todavía hay dos archivos csv que no usamos: los datos de hogares y de individuos. Usando nuestro dataset de viviendas, unan los hogares a las viviendas y, luego, los hogares a los individuos. Una vez que tengan el dataset con los individuos, y el departamento al que pertenecen, creen un mapa con <strong>tmap</strong>, tal como hicimos con el índice de vivienda, pero ahora con la edad promedio por departamento (tener en cuenta que la variable “años cumplidos” es la P03)</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="haciendo-visualizaciones.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="making-polygons-comparable-again.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["AnalisisEspacialEnR.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

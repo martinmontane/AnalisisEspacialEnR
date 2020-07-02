@@ -2,5 +2,5 @@ book_filename: "AnalisisEspacialEnR"
 output_dir: "docs"
 #rmd_files: ["index.Rmd","IntroduccionR.rmd","Tidyverse.Rmd","visualizaciones.Rmd","DatosEspaciales.Rmd","Regresiones.Rmd","MachineLearning.Rmd","CARET.Rmd","datasets.Rmd","Anexo2.Rmd"]
 #rmd_files: ["index.Rmd","Geocoding.Rmd","DistanceMatrix.Rmd"]
-rmd_files: ["index.Rmd","DatosEspaciales.Rmd","Geocoding.Rmd","Geowrangling.Rmd","MachineLearningEspacial.Rmd","MachineLearningEspacial2.Rmd"]
+rmd_files: ["index.Rmd","DatosEspaciales.Rmd","Geocoding.Rmd","Geowrangling.Rmd","MachineLearningEspacial.Rmd","MachineLearningEspacial2.Rmd","VisualizacionesMapas.Rmd","HerramientasDatosEspaciales.Rmd"]
 delete_merged_file: true

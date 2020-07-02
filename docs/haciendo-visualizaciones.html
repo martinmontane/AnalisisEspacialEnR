@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>7 Haciendo visualizaciones | Herramientas de análisis espacial en R</title>
+  <meta name="description" content="Usando R para analizar datos espaciales" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="7 Haciendo visualizaciones | Herramientas de análisis espacial en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Usando R para analizar datos espaciales" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="7 Haciendo visualizaciones | Herramientas de análisis espacial en R" />
+  
+  <meta name="twitter:description" content="Usando R para analizar datos espaciales" />
+  
+
+<meta name="author" content="Martin Montane" />
+
+
+<meta name="date" content="2020-07-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="mapas.html"/>
+<link rel="next" href="making-polygons-comparable-again.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3.9000/leaflet-providers-plugin.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-necesitamos-para-arrancar"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html"><i class="fa fa-check"></i><b>1</b> Datos espaciales en R</a><ul>
+<li class="chapter" data-level="1.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#qué-es-un-dato-espacial"><i class="fa fa-check"></i><b>1.1</b> ¿Qué es un dato espacial?</a></li>
+<li class="chapter" data-level="1.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#dónde-estamos-en-la-tierra"><i class="fa fa-check"></i><b>1.2</b> ¿Dónde estamos en la Tierra?</a></li>
+<li class="chapter" data-level="1.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#coordinate-reference-systems"><i class="fa fa-check"></i><b>1.3</b> Coordinate Reference Systems</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#elipsoides-sistemas-de-coordenadas-y-datums"><i class="fa fa-check"></i><b>1.3.1</b> Elipsoides, sistemas de coordenadas y datums</a></li>
+<li class="chapter" data-level="1.3.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#proyecciones"><i class="fa fa-check"></i><b>1.3.2</b> Proyecciones</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud"><i class="fa fa-check"></i><b>1.4</b> Manos a la obra ¿Dónde construir el próximo centro de salud?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#cargando-los-datos-espaciales"><i class="fa fa-check"></i><b>1.4.1</b> Cargando los datos espaciales</a></li>
+<li class="chapter" data-level="1.4.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#detectando-la-cobertura-actual."><i class="fa fa-check"></i><b>1.4.2</b> Detectando la cobertura actual.</a></li>
+<li class="chapter" data-level="1.4.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#distancia-contra-la-avenida-más-cercana"><i class="fa fa-check"></i><b>1.4.3</b> Distancia contra la avenida más cercana</a></li>
+<li class="chapter" data-level="1.4.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#incorporando-el-resto-de-las-variables"><i class="fa fa-check"></i><b>1.4.4</b> Incorporando el resto de las variables</a></li>
+<li class="chapter" data-level="1.4.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#creando-nuestro-índice-de-demanda-de-salud"><i class="fa fa-check"></i><b>1.4.5</b> Creando nuestro índice de demanda de salud</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#ejercicio"><i class="fa fa-check"></i><b>1.5</b> Ejercicio</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><i class="fa fa-check"></i><b>2</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="2.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#qué-es-la-geocodificación-o-geocoding"><i class="fa fa-check"></i><b>2.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="2.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#api-interfaz-de-programación-de-aplicaciones"><i class="fa fa-check"></i><b>2.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="2.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#servicio-de-normalización-de-datos-geográficos-de-argentina"><i class="fa fa-check"></i><b>2.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="2.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#google-geocode-api"><i class="fa fa-check"></i><b>2.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="2.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#diferencias-entre-las-dos-apis"><i class="fa fa-check"></i><b>2.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="2.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#una-tercera-alternativa-herer"><i class="fa fa-check"></i><b>2.6</b> Una tercera alternativa: hereR</a></li>
+<li class="chapter" data-level="2.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#comparando-todos-los-métodos"><i class="fa fa-check"></i><b>2.7</b> Comparando todos los métodos</a></li>
+<li class="chapter" data-level="2.8" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#ejercicios"><i class="fa fa-check"></i><b>2.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><i class="fa fa-check"></i><b>3</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="3.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#la-distancia-espacial-y-la-distancia-de-viaje"><i class="fa fa-check"></i><b>3.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="3.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-paquetes-que-vamos-a-utilizar"><i class="fa fa-check"></i><b>3.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cómo-usar-los-servicios-de-here"><i class="fa fa-check"></i><b>3.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-datos-repositorio-de-datos-del-gcba"><i class="fa fa-check"></i><b>3.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="3.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#transformando-nuestros-datos"><i class="fa fa-check"></i><b>3.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="3.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cuánto-tardo-en-llegar-al-monumental"><i class="fa fa-check"></i><b>3.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="3.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#midiendo-la-cobertura-de-los-parques"><i class="fa fa-check"></i><b>3.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="3.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba"><i class="fa fa-check"></i><b>3.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="3.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#ejercicios-1"><i class="fa fa-check"></i><b>3.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html"><i class="fa fa-check"></i><b>4</b> El ritual del aprendizaje automático (Parte 1)</a><ul>
+<li class="chapter" data-level="4.1" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-1-carga-de-los-datos"><i class="fa fa-check"></i><b>4.1</b> Paso 1: Carga de los datos</a></li>
+<li class="chapter" data-level="4.2" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-2-análisis-exploratorio-y-corrección-de-errores"><i class="fa fa-check"></i><b>4.2</b> Paso 2: análisis exploratorio y corrección de errores</a></li>
+<li class="chapter" data-level="4.3" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-3-crear-nuevas-variables-o-feature-engineering"><i class="fa fa-check"></i><b>4.3</b> Paso 3: crear nuevas variables (o <em>feature engineering</em>)</a></li>
+<li class="chapter" data-level="4.4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-4-criterio-de-selección-y-optimización-de-los-parámetros"><i class="fa fa-check"></i><b>4.4</b> Paso 4: criterio de selección y optimización de los parámetros</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html"><i class="fa fa-check"></i><b>5</b> El ritual del aprendizaje automático (Parte 2)</a><ul>
+<li class="chapter" data-level="5.1" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#separando-dataset-de-entrenamiento-y-de-testing"><i class="fa fa-check"></i><b>5.1</b> Separando dataset de entrenamiento y de testing</a></li>
+<li class="chapter" data-level="5.2" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#nuestra-receta-y-su-preparación"><i class="fa fa-check"></i><b>5.2</b> Nuestra receta y su preparación</a></li>
+<li class="chapter" data-level="5.3" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#selección-de-modelo-y-espacio-de-búsqueda-de-los-parámetros"><i class="fa fa-check"></i><b>5.3</b> Selección de modelo y espacio de búsqueda de los parámetros</a></li>
+<li class="chapter" data-level="5.4" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#entrenando-los-modelos-en-nuestro-espacio-de-búsqueda"><i class="fa fa-check"></i><b>5.4</b> Entrenando los modelos en nuestro espacio de búsqueda</a></li>
+<li class="chapter" data-level="5.5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#seleccionando-el-mejor-modelo-y-analizando-los-resultados"><i class="fa fa-check"></i><b>5.5</b> Seleccionando el mejor modelo y analizando los resultados</a></li>
+<li class="chapter" data-level="5.6" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#importancia-de-las-variables"><i class="fa fa-check"></i><b>5.6</b> Importancia de las variables</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="mapas.html"><a href="mapas.html"><i class="fa fa-check"></i><b>6</b> Mapas</a><ul>
+<li class="chapter" data-level="6.1" data-path="mapas.html"><a href="mapas.html#trabajando-con-el-censo-2010"><i class="fa fa-check"></i><b>6.1</b> Trabajando con el censo 2010</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="mapas.html"><a href="mapas.html#datos-del-censo-2010"><i class="fa fa-check"></i><b>6.1.1</b> Datos del censo 2010</a></li>
+<li class="chapter" data-level="6.1.2" data-path="mapas.html"><a href="mapas.html#polígonos-del-censo-2010"><i class="fa fa-check"></i><b>6.1.2</b> Polígonos del Censo 2010</a></li>
+<li class="chapter" data-level="6.1.3" data-path="mapas.html"><a href="mapas.html#uniendo-los-datos-con-sus-polígonos"><i class="fa fa-check"></i><b>6.1.3</b> Uniendo los datos con sus polígonos</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html"><i class="fa fa-check"></i><b>7</b> Haciendo visualizaciones</a><ul>
+<li class="chapter" data-level="7.0.1" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html#ggplot2"><i class="fa fa-check"></i><b>7.0.1</b> Ggplot2</a></li>
+<li class="chapter" data-level="7.0.2" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html#tmap"><i class="fa fa-check"></i><b>7.0.2</b> Tmap</a></li>
+<li class="chapter" data-level="7.1" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html#leaflet"><i class="fa fa-check"></i><b>7.1</b> Leaflet</a></li>
+<li class="chapter" data-level="7.2" data-path="haciendo-visualizaciones.html"><a href="haciendo-visualizaciones.html#ejercicios-2"><i class="fa fa-check"></i><b>7.2</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html"><i class="fa fa-check"></i><b>8</b> Making polygons comparable again</a><ul>
+<li class="chapter" data-level="8.1" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#carga-de-los-datos"><i class="fa fa-check"></i><b>8.1</b> Carga de los datos</a></li>
+<li class="chapter" data-level="8.2" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#diferentes-radios-censales"><i class="fa fa-check"></i><b>8.2</b> Diferentes radios censales</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#breve-desvío-haciendo-lo-mismo-con-ggplot"><i class="fa fa-check"></i><b>8.2.1</b> Breve desvío: haciendo lo mismo con ggplot()</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#make-polygons-comparable-again"><i class="fa fa-check"></i><b>8.3</b> Make polygons comparable again</a></li>
+<li class="chapter" data-level="8.4" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#haciendo-mapas-de-nuestros-nuevos-datos"><i class="fa fa-check"></i><b>8.4</b> Haciendo mapas de nuestros nuevos datos</a></li>
+<li class="chapter" data-level="8.5" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#ejercicio-1"><i class="fa fa-check"></i><b>8.5</b> Ejercicio</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Herramientas de análisis espacial en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="haciendo-visualizaciones" class="section level1">
+<h1><span class="header-section-number">7</span> Haciendo visualizaciones</h1>
+<p>Hace unos años uno podría haber dicho que una de las desventajas de R es su falta de realizar visualizaciones de relevancia, ni siquiera hablar de trabajar con visualizaciones interactivas. Ejecuten el siguiente código, tal como hace Lovelace en su libro de Geocomputation, y verán que ya no es el caso:</p>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="haciendo-visualizaciones.html#cb227-1"></a>popup =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Nuestra clase&quot;</span>)</span>
+<span id="cb227-2"><a href="haciendo-visualizaciones.html#cb227-2"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span></span>
+<span id="cb227-3"><a href="haciendo-visualizaciones.html#cb227-3"></a><span class="st">  </span><span class="kw">addProviderTiles</span>(<span class="st">&quot;NASAGIBS.ViirsEarthAtNight2012&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb227-4"><a href="haciendo-visualizaciones.html#cb227-4"></a><span class="st">  </span><span class="kw">addMarkers</span>(<span class="dt">lng =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">58.381592</span>),</span>
+<span id="cb227-5"><a href="haciendo-visualizaciones.html#cb227-5"></a>             <span class="dt">lat =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">34.603722</span>), </span>
+<span id="cb227-6"><a href="haciendo-visualizaciones.html#cb227-6"></a>             <span class="dt">popup =</span> popup) <span class="op">%&gt;%</span></span>
+<span id="cb227-7"><a href="haciendo-visualizaciones.html#cb227-7"></a><span class="st">  </span><span class="kw">setView</span>(<span class="dt">lng =</span> <span class="fl">-58.381592</span>, <span class="dt">lat =</span><span class="op">-</span><span class="fl">34.603722</span>, <span class="dt">zoom =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p>Este mapa interactivo es posible gracias a la implementación de Leaflet para R (deben tener instalado y cargado en la sesión el paquete homónimo para poder correrlo). Hoy en día R nos da la posiblidad de realizar excelentes gráficos y visualizaciones. Vamos a presentar los principales paquetes para hacerlo durante las próximas dos clases, haciendo énfasis en los mapas.</p>
+<div id="ggplot2" class="section level3">
+<h3><span class="header-section-number">7.0.1</span> Ggplot2</h3>
+<p>Hace tiempo que <strong>ggplot2</strong> se ha convertido en el paquete de referencia para hacer visualizaciones. En distintas partes de nuestro curso lo he mostrado, en la mayoría de veces sin su aplicación a datos espaciales. En esta clase voy a mostrar que es posible hacer gráficos con <strong>ggplot2</strong> y <strong>sf</strong>, pero más tarde también voy a mostrar que sus funcionalidades ampliamente exceden esta extensión.</p>
+<p>Ggplot2 (al igual que <strong>tmap</strong> y <strong>leaflet</strong>) organiza su trabajo en capas. En general, primero pasamos los datos y después vamos agregando “mejoras incrementales”. Siempre debemos comenzar con <strong>ggplot()</strong> y luego indicar qué tipo de gráfico queremos:</p>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="haciendo-visualizaciones.html#cb228-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad) <span class="op">+</span><span class="st"> </span><span class="kw">geom_sf</span>()</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-173-1.png" width="672" /></p>
+<p>Como vemos, los departamentos de la Antártida y las Islas del Atlántico Sur no tienen mucho sentido para nuestras visualizaciones, y además nuestra visualización. Vamos a filtrarlas para lo que resta de la clase:</p>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="haciendo-visualizaciones.html#cb229-1"></a>datosCalidad &lt;-<span class="st"> </span>datosCalidad <span class="op">%&gt;%</span></span>
+<span id="cb229-2"><a href="haciendo-visualizaciones.html#cb229-2"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>NOMDPTO <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Islas del Atlántico sur&#39;</span>, <span class="st">&quot;Antártida Argentina&quot;</span>))</span>
+<span id="cb229-3"><a href="haciendo-visualizaciones.html#cb229-3"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad) <span class="op">+</span><span class="st"> </span><span class="kw">geom_sf</span>()</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-174-1.png" width="672" /></p>
+<p>Mucho mejor. Ahora debemos rellenar los polígonos con nuestras variables, en este caso el índicador de deficiencias en la calidad de la construcción o servicios de las viviendas. Esto lo hacemos SIEMPRE dentro de la función <strong>aes()</strong>, en este caso con <strong>fill</strong>:</p>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="haciendo-visualizaciones.html#cb230-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad, <span class="kw">aes</span>(<span class="dt">fill =</span> indiceCalidad)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_sf</span>()</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-175-1.png" width="672" /></p>
+<p>Lo que hace <strong>aes()</strong> es pasarle a ciertos objetos del gráfico (en este caso, <strong>fill</strong>) los valores que debe tomar. En español, lo que le decimos es “de ahora en más, rellená todos los polígonos en base a los valores de la variable <strong>indiceCalidad</strong>”. Luego, le decimos que grafique las geometrias de sf, simplemente pasándole el argumento “geom_sf”. Los colores que tiene por default son bastante malos y no queda muy en claro el valor que le corresponde a cada departamento. Vamos a empezar a hacer uso de algunas mejoras en los gráficos de ggplot2</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="haciendo-visualizaciones.html#cb231-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad, <span class="kw">aes</span>(<span class="dt">fill =</span> indiceCalidad)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb231-2"><a href="haciendo-visualizaciones.html#cb231-2"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">colour =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb231-3"><a href="haciendo-visualizaciones.html#cb231-3"></a><span class="st">  </span><span class="kw">scale_fill_gradientn</span>(<span class="dt">colours =</span> <span class="kw">brewer.pal</span>(<span class="dt">n =</span> <span class="dv">5</span>, <span class="dt">name =</span> <span class="st">&quot;Blues&quot;</span>),</span>
+<span id="cb231-4"><a href="haciendo-visualizaciones.html#cb231-4"></a>                       <span class="dt">name =</span> <span class="st">&quot;Viviendas de calidad </span><span class="ch">\n</span><span class="st">insuficiente (%)&quot;</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-176-1.png" width="672" /></p>
+<p>Bastante mejor. Lo que hicimos fue 1) cambiar el color de los límites entre los polígonos (colour = “white”) y también cambiamos los colores correspondientes a cada uno de los valores a través de <strong>scale_fill_gradientn</strong>. A esta función solo debemos asignarle una cantidad de colores, y lo que hace es generar las transiciones entre ellos para generar el gradiente de colores. Aquí es donde usamos las paletas que RColorBrewer nos ofrece (<a href="http://colorbrewer2.org/" class="uri">http://colorbrewer2.org/</a>). la función brewer.pal nos pide solo dos argumentos: la cantidad de colores y la paleta. Luego, en <em>name</em> indicamos el título de la leyenda. Los caracteres <code>\n</code> son interpretados como un <strong>enter</strong> en la paleta. Prueben cambiar la paleta “Blues” por la paleta “Oranges” o "Reds.</p>
+<p>Todavía podemos mejorar sustancialmente el gráfico. Por ejemplo, con el siguiente código:</p>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="haciendo-visualizaciones.html#cb232-1"></a>mapa &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad, <span class="kw">aes</span>(<span class="dt">fill =</span> indiceCalidad)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb232-2"><a href="haciendo-visualizaciones.html#cb232-2"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">colour =</span> <span class="ot">NA</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb232-3"><a href="haciendo-visualizaciones.html#cb232-3"></a><span class="st">  </span><span class="kw">scale_fill_gradientn</span>(<span class="dt">colours =</span> <span class="kw">brewer.pal</span>(<span class="dt">n =</span> <span class="dv">5</span>, <span class="dt">name =</span> <span class="st">&quot;Reds&quot;</span>),</span>
+<span id="cb232-4"><a href="haciendo-visualizaciones.html#cb232-4"></a>                       <span class="dt">name =</span> <span class="st">&quot;Viviendas de calidad insuficiente (%)&quot;</span>,</span>
+<span id="cb232-5"><a href="haciendo-visualizaciones.html#cb232-5"></a>                       <span class="dt">guide =</span> <span class="kw">guide_colourbar</span>(</span>
+<span id="cb232-6"><a href="haciendo-visualizaciones.html#cb232-6"></a>                         <span class="dt">direction =</span> <span class="st">&quot;horizontal&quot;</span>,</span>
+<span id="cb232-7"><a href="haciendo-visualizaciones.html#cb232-7"></a>                         <span class="dt">barheight =</span> <span class="fl">0.8</span>,</span>
+<span id="cb232-8"><a href="haciendo-visualizaciones.html#cb232-8"></a>                         <span class="dt">barwidth =</span> <span class="dv">16</span>,</span>
+<span id="cb232-9"><a href="haciendo-visualizaciones.html#cb232-9"></a>                         <span class="dt">title.position =</span> <span class="st">&#39;top&#39;</span>,</span>
+<span id="cb232-10"><a href="haciendo-visualizaciones.html#cb232-10"></a>                         <span class="dt">title.hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb232-11"><a href="haciendo-visualizaciones.html#cb232-11"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-177-1.png" width="672" /></p>
+<p>¡Mucho mejor! Pero hay varias cosas que incluímos, vamos a explicarlo paso por paso. En primer lugar, ya no hay línea divisora entre los polígonos, <strong>recomiendo enfáticamente removerlos cuando las unidades son muchas, pequeñas y el mapa no es interactivo</strong>, esto lo hacemos mediante <strong>colour = NA</strong> dentro de <strong>geom_sf</strong>.</p>
+<p>Luego, dentro de el espacio donde definimos la paleta <strong>scale_fill_gradientn</strong> agregamos una colourbar, que lo que haces es modificar la leyenda dándole un mejor aspecto. Podemos elegir la dirección (en este caso, horizontal), debemos elegir tanto su largo como su ancho, elegir la posición del titulo y elegir su “justificación”, que es básicamente lo que hacemos en word eligiendo si queremos que el texto se “pegue” a la parte izquierda, este centrado o se “pegue” a la parte derecha. hjust = 0.5 lo deja centrado. Los tamaños en ggplot2 están representados en milimetros, suponiendo que en cada pulgada hay 72 puntos (72 PPI), vamos a volver a esto un poco más adelante.</p>
+<p>Noten algo más: guardamos nuestro gráfico en un objeto que se llama “mapa”. De ahora en más podemos ir modificando este objeto agregándole capas con <strong>+</strong> como estuvimos haciendo hasta ahora. Vamos a cambiar ese fondo gris que no queda bien:</p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="haciendo-visualizaciones.html#cb233-1"></a>mapa &lt;-<span class="st"> </span>mapa  <span class="op">+</span><span class="st"> </span><span class="kw">theme_void</span>()</span>
+<span id="cb233-2"><a href="haciendo-visualizaciones.html#cb233-2"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-178-1.png" width="672" /></p>
+<p>Como ggplot2 trabaja por capas, le asignamos un conjunto de formatos mediante la función <strong>theme_void</strong>. Los temas (themes) predefinidos son muy útiles ya que nos ahorran mucho código de formateo de la visualización. el paquete <strong>ggthemes</strong> contiene varios themes muy interesantes, como los del Wall Street Journal, Five Thirty Eight o Stata, más adelante vamos a probarlos. Probemos qué hubiera pasado con aplicando otro theme:</p>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="haciendo-visualizaciones.html#cb234-1"></a>mapaStata &lt;-<span class="st"> </span>mapa  <span class="op">+</span><span class="st"> </span><span class="kw">theme_stata</span>()</span>
+<span id="cb234-2"><a href="haciendo-visualizaciones.html#cb234-2"></a>mapaStata</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
+<p>Bien, ahora querríamos colocar la colourbar abajo, tal como hace el theme_stata(), y también remover las líneas de fondo. Estas modificaciones se pueden hacer dentro de la función <strong>theme()</strong>. Dentro de ella elegimos los objetos y los modificamos. Por ejemplo, en <strong>legend.position</strong> decimos dónde queremos la leyenda ,en este caso la queremos abajo del gráfico y por eso usamos “bottom”. Luego, tomamos la grilla de fondo “panel.grid.major” y a la línea le asignamos un color transparente. También seteamos algunos parámetros para el título (que esté centrado, que tenga tamaño 16 y que esté en negrita) y el título de nuestra leyenda.</p>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="haciendo-visualizaciones.html#cb235-1"></a>mapa &lt;-<span class="st"> </span>mapa <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb235-2"><a href="haciendo-visualizaciones.html#cb235-2"></a>                     <span class="dt">panel.grid.major=</span><span class="kw">element_line</span>(<span class="dt">colour=</span><span class="st">&quot;transparent&quot;</span>),</span>
+<span id="cb235-3"><a href="haciendo-visualizaciones.html#cb235-3"></a>                     <span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span>  <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="dv">16</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb235-4"><a href="haciendo-visualizaciones.html#cb235-4"></a>                     <span class="dt">legend.title =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span>  <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="dv">12</span>))</span>
+<span id="cb235-5"><a href="haciendo-visualizaciones.html#cb235-5"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-180-1.png" width="672" /></p>
+<p>Solo nos queda agregar un título y una fuente:</p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="haciendo-visualizaciones.html#cb236-1"></a>mapa &lt;-<span class="st"> </span>mapa <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb236-2"><a href="haciendo-visualizaciones.html#cb236-2"></a>                    <span class="dt">caption =</span> <span class="st">&quot;Fuente: INDEC&quot;</span>)</span>
+<span id="cb236-3"><a href="haciendo-visualizaciones.html#cb236-3"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
+<p>Ahora nuestro gráfico quedó mucho mejor. Pueden guardardo desde “Export”, aunque rápidamente van a darse cuenta, cuando vayan cambiando las dimensiones de los plots, que a medida que lo hacen más grande, el texto queda más chico. Además, solo pueden exportar el formato del tamaño del planel multiuso. Pero no se preocupen, hice una función que hace todo esto más fácil: van a poder elegir el ancho y alto en píxeles y después solo tienen que elegir cuánto quieren que se agrande el texto. Ejecuten el siguiente código:</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="haciendo-visualizaciones.html#cb237-1"></a><span class="co"># Source ejecuta código R de otros archivos</span></span>
+<span id="cb237-2"><a href="haciendo-visualizaciones.html#cb237-2"></a><span class="kw">source</span>(<span class="st">&quot;https://raw.githubusercontent.com/datalab-UTDT/datasets/master/auxiliares.R&quot;</span>)</span>
+<span id="cb237-3"><a href="haciendo-visualizaciones.html#cb237-3"></a><span class="kw">plot.save</span>(<span class="dt">plot =</span> mapa,</span>
+<span id="cb237-4"><a href="haciendo-visualizaciones.html#cb237-4"></a>          <span class="dt">width =</span> <span class="dv">500</span>,</span>
+<span id="cb237-5"><a href="haciendo-visualizaciones.html#cb237-5"></a>          <span class="dt">height =</span> <span class="dv">1000</span>,</span>
+<span id="cb237-6"><a href="haciendo-visualizaciones.html#cb237-6"></a>          <span class="dt">filename =</span><span class="st">&#39;mapa.png&#39;</span>,</span>
+<span id="cb237-7"><a href="haciendo-visualizaciones.html#cb237-7"></a>          <span class="dt">bg =</span> <span class="st">&quot;#f5f5f2&quot;</span>)</span>
+<span id="cb237-8"><a href="haciendo-visualizaciones.html#cb237-8"></a></span>
+<span id="cb237-9"><a href="haciendo-visualizaciones.html#cb237-9"></a><span class="kw">plot.save</span>(<span class="dt">plot =</span> mapa,</span>
+<span id="cb237-10"><a href="haciendo-visualizaciones.html#cb237-10"></a>          <span class="dt">width =</span> <span class="dv">1000</span>,</span>
+<span id="cb237-11"><a href="haciendo-visualizaciones.html#cb237-11"></a>          <span class="dt">height =</span> <span class="dv">2000</span>,</span>
+<span id="cb237-12"><a href="haciendo-visualizaciones.html#cb237-12"></a>          <span class="dt">text.expansion =</span> <span class="dv">2</span>,</span>
+<span id="cb237-13"><a href="haciendo-visualizaciones.html#cb237-13"></a>          <span class="dt">filename =</span><span class="st">&#39;mapaText2.png&#39;</span>,</span>
+<span id="cb237-14"><a href="haciendo-visualizaciones.html#cb237-14"></a>          <span class="dt">bg =</span> <span class="st">&quot;#f5f5f2&quot;</span>)</span></code></pre></div>
+<p>¿Qué patrón observan en el mapa? Por lo que vemos, el norte del país muestra los peores valores en nuestro indicador, especialmente en las provincias del noreste.</p>
+</div>
+<div id="tmap" class="section level3">
+<h3><span class="header-section-number">7.0.2</span> Tmap</h3>
+<p>Aun siendo muy útil para nuestros mapas, Gplo2 es mucho más útil para otro tipo de visualizaciones. Para hacer clorophets, una de las visualizaciones más típicas, el paquete más simple y que más utilizarán es <strong>tmap</strong>. Ya lo hemos usado en otras ocasiones, y veamos cómo podemos hacer lo que hicimos con ggplot2 de una manera más simple:</p>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="haciendo-visualizaciones.html#cb238-1"></a>tmapClorophet &lt;-<span class="st">  </span><span class="kw">tm_shape</span>(datosCalidad) <span class="op">+</span></span>
+<span id="cb238-2"><a href="haciendo-visualizaciones.html#cb238-2"></a><span class="st">                  </span><span class="kw">tm_polygons</span>(<span class="dt">border.col =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;indiceCalidad&quot;</span>,</span>
+<span id="cb238-3"><a href="haciendo-visualizaciones.html#cb238-3"></a>                              <span class="dt">palette=</span><span class="kw">brewer.pal</span>(<span class="dt">n=</span><span class="dv">5</span>,<span class="st">&quot;Reds&quot;</span>),</span>
+<span id="cb238-4"><a href="haciendo-visualizaciones.html#cb238-4"></a>                              <span class="dt">title =</span> <span class="st">&quot;Viviendas de </span><span class="ch">\n</span><span class="st">calidad </span><span class="ch">\n</span><span class="st">insuficiente&quot;</span>) <span class="op">+</span></span>
+<span id="cb238-5"><a href="haciendo-visualizaciones.html#cb238-5"></a><span class="st">                  </span><span class="kw">tm_layout</span>(<span class="dt">legend.format =</span> <span class="kw">list</span>(<span class="dt">text.separator =</span> <span class="st">&quot;-&quot;</span>),</span>
+<span id="cb238-6"><a href="haciendo-visualizaciones.html#cb238-6"></a>                            <span class="dt">main.title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb238-7"><a href="haciendo-visualizaciones.html#cb238-7"></a>                            <span class="dt">main.title.size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb238-8"><a href="haciendo-visualizaciones.html#cb238-8"></a>                            <span class="dt">frame =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb238-9"><a href="haciendo-visualizaciones.html#cb238-9"></a>tmapClorophet</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-183-1.png" width="672" /></p>
+<p>Como vemos, la sintaxis es relativamente similar a ggplot2. Primero debemos informar cuáles son los datos dentro de tm_shape (en este caso, datosCalidad). Luego indicamos qué queremos graficar: polígónos (tm_polygons). Al igual que en el anterior gráfico, no queremos que haya divisiones entre los polígonos así que lo pasamos a “transparent”. Elegimos el color por el cual queremos que rellene los polígonos con <strong>col</strong>, la paleta con <strong>palette</strong> y el título de la leyenda con <strong>title</strong>. Luego, con <strong>tm_layout()</strong> modificamos el aspecto de la leyenda, específicamente el separador entre las categorías (en lugar de “to”, que use “-”). Cambiamos el título y sacamos el frame que viene por default ¡Muy fácil!</p>
+<p>Todavía más, con estos mapas podemos discretizar rápidamente nuestros plots. Por default nos genera las 5 categorías que dividen a la variable (de 0 a 100). En lugar de eso, podemos mejorar esta aproximación al graficar en 4 categorías a los departamentos de tal manera que en cada una de estas categorías se acumule aproximadamente la misma cantidad de departamentos. Estos son los quintiles de una distribución y <strong>tmap</strong> nos hace el trabajo muy fácil.</p>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="haciendo-visualizaciones.html#cb239-1"></a>tmapClorophet &lt;-<span class="st">  </span><span class="kw">tm_shape</span>(datosCalidad) <span class="op">+</span></span>
+<span id="cb239-2"><a href="haciendo-visualizaciones.html#cb239-2"></a><span class="st">                  </span><span class="kw">tm_polygons</span>(<span class="dt">border.col =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;indiceCalidad&quot;</span>,</span>
+<span id="cb239-3"><a href="haciendo-visualizaciones.html#cb239-3"></a>                              <span class="dt">palette=</span><span class="kw">rev</span>(<span class="kw">brewer.pal</span>(<span class="dt">n=</span><span class="dv">4</span>,<span class="st">&quot;RdYlGn&quot;</span>)),</span>
+<span id="cb239-4"><a href="haciendo-visualizaciones.html#cb239-4"></a>                              <span class="dt">breaks =</span> <span class="kw">quantile</span>(datosCalidad<span class="op">$</span>indiceCalidad),</span>
+<span id="cb239-5"><a href="haciendo-visualizaciones.html#cb239-5"></a>                              <span class="dt">title =</span> <span class="st">&quot;Viviendas de </span><span class="ch">\n</span><span class="st">calidad </span><span class="ch">\n</span><span class="st">insuficiente&quot;</span>) <span class="op">+</span></span>
+<span id="cb239-6"><a href="haciendo-visualizaciones.html#cb239-6"></a><span class="st">                  </span><span class="kw">tm_layout</span>(<span class="dt">legend.format =</span> <span class="kw">list</span>(<span class="dt">text.separator =</span> <span class="st">&quot;-&quot;</span>),</span>
+<span id="cb239-7"><a href="haciendo-visualizaciones.html#cb239-7"></a>                            <span class="dt">main.title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb239-8"><a href="haciendo-visualizaciones.html#cb239-8"></a>                            <span class="dt">main.title.size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb239-9"><a href="haciendo-visualizaciones.html#cb239-9"></a>                            <span class="dt">frame =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb239-10"><a href="haciendo-visualizaciones.html#cb239-10"></a>tmapClorophet</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-184-1.png" width="672" /></p>
+<p>La clave fue el argumento breaks, donde indicamos dónde queremos que corte a la variable. <strong>quantile()</strong> corta en cuatro porciones a la variable índice de calidad, mientras que usamos otro tipo de paleta y, ademas, invertimos el orden usando rev().</p>
+<p>Vamos a mejorar nuestro gráfico utilizando simultáneamente los polígonos de las provincias de Argentina. Podrían repetir el procedimiento leyendo los shapefiles con el comando readOGR tal como hicimos con los departamentos. Sin embargo, para aprender a leer otro tipo de archivos donde se guardan datos espaciales, vamos a usar la función <strong>st_read</strong> y leer un archivo geojson:</p>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="haciendo-visualizaciones.html#cb240-1"></a>mapaProvincias &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://github.com/datalab-UTDT/datasets/raw/master/provincias.geojson&quot;</span>)</span>
+<span id="cb240-2"><a href="haciendo-visualizaciones.html#cb240-2"></a>mapaProvincias &lt;-<span class="st"> </span>mapaProvincias[<span class="op">-</span><span class="dv">24</span>,]</span></code></pre></div>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="haciendo-visualizaciones.html#cb241-1"></a>tmapClorophet &lt;-<span class="st">  </span><span class="kw">tm_shape</span>(datosCalidad) <span class="op">+</span></span>
+<span id="cb241-2"><a href="haciendo-visualizaciones.html#cb241-2"></a><span class="st">                  </span><span class="kw">tm_polygons</span>(<span class="dt">border.col =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;indiceCalidad&quot;</span>,</span>
+<span id="cb241-3"><a href="haciendo-visualizaciones.html#cb241-3"></a>                              <span class="dt">palette=</span><span class="kw">rev</span>(<span class="kw">brewer.pal</span>(<span class="dt">n=</span><span class="dv">4</span>,<span class="st">&quot;RdYlGn&quot;</span>)),</span>
+<span id="cb241-4"><a href="haciendo-visualizaciones.html#cb241-4"></a>                              <span class="dt">breaks =</span> <span class="kw">quantile</span>(datosCalidad<span class="op">$</span>indiceCalidad),</span>
+<span id="cb241-5"><a href="haciendo-visualizaciones.html#cb241-5"></a>                              <span class="dt">title =</span> <span class="st">&quot;Viviendas de </span><span class="ch">\n</span><span class="st">calidad </span><span class="ch">\n</span><span class="st">insuficiente&quot;</span>) <span class="op">+</span></span>
+<span id="cb241-6"><a href="haciendo-visualizaciones.html#cb241-6"></a><span class="st">                  </span><span class="kw">tm_layout</span>(<span class="dt">legend.format =</span> <span class="kw">list</span>(<span class="dt">text.separator =</span> <span class="st">&quot;-&quot;</span>),</span>
+<span id="cb241-7"><a href="haciendo-visualizaciones.html#cb241-7"></a>                            <span class="dt">main.title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb241-8"><a href="haciendo-visualizaciones.html#cb241-8"></a>                            <span class="dt">main.title.size =</span> <span class="fl">0.8</span>, <span class="dt">main.title.position =</span> <span class="st">&#39;center&#39;</span>,</span>
+<span id="cb241-9"><a href="haciendo-visualizaciones.html#cb241-9"></a>                            <span class="dt">frame =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb241-10"><a href="haciendo-visualizaciones.html#cb241-10"></a><span class="st">                  </span><span class="kw">tm_shape</span>(mapaProvincias) <span class="op">+</span></span>
+<span id="cb241-11"><a href="haciendo-visualizaciones.html#cb241-11"></a><span class="st">                  </span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb241-12"><a href="haciendo-visualizaciones.html#cb241-12"></a>tmapClorophet</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-186-1.png" width="672" /></p>
+<p>Ahora podemos ver como guardar un objeto tmap usando <strong>save_tmap</strong>. Tener en cuenta que el ancho y el alto en este caso tienen que multiplicarlo por 300 para conocer el tamaño en píxeles total (esto es porque tiene predefinido ppi=300). Por ejemplo, el archivo “tmapClorophet.png” debería tener 900px de ancho.</p>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="haciendo-visualizaciones.html#cb242-1"></a><span class="kw">save_tmap</span>(<span class="dt">tm =</span> tmapClorophet, <span class="dt">filename =</span> <span class="st">&quot;tmapClorophet.png&quot;</span>,<span class="dt">width =</span> <span class="dv">3</span>)</span></code></pre></div>
+</div>
+<div id="leaflet" class="section level2">
+<h2><span class="header-section-number">7.1</span> Leaflet</h2>
+<p>Hasta ahora hemos estado trabajando con gráficos estáticos. En muchas oportunidades son útiles, y cuando debemos hacer reportes o determinadas presentaciones son nuestra única opción. Sin embargo, los mapas interactivos nos permiten consultar los datos de una manera distinta y son una buena alternativa para compartir las visualizaciones. Vamos a ver un simple ejemplo de utilización de <strong>Leaflet</strong>, mostrando las mismas visualizaciones que estuvimos haciendo hasta el momento para los datos del censo.</p>
+<p>Todas las visualizaciones de leaflet deben comenzar con la función leaflet() y, a diferencia de ggplot2 y tmap, en leaflet usamos <strong>%&gt;%</strong> para ir agregando las capas. <strong>addTiles()</strong> plotea la “imagen” del mundo, si no usamos esa función solo veremos un output gris</p>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="haciendo-visualizaciones.html#cb243-1"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">addTiles</span>()</span></code></pre></div>
+<p>Ahora deberíamos indicar qué tipo de figura deseamos agregar. En nuestro caso, queremos agregar polígonos, por lo que usaremos la función <strong>addPolygons</strong></p>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="haciendo-visualizaciones.html#cb244-1"></a><span class="kw">leaflet</span>(datosCalidad) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb244-2"><a href="haciendo-visualizaciones.html#cb244-2"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb244-3"><a href="haciendo-visualizaciones.html#cb244-3"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data =</span> datosCalidad)</span></code></pre></div>
+<p>Debemos rellenarlos con los valores correspondientes al índice de deficiencia de viviendas que armamos anteriormente. Para eso tenemos que crear una paleta, como ya hicimos en ggplot2 y tmap. En Leaflet lo que tenemos que usar es la función <strong>colorBin</strong>. A ella le pasamos una paleta de RColorBrewer, en orden reverso para que vaya desde verde (valores más bajo) a rojo (valores más altos). Al mismo tiempo, seteamos a FALSE los bordes de los polígonos (stroke=FALSE) y la opacidad a 1 del relleno (fillOpacity=1) para que veamos correctamente los colores.</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="haciendo-visualizaciones.html#cb245-1"></a>pal &lt;-<span class="st"> </span><span class="kw">colorBin</span>(<span class="st">&quot;RdYlGn&quot;</span>, <span class="dt">reverse =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb245-2"><a href="haciendo-visualizaciones.html#cb245-2"></a>                <span class="dt">domain =</span> datosCalidad<span class="op">$</span>indiceCalidad,</span>
+<span id="cb245-3"><a href="haciendo-visualizaciones.html#cb245-3"></a>                <span class="dt">bins =</span> <span class="kw">quantile</span>(datosCalidad<span class="op">$</span>indiceCalidad))</span>
+<span id="cb245-4"><a href="haciendo-visualizaciones.html#cb245-4"></a></span>
+<span id="cb245-5"><a href="haciendo-visualizaciones.html#cb245-5"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb245-6"><a href="haciendo-visualizaciones.html#cb245-6"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb245-7"><a href="haciendo-visualizaciones.html#cb245-7"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data=</span>datosCalidad,</span>
+<span id="cb245-8"><a href="haciendo-visualizaciones.html#cb245-8"></a>              <span class="dt">stroke =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb245-9"><a href="haciendo-visualizaciones.html#cb245-9"></a>              <span class="dt">fillColor =</span> <span class="op">~</span><span class="kw">pal</span>(indiceCalidad),</span>
+<span id="cb245-10"><a href="haciendo-visualizaciones.html#cb245-10"></a>              <span class="dt">fillOpacity =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>Para terminar, vamos a agregar los labels, es decir lo que aparece cuando nos posicionamos sobre alguno de los polígonos. Esto lo hacemos con el arugmento <strong>label</strong> dentro de los polígonos. Al igual que <strong>fillColor</strong>, debemos pasarlo como fórmula, es decir usando el prefijo <strong>~</strong>, y luego usamos la función <strong>paste0</strong>, que como ya hemos visto en clases anteriores “pega” o colapsa los vectores. En este ejemplo queremos que diga el nombre del departamento, dos puntos, el valor del índice de calidad y luego el signo %. Además, agregamos el contorno de las provincias agregando otra capa de polígonos, pero sin relleno y solo con el contorno en blanco</p>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="haciendo-visualizaciones.html#cb246-1"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb246-2"><a href="haciendo-visualizaciones.html#cb246-2"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb246-3"><a href="haciendo-visualizaciones.html#cb246-3"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data =</span> datosCalidad,</span>
+<span id="cb246-4"><a href="haciendo-visualizaciones.html#cb246-4"></a>              <span class="dt">stroke =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb246-5"><a href="haciendo-visualizaciones.html#cb246-5"></a>              <span class="dt">fillColor =</span> <span class="op">~</span><span class="kw">pal</span>(indiceCalidad),</span>
+<span id="cb246-6"><a href="haciendo-visualizaciones.html#cb246-6"></a>              <span class="dt">fillOpacity =</span> <span class="dv">1</span>,</span>
+<span id="cb246-7"><a href="haciendo-visualizaciones.html#cb246-7"></a>              <span class="dt">label =</span> <span class="op">~</span><span class="kw">paste0</span>(NOMDPTO,<span class="st">&quot;: &quot;</span>, indiceCalidad, <span class="st">&#39;%&#39;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb246-8"><a href="haciendo-visualizaciones.html#cb246-8"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data=</span>mapaProvincias,</span>
+<span id="cb246-9"><a href="haciendo-visualizaciones.html#cb246-9"></a>              <span class="dt">color =</span> <span class="st">&#39;white&#39;</span>,</span>
+<span id="cb246-10"><a href="haciendo-visualizaciones.html#cb246-10"></a>              <span class="dt">weight =</span> <span class="dv">2</span>,</span>
+<span id="cb246-11"><a href="haciendo-visualizaciones.html#cb246-11"></a>              <span class="dt">fill =</span> <span class="ot">NA</span>)</span></code></pre></div>
+</div>
+<div id="ejercicios-2" class="section level2">
+<h2><span class="header-section-number">7.2</span> Ejercicios</h2>
+<p>En la carpeta de datos del censo todavía hay dos archivos csv que no usamos: los datos de hogares y de individuos. Usando nuestro dataset de viviendas, unan los hogares a las viviendas y, luego, los hogares a los individuos. Una vez que tengan el dataset con los individuos, y el departamento al que pertenecen, creen un mapa con <strong>tmap</strong>, tal como hicimos con el índice de vivienda, pero ahora con la edad promedio por departamento (tener en cuenta que la variable “años cumplidos” es la P03)</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="mapas.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="making-polygons-comparable-again.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["AnalisisEspacialEnR.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

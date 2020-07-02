@@ -173,7 +173,7 @@ Aprovechemos la nueva información que tenemos para poder hacer mapas. Usando gg
 Lo primero que tenemos que hacer en ggplot, para que la leyenda represente correctamente los colores de nuestro mapa, es juntar todo en un mismo dataset que sea largo. Recuerden que esto es lo necesario para trabajar con paneles y facet_wrap().
 
 Seleccionamos las dos y usamos pivot_longer()
-```{r tidy=TRUE}
+```{r message=FALSE, warning=FALSE, tidy=TRUE}
 nuevosDatosLonger <- nuevosDatos %>% 
                      select(avgAge,avgAge_2001) %>%
                      pivot_longer(names_to = "Year",values_to = "AvgAge",cols = c("avgAge","avgAge_2001")) %>%

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6 Mapas | Herramientas de análisis espacial en R</title>
+  <meta name="description" content="Usando R para analizar datos espaciales" />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6 Mapas | Herramientas de análisis espacial en R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Usando R para analizar datos espaciales" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6 Mapas | Herramientas de análisis espacial en R" />
+  
+  <meta name="twitter:description" content="Usando R para analizar datos espaciales" />
+  
+
+<meta name="author" content="Martin Montane" />
+
+
+<meta name="date" content="2020-07-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="el-ritual-del-aprendizaje-automático-parte-2.html"/>
+<link rel="next" href="making-polygons-comparable-again.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3.9000/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3.9000/leaflet-providers-plugin.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Herramientas de análisis espacial en R</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#qué-necesitamos-para-arrancar"><i class="fa fa-check"></i>¿Qué necesitamos para arrancar?</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html"><i class="fa fa-check"></i><b>1</b> Datos espaciales en R</a><ul>
+<li class="chapter" data-level="1.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#qué-es-un-dato-espacial"><i class="fa fa-check"></i><b>1.1</b> ¿Qué es un dato espacial?</a></li>
+<li class="chapter" data-level="1.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#dónde-estamos-en-la-tierra"><i class="fa fa-check"></i><b>1.2</b> ¿Dónde estamos en la Tierra?</a></li>
+<li class="chapter" data-level="1.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#coordinate-reference-systems"><i class="fa fa-check"></i><b>1.3</b> Coordinate Reference Systems</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#elipsoides-sistemas-de-coordenadas-y-datums"><i class="fa fa-check"></i><b>1.3.1</b> Elipsoides, sistemas de coordenadas y datums</a></li>
+<li class="chapter" data-level="1.3.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#proyecciones"><i class="fa fa-check"></i><b>1.3.2</b> Proyecciones</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#manos-a-la-obra-dónde-construir-el-próximo-centro-de-salud"><i class="fa fa-check"></i><b>1.4</b> Manos a la obra ¿Dónde construir el próximo centro de salud?</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#cargando-los-datos-espaciales"><i class="fa fa-check"></i><b>1.4.1</b> Cargando los datos espaciales</a></li>
+<li class="chapter" data-level="1.4.2" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#detectando-la-cobertura-actual."><i class="fa fa-check"></i><b>1.4.2</b> Detectando la cobertura actual.</a></li>
+<li class="chapter" data-level="1.4.3" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#distancia-contra-la-avenida-más-cercana"><i class="fa fa-check"></i><b>1.4.3</b> Distancia contra la avenida más cercana</a></li>
+<li class="chapter" data-level="1.4.4" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#incorporando-el-resto-de-las-variables"><i class="fa fa-check"></i><b>1.4.4</b> Incorporando el resto de las variables</a></li>
+<li class="chapter" data-level="1.4.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#creando-nuestro-índice-de-demanda-de-salud"><i class="fa fa-check"></i><b>1.4.5</b> Creando nuestro índice de demanda de salud</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="datos-espaciales-en-r.html"><a href="datos-espaciales-en-r.html#ejercicio"><i class="fa fa-check"></i><b>1.5</b> Ejercicio</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><i class="fa fa-check"></i><b>2</b> Geocoding: de la representación humana al sistema de coordenadas</a><ul>
+<li class="chapter" data-level="2.1" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#qué-es-la-geocodificación-o-geocoding"><i class="fa fa-check"></i><b>2.1</b> ¿Qué es la geocodificación o geocoding?</a></li>
+<li class="chapter" data-level="2.2" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#api-interfaz-de-programación-de-aplicaciones"><i class="fa fa-check"></i><b>2.2</b> API: Interfaz de programación de aplicaciones</a></li>
+<li class="chapter" data-level="2.3" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#servicio-de-normalización-de-datos-geográficos-de-argentina"><i class="fa fa-check"></i><b>2.3</b> Servicio de Normalización de Datos Geográficos de Argentina</a></li>
+<li class="chapter" data-level="2.4" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#google-geocode-api"><i class="fa fa-check"></i><b>2.4</b> Google geocode API</a></li>
+<li class="chapter" data-level="2.5" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#diferencias-entre-las-dos-apis"><i class="fa fa-check"></i><b>2.5</b> Diferencias entre las dos APIs</a></li>
+<li class="chapter" data-level="2.6" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#una-tercera-alternativa-herer"><i class="fa fa-check"></i><b>2.6</b> Una tercera alternativa: hereR</a></li>
+<li class="chapter" data-level="2.7" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#comparando-todos-los-métodos"><i class="fa fa-check"></i><b>2.7</b> Comparando todos los métodos</a></li>
+<li class="chapter" data-level="2.8" data-path="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html"><a href="geocoding-de-la-representación-humana-al-sistema-de-coordenadas.html#ejercicios"><i class="fa fa-check"></i><b>2.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><i class="fa fa-check"></i><b>3</b> Tiempos de viaje y análisis de accesibilidad</a><ul>
+<li class="chapter" data-level="3.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#la-distancia-espacial-y-la-distancia-de-viaje"><i class="fa fa-check"></i><b>3.1</b> La distancia espacial y la distancia de viaje</a></li>
+<li class="chapter" data-level="3.2" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-paquetes-que-vamos-a-utilizar"><i class="fa fa-check"></i><b>3.2</b> Los paquetes que vamos a utilizar</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cómo-usar-los-servicios-de-here"><i class="fa fa-check"></i><b>3.2.1</b> Cómo usar los servicios de HERE</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#los-datos-repositorio-de-datos-del-gcba"><i class="fa fa-check"></i><b>3.3</b> Los datos: repositorio de datos del GCBA</a></li>
+<li class="chapter" data-level="3.4" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#transformando-nuestros-datos"><i class="fa fa-check"></i><b>3.4</b> Transformando nuestros datos</a></li>
+<li class="chapter" data-level="3.5" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#cuánto-tardo-en-llegar-al-monumental"><i class="fa fa-check"></i><b>3.5</b> ¿Cuánto tardo en llegar al monumental?</a></li>
+<li class="chapter" data-level="3.6" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#midiendo-la-cobertura-de-los-parques"><i class="fa fa-check"></i><b>3.6</b> Midiendo la cobertura de los parques</a></li>
+<li class="chapter" data-level="3.7" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#redondeando-caracterizando-la-oferta-de-los-espacios-verdes-en-caba"><i class="fa fa-check"></i><b>3.7</b> Redondeando: caracterizando la oferta de los espacios verdes en CABA</a></li>
+<li class="chapter" data-level="3.8" data-path="tiempos-de-viaje-y-análisis-de-accesibilidad.html"><a href="tiempos-de-viaje-y-análisis-de-accesibilidad.html#ejercicios-1"><i class="fa fa-check"></i><b>3.8</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html"><i class="fa fa-check"></i><b>4</b> El ritual del aprendizaje automático (Parte 1)</a><ul>
+<li class="chapter" data-level="4.1" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-1-carga-de-los-datos"><i class="fa fa-check"></i><b>4.1</b> Paso 1: Carga de los datos</a></li>
+<li class="chapter" data-level="4.2" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-2-análisis-exploratorio-y-corrección-de-errores"><i class="fa fa-check"></i><b>4.2</b> Paso 2: análisis exploratorio y corrección de errores</a></li>
+<li class="chapter" data-level="4.3" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-3-crear-nuevas-variables-o-feature-engineering"><i class="fa fa-check"></i><b>4.3</b> Paso 3: crear nuevas variables (o <em>feature engineering</em>)</a></li>
+<li class="chapter" data-level="4.4" data-path="el-ritual-del-aprendizaje-automático-parte-1.html"><a href="el-ritual-del-aprendizaje-automático-parte-1.html#paso-4-criterio-de-selección-y-optimización-de-los-parámetros"><i class="fa fa-check"></i><b>4.4</b> Paso 4: criterio de selección y optimización de los parámetros</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html"><i class="fa fa-check"></i><b>5</b> El ritual del aprendizaje automático (Parte 2)</a><ul>
+<li class="chapter" data-level="5.1" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#separando-dataset-de-entrenamiento-y-de-testing"><i class="fa fa-check"></i><b>5.1</b> Separando dataset de entrenamiento y de testing</a></li>
+<li class="chapter" data-level="5.2" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#nuestra-receta-y-su-preparación"><i class="fa fa-check"></i><b>5.2</b> Nuestra receta y su preparación</a></li>
+<li class="chapter" data-level="5.3" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#selección-de-modelo-y-espacio-de-búsqueda-de-los-parámetros"><i class="fa fa-check"></i><b>5.3</b> Selección de modelo y espacio de búsqueda de los parámetros</a></li>
+<li class="chapter" data-level="5.4" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#entrenando-los-modelos-en-nuestro-espacio-de-búsqueda"><i class="fa fa-check"></i><b>5.4</b> Entrenando los modelos en nuestro espacio de búsqueda</a></li>
+<li class="chapter" data-level="5.5" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#seleccionando-el-mejor-modelo-y-analizando-los-resultados"><i class="fa fa-check"></i><b>5.5</b> Seleccionando el mejor modelo y analizando los resultados</a></li>
+<li class="chapter" data-level="5.6" data-path="el-ritual-del-aprendizaje-automático-parte-2.html"><a href="el-ritual-del-aprendizaje-automático-parte-2.html#importancia-de-las-variables"><i class="fa fa-check"></i><b>5.6</b> Importancia de las variables</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="mapas.html"><a href="mapas.html"><i class="fa fa-check"></i><b>6</b> Mapas</a><ul>
+<li class="chapter" data-level="6.1" data-path="mapas.html"><a href="mapas.html#trabajando-con-el-censo-2010"><i class="fa fa-check"></i><b>6.1</b> Trabajando con el censo 2010</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="mapas.html"><a href="mapas.html#datos-del-censo-2010"><i class="fa fa-check"></i><b>6.1.1</b> Datos del censo 2010</a></li>
+<li class="chapter" data-level="6.1.2" data-path="mapas.html"><a href="mapas.html#polígonos-del-censo-2010"><i class="fa fa-check"></i><b>6.1.2</b> Polígonos del Censo 2010</a></li>
+<li class="chapter" data-level="6.1.3" data-path="mapas.html"><a href="mapas.html#uniendo-los-datos-con-sus-polígonos"><i class="fa fa-check"></i><b>6.1.3</b> Uniendo los datos con sus polígonos</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="mapas.html"><a href="mapas.html#haciendo-visualizaciones"><i class="fa fa-check"></i><b>6.2</b> Haciendo visualizaciones</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="mapas.html"><a href="mapas.html#ggplot2"><i class="fa fa-check"></i><b>6.2.1</b> Ggplot2</a></li>
+<li class="chapter" data-level="6.2.2" data-path="mapas.html"><a href="mapas.html#tmap"><i class="fa fa-check"></i><b>6.2.2</b> Tmap</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="mapas.html"><a href="mapas.html#leaflet"><i class="fa fa-check"></i><b>6.3</b> Leaflet</a></li>
+<li class="chapter" data-level="6.4" data-path="mapas.html"><a href="mapas.html#ejercicios-2"><i class="fa fa-check"></i><b>6.4</b> Ejercicios</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html"><i class="fa fa-check"></i><b>7</b> Making polygons comparable again</a><ul>
+<li class="chapter" data-level="7.1" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#carga-de-los-datos"><i class="fa fa-check"></i><b>7.1</b> Carga de los datos</a></li>
+<li class="chapter" data-level="7.2" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#diferentes-radios-censales"><i class="fa fa-check"></i><b>7.2</b> Diferentes radios censales</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#breve-desvío-haciendo-lo-mismo-con-ggplot"><i class="fa fa-check"></i><b>7.2.1</b> Breve desvío: haciendo lo mismo con ggplot()</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#make-polygons-comparable-again"><i class="fa fa-check"></i><b>7.3</b> Make polygons comparable again</a></li>
+<li class="chapter" data-level="7.4" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#haciendo-mapas-de-nuestros-nuevos-datos"><i class="fa fa-check"></i><b>7.4</b> Haciendo mapas de nuestros nuevos datos</a></li>
+<li class="chapter" data-level="7.5" data-path="making-polygons-comparable-again.html"><a href="making-polygons-comparable-again.html#ejercicio-1"><i class="fa fa-check"></i><b>7.5</b> Ejercicio</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Herramientas de análisis espacial en R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="mapas" class="section level1">
+<h1><span class="header-section-number">6</span> Mapas</h1>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="mapas.html#cb199-1"></a><span class="kw">require</span>(tidyverse) <span class="co"># Para manipulación de nuestros datos</span></span>
+<span id="cb199-2"><a href="mapas.html#cb199-2"></a><span class="kw">require</span>(sf) <span class="co"># Para manipulación de nuestros datos (espaciales)</span></span>
+<span id="cb199-3"><a href="mapas.html#cb199-3"></a><span class="kw">require</span>(ggplot2)</span>
+<span id="cb199-4"><a href="mapas.html#cb199-4"></a><span class="kw">require</span>(ggthemes) <span class="co"># Sirve para dejar más lindos nuestros gráficos de ggplot</span></span>
+<span id="cb199-5"><a href="mapas.html#cb199-5"></a><span class="kw">require</span>(RColorBrewer) <span class="co"># Ídem</span></span>
+<span id="cb199-6"><a href="mapas.html#cb199-6"></a><span class="kw">require</span>(leaflet) <span class="co"># Sirve para hacer mapas intereactivos</span></span>
+<span id="cb199-7"><a href="mapas.html#cb199-7"></a><span class="kw">require</span>(tmap)</span></code></pre></div>
+<div id="trabajando-con-el-censo-2010" class="section level2">
+<h2><span class="header-section-number">6.1</span> Trabajando con el censo 2010</h2>
+<div id="datos-del-censo-2010" class="section level3">
+<h3><span class="header-section-number">6.1.1</span> Datos del censo 2010</h3>
+<p>Hasta ahora hemos hecho énfasis en el dataset de propiedades de Properati en CABA. Vamos a retomar ese tema un poco más adelante, pero para volver a entrenar las fases anteriores del proceso de data science (importar, transformar y graficar datos) vamos a utilizar los datos del Censo 2010, provistos por <a href="http://datar.noip.me/" class="uri">http://datar.noip.me/</a>. Debido a que el archivo .rar pesa 400mb - y que varias de las actividades que vamos a hacer probablemente no puedan ejecutarse en todas las computadores del curso, por un tema de memoria RAM - lo que hice fue, al igual que la clase 2, tomar una muestra estratificada del censo de tal manera que puedan recorrer todo el camino.</p>
+<p>El archivo con la muestra estratificada pueden descargarlo desde nuestro repositorio. Para replicar la experiencia que tendrían si descargaran los datos del censo desde <a href="http://datar.noip.me/" class="uri">http://datar.noip.me/</a>, se trata de un .rar cuyo contenido deberían extraer en la carpeta del proyecto (o alguna subcarpeta). Hay ocho archivos .csv, que eventualmente usaremos, y un archivo descripción.txt, donde tenemos la información sobre qué es cada variable y cuales son los valores que pueden tomar. Además, existe una carpeta que se llama “labels”, donde se encuentra la información sobre qué significa cada uno de los valores de las variables para un subconjunto de ellas. De cualquier manera, no lo vamos a usar ya que esa información se encuentra en el archivo .txt.</p>
+<p>Pueden acceder al archivo .rar que contiene todos estos archivos desde <a href="https://github.com/datalab-UTDT/datasets/raw/master/CNPHyV-2010Sample.rar" class="uri">https://github.com/datalab-UTDT/datasets/raw/master/CNPHyV-2010Sample.rar</a>. Recuerden que deben descargarlo en alguna de las carpetas dentro de sus proyectos.</p>
+<p>El censo del 2010 en Argentina distingue entre las siguientes tres entidades principales:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Viviendas</strong>. Según el INDEC, una vivienda es “un espacio donde viven personas”. En realidad, un lugar donde podrían vivir personas, pero al momento del censo pueden estar ocupados o desocupadas.</li>
+<li><strong>Hogares</strong>. Un hogar para el INDEC es una persona o grupo de personas que viven 1) bajo el mismo techo y 2) comparten los gastos de alimentación.</li>
+<li><strong>Individuos</strong></li>
+</ol>
+<p>Los datos vinculados a cada una de estas unidades están almacenadas en diversos archivos .csv: “VIVIENDA.csv”, “HOGAR.csv” y “PERSONA.csv”. Comencemos primero con las viviendas:</p>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="mapas.html#cb200-1"></a>viviendas &lt;-<span class="st"> </span><span class="kw">read_delim</span>(<span class="dt">file =</span> <span class="st">&#39;data/CNPHyV-2010Sample/VIVIENDA.csv&#39;</span>,<span class="dt">delim=</span><span class="st">&quot;;&quot;</span>)</span></code></pre></div>
+<p>Estén atentos que estamos usando la función <strong>read_delim</strong> en lugar de <strong>read_csv</strong>. La principal diferencia es que con read_delim() podemos indicar con el argumento <em>delim</em> el caracter que marca la separación entre datos</p>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="mapas.html#cb201-1"></a><span class="kw">glimpse</span>(viviendas)</span></code></pre></div>
+<pre><code>## Rows: 52,508
+## Columns: 13
+## $ VIVIENDA_REF_ID &lt;dbl&gt; 17831, 32505, 99783, 8879, 78302, 12649, 87383, 50584, 4089, 4494, 91055, 58043, 131148, 108284, 23444,...
+## $ RADIO_REF_ID    &lt;dbl&gt; 61, 88, 236, 45, 181, 51, 204, 121, 27, 29, 214, 133, 329, 259, 72, 221, 66, 264, 121, 117, 285, 122, 3...
+## $ TIPVV           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ V01             &lt;dbl&gt; 4, 4, 1, 4, 4, 4, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1...
+## $ V02             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ V00             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...
+## $ URP             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ INCALSERV       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3...
+## $ INMAT           &lt;dbl&gt; 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2...
+## $ MUNI            &lt;dbl&gt; 20010001, 20010001, 20010001, 20010001, 20010001, 20010001, 20010001, 20010001, 20010001, 20010001, 200...
+## $ LOCAL           &lt;dbl&gt; 2001010, 2001010, 2001010, 2001010, 2001010, 2001010, 2001010, 2001010, 2001010, 2001010, 2001010, 2001...
+## $ INCALCONS       &lt;dbl&gt; 1, 1, 1, 1, 1, 2, 1, 1, 2, 3, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2...
+## $ TOTHOG          &lt;dbl&gt; 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...</code></pre>
+<p>Son 52.508 viviendas, con 13 variables. Varias de ellas nos dan información sobre la ubicación geógrafica. Por ejemplo, <strong>RADIO_REF_ID</strong> es una variable que vincula a cada vivienda con un determinado <strong>radio censal</strong>, la unidad geográfica de menor tamaño del censo. La muestra con la que estamos trabajando está estratificada a nivel de <strong>departamentos</strong>, por lo que pueden existir radios censales para los cuales no exista ninguna información. <strong>VIVIENDA_REF_ID</strong> identifica de manera única a las viviendas, y será de mucha utilidad más tarde para usar información sobre los hogares y los invididuos.</p>
+<p>Con respecto a los datos específicos sobre las viviendas, dos de los más interesantes son <strong>INCALSERV</strong>, e <strong>INCALCONS</strong> que nos indican el índice de calidad de conexiones a servicios públicos y el índice de calidad de la construcción de la vivienda, respectivamente. La página Redatam (<a href="https://redatam.indec.gob.ar/argbin/RpWebEngine.exe/PortalAction?&amp;MODE=MAIN&amp;BASE=CPV2010B&amp;MAIN=WebServerMain.inl" class="uri">https://redatam.indec.gob.ar/argbin/RpWebEngine.exe/PortalAction?&amp;MODE=MAIN&amp;BASE=CPV2010B&amp;MAIN=WebServerMain.inl</a>) del Censo 2010 de Argentina nos permite ver cuáles son todas las variables del “cuestionario básico” y las variables que pueden tomar. En este caso, ambas variables pueden tomar los valores 1,2 o 3 (“Satisfactoria”, “Básica” e “Insuficiente”).</p>
+<p>Dejemos por un lado las variables referidas a los índices de calidad. Recuerden que estamos trabajando con una muestra estratificada a nivel departamental, por lo que nuestros gráficos tendrán más sentido a esa agregación o mayor (nivel provincial). Lamentablemente, nuestro dataset de viviendas no nos dice a cuál departamento pertenece cada vivienda, pero, como anticipamos anteriormente, sí nos da información sobre su radio censal en <strong>RADIO_REF_ID</strong>. Los radios censales se agrupan en <strong>fracciones censales</strong>, que a su vez se asocian a departamentos y estos últimos a las provincias. Como les dije, hoy vamos a leer muchos archivos para prácticar ¡Allá vamos!</p>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="mapas.html#cb203-1"></a>radios &lt;-<span class="st"> </span><span class="kw">read_delim</span>(<span class="dt">file =</span> <span class="st">&#39;data/CNPHyV-2010Sample/RADIO.csv&#39;</span>, <span class="dt">delim=</span><span class="st">&quot;;&quot;</span>)</span>
+<span id="cb203-2"><a href="mapas.html#cb203-2"></a>fracciones &lt;-<span class="st"> </span><span class="kw">read_delim</span>(<span class="dt">file =</span> <span class="st">&quot;data/CNPHyV-2010Sample/FRAC.csv&quot;</span>, <span class="dt">delim=</span><span class="st">&quot;;&quot;</span>)</span>
+<span id="cb203-3"><a href="mapas.html#cb203-3"></a><span class="co"># El parámetro LOCALE nos permite especificar algunas caracteristicas sobre cómo leer los datos, en este caso pedimos que el encoding sea UTF-8. Además, usamos trimws() para sacar alguno de los espacios que tiene la columna NOMDPTO</span></span>
+<span id="cb203-4"><a href="mapas.html#cb203-4"></a>departamentos &lt;-<span class="st"> </span><span class="kw">read_delim</span>(<span class="dt">file =</span> <span class="st">&quot;data/CNPHyV-2010Sample/DPTO.csv&quot;</span>, <span class="dt">delim=</span><span class="st">&quot;;&quot;</span>,<span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb203-5"><a href="mapas.html#cb203-5"></a><span class="st">                 </span><span class="kw">mutate</span>(<span class="dt">NOMDPTO=</span><span class="kw">trimws</span>(NOMDPTO))</span></code></pre></div>
+<p>Bien, si no tuvieron ningun problemas con los separadores - ni con la dirección del archivo -, ya están en condiciones de observar qué contenido tiene cada uno de nuestros objetos. Veamos:</p>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="mapas.html#cb204-1"></a><span class="kw">glimpse</span>(radios)</span></code></pre></div>
+<pre><code>## Rows: 52,382
+## Columns: 3
+## $ RADIO_REF_ID &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,...
+## $ FRAC_REF_ID  &lt;dbl&gt; 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3...
+## $ IDRADIO      &lt;chr&gt; &quot;01&quot;, &quot;01&quot;, &quot;02&quot;, &quot;03&quot;, &quot;04&quot;, &quot;05&quot;, &quot;06&quot;, &quot;07&quot;, &quot;08&quot;, &quot;09&quot;, &quot;10&quot;, &quot;11&quot;, &quot;12&quot;, &quot;13&quot;, &quot;14&quot;, &quot;15&quot;, &quot;16&quot;, &quot;17&quot;...</code></pre>
+<p><strong>radios</strong> es un Data Frame con 3 variables y 52.382 observaciones. Cada una de las observaciones corresponde a un radio único, por lo que en el Censo 2010 los radios censales fueron levemente superior a 52.000. Como vemos, cada radio censal se asocia a una única fracción censal. Veamos ahora nuestro data frame que contiene información sobre las fracciones.</p>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="mapas.html#cb206-1"></a><span class="kw">glimpse</span>(fracciones)</span></code></pre></div>
+<pre><code>## Rows: 5,428
+## Columns: 3
+## $ FRAC_REF_ID &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, ...
+## $ DPTO_REF_ID &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2,...
+## $ IDFRAC      &lt;chr&gt; &quot;01&quot;, &quot;02&quot;, &quot;03&quot;, &quot;04&quot;, &quot;05&quot;, &quot;06&quot;, &quot;07&quot;, &quot;08&quot;, &quot;09&quot;, &quot;10&quot;, &quot;11&quot;, &quot;12&quot;, &quot;13&quot;, &quot;14&quot;, &quot;15&quot;, &quot;16&quot;, &quot;17&quot;, &quot;18&quot;,...</code></pre>
+<p>Bien, las fracciones censales son 5.428 y cada una de ellas corresponde a un determinado departamento, que podemos a su vez consultar en el data frame homónimo:</p>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="mapas.html#cb208-1"></a><span class="kw">glimpse</span>(departamentos)</span></code></pre></div>
+<pre><code>## Rows: 527
+## Columns: 5
+## $ DPTO_REF_ID &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, ...
+## $ PROV_REF_ID &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+## $ IDDPTO      &lt;chr&gt; &quot;001&quot;, &quot;002&quot;, &quot;003&quot;, &quot;004&quot;, &quot;005&quot;, &quot;006&quot;, &quot;007&quot;, &quot;008&quot;, &quot;009&quot;, &quot;010&quot;, &quot;011&quot;, &quot;012&quot;, &quot;013&quot;, &quot;014&quot;, &quot;015&quot;, &quot;0...
+## $ DPTO        &lt;dbl&gt; 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 6028, 6035, 6091,...
+## $ NOMDPTO     &lt;chr&gt; &quot;Comuna 01&quot;, &quot;Comuna 02&quot;, &quot;Comuna 03&quot;, &quot;Comuna 04&quot;, &quot;Comuna 05&quot;, &quot;Comuna 06&quot;, &quot;Comuna 07&quot;, &quot;Comuna 08&quot;, &quot;Co...</code></pre>
+<p>El data frame departamentos cuenta con más información, ya que también incluye el nombre de los departamentos.</p>
+<p>Ya tenemos nuestro camino para unir a las viviendas con sus respectivos departamentos: tenemos que combinar los radios con las fracciones y luego las fracciones con sus departamentos. Por suerte, <strong>tidyverse</strong> nos brinda una función importante para lograr esto: <strong>left_join</strong>. Veamos cómo funciona:</p>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="mapas.html#cb210-1"></a>radios &lt;-<span class="st"> </span><span class="kw">left_join</span>(radios, fracciones, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;FRAC_REF_ID&quot;</span>))</span>
+<span id="cb210-2"><a href="mapas.html#cb210-2"></a><span class="kw">glimpse</span>(radios)</span></code></pre></div>
+<pre><code>## Rows: 52,382
+## Columns: 5
+## $ RADIO_REF_ID &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,...
+## $ FRAC_REF_ID  &lt;dbl&gt; 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3...
+## $ IDRADIO      &lt;chr&gt; &quot;01&quot;, &quot;01&quot;, &quot;02&quot;, &quot;03&quot;, &quot;04&quot;, &quot;05&quot;, &quot;06&quot;, &quot;07&quot;, &quot;08&quot;, &quot;09&quot;, &quot;10&quot;, &quot;11&quot;, &quot;12&quot;, &quot;13&quot;, &quot;14&quot;, &quot;15&quot;, &quot;16&quot;, &quot;17&quot;...
+## $ DPTO_REF_ID  &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ IDFRAC       &lt;chr&gt; &quot;01&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;...</code></pre>
+<p>Si se fijan bien, el data frame <strong>radios</strong> ahora tiene 5 variables: las 3 iniciales y dos nuevas: <strong>DPTO_REF_ID</strong> e <strong>IDFRAC</strong>. La cantidad de filas es la mismas que antes ¿Qué es lo que hace la función <strong>left_join</strong>? Para cada observación del primer data frame que le pasamos (<strong>radios</strong>) incorpora las variables que están en el segundo dataset que le pasamos (<strong>fracciones</strong>) usando una o más columnas que sirven para unir ambos data frames, en este caso <strong>FRAC_REF_ID</strong>.</p>
+<p>Uno podria pensar que como ahora tenemos el ID del departamento ya podemos unir a las viviendas con los departamentos. Sin embargo, como vamos a ver más adelante los ids de los departamentos en estas tablas no coinciden con los del shapefile disponible en el mismo repositorio. Por esta razón, vamos a tener que trabajar con los códigos de los departamentos. Para esto, debemos hacer un nuevo left_join entre las fracciones censales y el data frame con el listado de departamentos para obtener el código:</p>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="mapas.html#cb212-1"></a>radios &lt;-<span class="st"> </span><span class="kw">left_join</span>(radios, departamentos <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(DPTO_REF_ID, DPTO), <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;DPTO_REF_ID&quot;</span>))</span>
+<span id="cb212-2"><a href="mapas.html#cb212-2"></a><span class="kw">glimpse</span>(radios)</span></code></pre></div>
+<pre><code>## Rows: 52,382
+## Columns: 6
+## $ RADIO_REF_ID &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,...
+## $ FRAC_REF_ID  &lt;dbl&gt; 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3...
+## $ IDRADIO      &lt;chr&gt; &quot;01&quot;, &quot;01&quot;, &quot;02&quot;, &quot;03&quot;, &quot;04&quot;, &quot;05&quot;, &quot;06&quot;, &quot;07&quot;, &quot;08&quot;, &quot;09&quot;, &quot;10&quot;, &quot;11&quot;, &quot;12&quot;, &quot;13&quot;, &quot;14&quot;, &quot;15&quot;, &quot;16&quot;, &quot;17&quot;...
+## $ DPTO_REF_ID  &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ IDFRAC       &lt;chr&gt; &quot;01&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;...
+## $ DPTO         &lt;dbl&gt; 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001, 2001...</code></pre>
+<p>Ya podemos vincular las viviendas a los departamentos, ya que nuestro data frame de viviendas tiene una variable que identifica a cada radio, y nuestro data frame que acabamos de crear contiene el mismo ID y lo asigna al departamento correspondiente. Antes de aplicar el <strong>left_join</strong>, es importante marcar que siempre nos devuelve <strong>todas</strong> las columnas de ambos dataframes. Esto es ineficiente en muchos casos, por ejemplo a nosotros solo nos interesa agregar la información sobre <strong>DPTO</strong> (el código del departamento). La forma más fácil de evitar hacer innecesariamente grande nuestro dataset es eliminar las variables antes de hacer el join:</p>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="mapas.html#cb214-1"></a>viviendas &lt;-<span class="st"> </span><span class="kw">left_join</span>(<span class="dt">x =</span> viviendas,</span>
+<span id="cb214-2"><a href="mapas.html#cb214-2"></a>                       <span class="dt">y =</span> radios <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(RADIO_REF_ID, DPTO),</span>
+<span id="cb214-3"><a href="mapas.html#cb214-3"></a>                       <span class="dt">by =</span> <span class="st">&quot;RADIO_REF_ID&quot;</span>)</span>
+<span id="cb214-4"><a href="mapas.html#cb214-4"></a><span class="kw">str</span>(viviendas) <span class="co"># En la 14va columna tenemos el departamento al que pertenece</span></span></code></pre></div>
+<pre><code>## tibble [52,508 x 14] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ VIVIENDA_REF_ID: num [1:52508] 17831 32505 99783 8879 78302 ...
+##  $ RADIO_REF_ID   : num [1:52508] 61 88 236 45 181 51 204 121 27 29 ...
+##  $ TIPVV          : num [1:52508] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ V01            : num [1:52508] 4 4 1 4 4 4 4 4 1 1 ...
+##  $ V02            : num [1:52508] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ V00            : num [1:52508] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ URP            : num [1:52508] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ INCALSERV      : num [1:52508] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ INMAT          : num [1:52508] 1 1 1 1 1 2 1 1 2 2 ...
+##  $ MUNI           : num [1:52508] 2e+07 2e+07 2e+07 2e+07 2e+07 ...
+##  $ LOCAL          : num [1:52508] 2e+06 2e+06 2e+06 2e+06 2e+06 ...
+##  $ INCALCONS      : num [1:52508] 1 1 1 1 1 2 1 1 2 3 ...
+##  $ TOTHOG         : num [1:52508] 1 1 1 1 1 2 1 1 1 1 ...
+##  $ DPTO           : num [1:52508] 2001 2001 2001 2001 2001 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   VIVIENDA_REF_ID = col_double(),
+##   ..   RADIO_REF_ID = col_double(),
+##   ..   TIPVV = col_double(),
+##   ..   V01 = col_double(),
+##   ..   V02 = col_double(),
+##   ..   V00 = col_double(),
+##   ..   URP = col_double(),
+##   ..   INCALSERV = col_double(),
+##   ..   INMAT = col_double(),
+##   ..   MUNI = col_double(),
+##   ..   LOCAL = col_double(),
+##   ..   INCALCONS = col_double(),
+##   ..   TOTHOG = col_double()
+##   .. )</code></pre>
+</div>
+<div id="polígonos-del-censo-2010" class="section level3">
+<h3><span class="header-section-number">6.1.2</span> Polígonos del Censo 2010</h3>
+<p>El caso del censo es uno de los más clásicos cuando queremos cruzar datos que pertenecen a una determinada organización territorial pero que no tienen incluido un <strong>shapefile</strong> o <strong>geojson</strong> (otra forma de guardar datos espaciales). En ese caso debemos encontrar los polígonos de cada región administrativa (departamentos) y unir los polígonos con los datos (joinearlos), del mismo modo que hicimos anteriormente. Pueden <a href="">descargar estos datos desde aquí</a>. Ya saben como leer shapefiles a R con <strong>read_sf()</strong></p>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="mapas.html#cb216-1"></a>sfDpto &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;data/deptosShapefile/pxdptodatosok.shp&quot;</span>)</span>
+<span id="cb216-2"><a href="mapas.html#cb216-2"></a><span class="kw">glimpse</span>(sfDpto)</span></code></pre></div>
+<pre><code>## Rows: 527
+## Columns: 11
+## $ link       &lt;chr&gt; &quot;02001&quot;, &quot;02002&quot;, &quot;02003&quot;, &quot;02004&quot;, &quot;06091&quot;, &quot;74056&quot;, &quot;02005&quot;, &quot;02006&quot;, &quot;06147&quot;, &quot;02007&quot;, &quot;02008&quot;, &quot;02009&quot;, ...
+## $ codpcia    &lt;chr&gt; &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;06&quot;, &quot;74&quot;, &quot;02&quot;, &quot;02&quot;, &quot;06&quot;, &quot;02&quot;, &quot;02&quot;, &quot;02&quot;, &quot;06&quot;, &quot;02&quot;, &quot;06&quot;, &quot;06&quot;, &quot;02&quot;, &quot;02&quot;, ...
+## $ departamen &lt;chr&gt; &quot;Comuna 1&quot;, &quot;Comuna 2&quot;, &quot;Comuna 3&quot;, &quot;Comuna 4&quot;, &quot;Berazategui&quot;, &quot;La Capital&quot;, &quot;Comuna 5&quot;, &quot;Comuna 6&quot;, &quot;Carlos...
+## $ provincia  &lt;chr&gt; &quot;Ciudad Autónoma de Buenos Aires&quot;, &quot;Ciudad Autónoma de Buenos Aires&quot;, &quot;Ciudad Autónoma de Buenos Aires&quot;, &quot;Ci...
+## $ mujeres    &lt;chr&gt; &quot;107789&quot;, &quot;89890&quot;, &quot;101936&quot;, &quot;115079&quot;, &quot;165636&quot;, &quot;104417&quot;, &quot;98199&quot;, &quot;97206&quot;, &quot;11381&quot;, &quot;118110&quot;, &quot;97692&quot;, &quot;85...
+## $ varones    &lt;chr&gt; &quot;98097&quot;, &quot;68042&quot;, &quot;85601&quot;, &quot;103166&quot;, &quot;158608&quot;, &quot;99602&quot;, &quot;80806&quot;, &quot;78870&quot;, &quot;10856&quot;, &quot;102481&quot;, &quot;89545&quot;, &quot;76207...
+## $ personas   &lt;chr&gt; &quot;205886&quot;, &quot;157932&quot;, &quot;187537&quot;, &quot;218245&quot;, &quot;324244&quot;, &quot;204019&quot;, &quot;179005&quot;, &quot;176076&quot;, &quot;22237&quot;, &quot;220591&quot;, &quot;187237&quot;,...
+## $ hogares    &lt;chr&gt; &quot;84468&quot;, &quot;73156&quot;, &quot;80489&quot;, &quot;76455&quot;, &quot;93164&quot;, &quot;58559&quot;, &quot;76846&quot;, &quot;75189&quot;, &quot;7775&quot;, &quot;81483&quot;, &quot;58204&quot;, &quot;56495&quot;, &quot;...
+## $ viv_part   &lt;chr&gt; &quot;130771&quot;, &quot;107967&quot;, &quot;101161&quot;, &quot;82926&quot;, &quot;96025&quot;, &quot;62166&quot;, &quot;92750&quot;, &quot;93368&quot;, &quot;9446&quot;, &quot;89520&quot;, &quot;55377&quot;, &quot;63322&quot;...
+## $ viv_part_h &lt;chr&gt; &quot;78360&quot;, &quot;70869&quot;, &quot;75605&quot;, &quot;69680&quot;, &quot;86248&quot;, &quot;53317&quot;, &quot;73226&quot;, &quot;72942&quot;, &quot;7504&quot;, &quot;73034&quot;, &quot;48631&quot;, &quot;52355&quot;, &quot;...
+## $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-58.37501 -..., MULTIPOLYGON (((-58.40084 -..., MULTIPOLYGON (((-58.39365 -...,...</code></pre>
+<p>Para hacer el join precisamos identificar la variable que tiene a los ids de los departamentos. En este caso podemos ver que la variable <strong>link</strong> (es una variable <strong>factor</strong>) tiene 527 valores (la misma cantidad de departamentos que tiene Argentina) y toma los mismos valores que nuestra variable en el dataset de viviendas (<strong>DPTO</strong>). Sin embargo, están en distinto formato: una es una variable numérica, mientras que la otra es una variable factor. Para hacer el join precisamos que ambas variables tengan el mismo formato:</p>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="mapas.html#cb218-1"></a>sfDpto<span class="op">$</span>link &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(sfDpto<span class="op">$</span>link))</span></code></pre></div>
+<p>Como no nos importa ninguna de las otras variables con las que viene el objeto sf, con excepción de su geometría (obviamente) y la varible “link” que contiene la información necesaria para hacer el join, vamos a quedarnos solo con ellas. Usemos lo que ya conocemos:</p>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="mapas.html#cb219-1"></a>sfDpto &lt;-<span class="st"> </span>sfDpto <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(link)</span></code></pre></div>
+</div>
+<div id="uniendo-los-datos-con-sus-polígonos" class="section level3">
+<h3><span class="header-section-number">6.1.3</span> Uniendo los datos con sus polígonos</h3>
+<p>Una de las opciones que podrían hacer es unir las observaciones de las viviendas a cada uno de los polígonos que pertenece. Sin embargo, esto no es eficiente. Lo mejor es hacer nuestras transformaciones sobre el dataset de viviendas para luego hacer la unión con los polígonos cuando tengamos un dataset con los indicadores por departamento. Las operaciones de join suelen ocupar mucho espacio de memoria (y tiempo), especialmente cuando se trata de muchas filas y columnas. Además, siempre que se pueda es mejor hacer nuestras transformaciones de datos cuando no son objetos Simple Feature.</p>
+<p>Vamos a generar un indicador de “mala infraestructura”. En rigor, vamos a medir la proporción de viviendas que presentan un índice de calidad de servicios igual a 3 (insuficiente) o de calidad de construcción de viviendas igual a 3 (insuficiente). Luego, vamos a agrupar el dataset por los departamentos. Por suerte, ya sabemos como hacerlo con <strong>tidyverse</strong>:</p>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="mapas.html#cb220-1"></a>datosCalidad &lt;-<span class="st"> </span>viviendas <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb220-2"><a href="mapas.html#cb220-2"></a><span class="st">                </span><span class="kw">mutate</span>(<span class="dt">indiceCalidad =</span> <span class="kw">ifelse</span>(INCALSERV <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>INCALCONS <span class="op">==</span><span class="st"> </span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb220-3"><a href="mapas.html#cb220-3"></a><span class="st">                </span><span class="kw">group_by</span>(DPTO) <span class="op">%&gt;%</span></span>
+<span id="cb220-4"><a href="mapas.html#cb220-4"></a><span class="st">                </span><span class="kw">summarise</span>(<span class="dt">indiceCalidad =</span> <span class="kw">round</span>(<span class="kw">sum</span>(indiceCalidad)<span class="op">/</span><span class="kw">n</span>()<span class="op">*</span><span class="dv">100</span>))</span></code></pre></div>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="mapas.html#cb222-1"></a><span class="kw">str</span>(datosCalidad)</span></code></pre></div>
+<pre><code>## tibble [526 x 2] (S3: tbl_df/tbl/data.frame)
+##  $ DPTO         : num [1:526] 2001 2002 2003 2004 2005 ...
+##  $ indiceCalidad: num [1:526] 9 2 6 7 5 1 4 10 1 1 ...</code></pre>
+<p>Tenemos el porcentaje de viviendas que tienen alguno de estos dos índices como insuficientes. Para esto usamos la función <strong>n()</strong>, que es sumamente útil: nos dice la cantidad de casos que existe para cada grupo. Es especialmente interesante cuando queremos calcular proporciones, ya que al ponerlo en el denominador, solo nos queda poner en el numerador la cantidad de casos que cumplen con nuestro criterio (que lo hicimos con la función <strong>sum()</strong>). Luego multiplicamos por 100, porque así se representan los datos en porcentajes.</p>
+<p>Ahora sí, ya podemos hacer la unión con nuestro dataset espacial:</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="mapas.html#cb224-1"></a>datosCalidad &lt;-<span class="st"> </span><span class="kw">left_join</span>(sfDpto, datosCalidad, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;link&quot;</span>=<span class="st">&quot;DPTO&quot;</span>))</span></code></pre></div>
+<p>¡Importante! Vean que pudimos asignar a las observaciones a sus polígonos sin necesidad de hacer un join espacial, como hicimos con los inmuebles y los polígonos de CABA en la anterior clase. Esto se puede hacer siempre que haya un ID que nos permita asignarlo. En general, esto no existe y hay que trabajar con los nombres de las entidades (en este caso, los departamentos).</p>
+<p>Antes de seguir, vamos a agregar los nombres de los departamentos, que nos será útil para las visuaizaciones:</p>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="mapas.html#cb225-1"></a>datosCalidad&lt;-<span class="st"> </span><span class="kw">left_join</span>(datosCalidad,</span>
+<span id="cb225-2"><a href="mapas.html#cb225-2"></a>                         departamentos <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(DPTO, NOMDPTO),</span>
+<span id="cb225-3"><a href="mapas.html#cb225-3"></a>                         <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;link&quot;</span>=<span class="st">&quot;DPTO&quot;</span>)) </span>
+<span id="cb225-4"><a href="mapas.html#cb225-4"></a><span class="kw">str</span>(datosCalidad)</span></code></pre></div>
+<pre><code>## tibble [527 x 4] (S3: sf/tbl_df/tbl/data.frame)
+##  $ geometry     :sfc_MULTIPOLYGON of length 527; first list element: List of 1
+##   ..$ :List of 1
+##   .. ..$ : num [1:539, 1:2] -58.4 -58.4 -58.4 -58.4 -58.4 ...
+##   ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;XY&quot; &quot;MULTIPOLYGON&quot; &quot;sfg&quot;
+##  $ link         : num [1:527] 2001 2002 2003 2004 6091 ...
+##  $ indiceCalidad: num [1:527] 9 2 6 7 25 21 5 1 30 4 ...
+##  $ NOMDPTO      : chr [1:527] &quot;Comuna 01&quot; &quot;Comuna 02&quot; &quot;Comuna 03&quot; &quot;Comuna 04&quot; ...
+##  - attr(*, &quot;sf_column&quot;)= chr &quot;geometry&quot;
+##  - attr(*, &quot;agr&quot;)= Factor w/ 3 levels &quot;constant&quot;,&quot;aggregate&quot;,..: NA NA NA
+##   ..- attr(*, &quot;names&quot;)= chr [1:3] &quot;link&quot; &quot;indiceCalidad&quot; &quot;NOMDPTO&quot;</code></pre>
+</div>
+</div>
+<div id="haciendo-visualizaciones" class="section level2">
+<h2><span class="header-section-number">6.2</span> Haciendo visualizaciones</h2>
+<p>Hace unos años uno podría haber dicho que una de las desventajas de R es su falta de realizar visualizaciones de relevancia, ni siquiera hablar de trabajar con visualizaciones interactivas. Ejecuten el siguiente código, tal como hace Lovelace en su libro de Geocomputation, y verán que ya no es el caso:</p>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="mapas.html#cb227-1"></a>popup =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Nuestra clase&quot;</span>)</span>
+<span id="cb227-2"><a href="mapas.html#cb227-2"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span></span>
+<span id="cb227-3"><a href="mapas.html#cb227-3"></a><span class="st">  </span><span class="kw">addProviderTiles</span>(<span class="st">&quot;NASAGIBS.ViirsEarthAtNight2012&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb227-4"><a href="mapas.html#cb227-4"></a><span class="st">  </span><span class="kw">addMarkers</span>(<span class="dt">lng =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">58.381592</span>),</span>
+<span id="cb227-5"><a href="mapas.html#cb227-5"></a>             <span class="dt">lat =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">34.603722</span>), </span>
+<span id="cb227-6"><a href="mapas.html#cb227-6"></a>             <span class="dt">popup =</span> popup) <span class="op">%&gt;%</span></span>
+<span id="cb227-7"><a href="mapas.html#cb227-7"></a><span class="st">  </span><span class="kw">setView</span>(<span class="dt">lng =</span> <span class="fl">-58.381592</span>, <span class="dt">lat =</span><span class="op">-</span><span class="fl">34.603722</span>, <span class="dt">zoom =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p>Este mapa interactivo es posible gracias a la implementación de Leaflet para R (deben tener instalado y cargado en la sesión el paquete homónimo para poder correrlo). Hoy en día R nos da la posiblidad de realizar excelentes gráficos y visualizaciones. Vamos a presentar los principales paquetes para hacerlo durante las próximas dos clases, haciendo énfasis en los mapas.</p>
+<div id="ggplot2" class="section level3">
+<h3><span class="header-section-number">6.2.1</span> Ggplot2</h3>
+<p>Hace tiempo que <strong>ggplot2</strong> se ha convertido en el paquete de referencia para hacer visualizaciones. En distintas partes de nuestro curso lo he mostrado, en la mayoría de veces sin su aplicación a datos espaciales. En esta clase voy a mostrar que es posible hacer gráficos con <strong>ggplot2</strong> y <strong>sf</strong>, pero más tarde también voy a mostrar que sus funcionalidades ampliamente exceden esta extensión.</p>
+<p>Ggplot2 (al igual que <strong>tmap</strong> y <strong>leaflet</strong>) organiza su trabajo en capas. En general, primero pasamos los datos y después vamos agregando “mejoras incrementales”. Siempre debemos comenzar con <strong>ggplot()</strong> y luego indicar qué tipo de gráfico queremos:</p>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="mapas.html#cb228-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad) <span class="op">+</span><span class="st"> </span><span class="kw">geom_sf</span>()</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-173-1.png" width="672" /></p>
+<p>Como vemos, los departamentos de la Antártida y las Islas del Atlántico Sur no tienen mucho sentido para nuestras visualizaciones, y además nuestra visualización. Vamos a filtrarlas para lo que resta de la clase:</p>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="mapas.html#cb229-1"></a>datosCalidad &lt;-<span class="st"> </span>datosCalidad <span class="op">%&gt;%</span></span>
+<span id="cb229-2"><a href="mapas.html#cb229-2"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>NOMDPTO <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Islas del Atlántico sur&#39;</span>, <span class="st">&quot;Antártida Argentina&quot;</span>))</span>
+<span id="cb229-3"><a href="mapas.html#cb229-3"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad) <span class="op">+</span><span class="st"> </span><span class="kw">geom_sf</span>()</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-174-1.png" width="672" /></p>
+<p>Mucho mejor. Ahora debemos rellenar los polígonos con nuestras variables, en este caso el índicador de deficiencias en la calidad de la construcción o servicios de las viviendas. Esto lo hacemos SIEMPRE dentro de la función <strong>aes()</strong>, en este caso con <strong>fill</strong>:</p>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="mapas.html#cb230-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad, <span class="kw">aes</span>(<span class="dt">fill =</span> indiceCalidad)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_sf</span>()</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-175-1.png" width="672" /></p>
+<p>Lo que hace <strong>aes()</strong> es pasarle a ciertos objetos del gráfico (en este caso, <strong>fill</strong>) los valores que debe tomar. En español, lo que le decimos es “de ahora en más, rellená todos los polígonos en base a los valores de la variable <strong>indiceCalidad</strong>”. Luego, le decimos que grafique las geometrias de sf, simplemente pasándole el argumento “geom_sf”. Los colores que tiene por default son bastante malos y no queda muy en claro el valor que le corresponde a cada departamento. Vamos a empezar a hacer uso de algunas mejoras en los gráficos de ggplot2</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="mapas.html#cb231-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad, <span class="kw">aes</span>(<span class="dt">fill =</span> indiceCalidad)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb231-2"><a href="mapas.html#cb231-2"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">colour =</span> <span class="st">&quot;white&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb231-3"><a href="mapas.html#cb231-3"></a><span class="st">  </span><span class="kw">scale_fill_gradientn</span>(<span class="dt">colours =</span> <span class="kw">brewer.pal</span>(<span class="dt">n =</span> <span class="dv">5</span>, <span class="dt">name =</span> <span class="st">&quot;Blues&quot;</span>),</span>
+<span id="cb231-4"><a href="mapas.html#cb231-4"></a>                       <span class="dt">name =</span> <span class="st">&quot;Viviendas de calidad </span><span class="ch">\n</span><span class="st">insuficiente (%)&quot;</span>)</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-176-1.png" width="672" /></p>
+<p>Bastante mejor. Lo que hicimos fue 1) cambiar el color de los límites entre los polígonos (colour = “white”) y también cambiamos los colores correspondientes a cada uno de los valores a través de <strong>scale_fill_gradientn</strong>. A esta función solo debemos asignarle una cantidad de colores, y lo que hace es generar las transiciones entre ellos para generar el gradiente de colores. Aquí es donde usamos las paletas que RColorBrewer nos ofrece (<a href="http://colorbrewer2.org/" class="uri">http://colorbrewer2.org/</a>). la función brewer.pal nos pide solo dos argumentos: la cantidad de colores y la paleta. Luego, en <em>name</em> indicamos el título de la leyenda. Los caracteres <code>\n</code> son interpretados como un <strong>enter</strong> en la paleta. Prueben cambiar la paleta “Blues” por la paleta “Oranges” o "Reds.</p>
+<p>Todavía podemos mejorar sustancialmente el gráfico. Por ejemplo, con el siguiente código:</p>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="mapas.html#cb232-1"></a>mapa &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> datosCalidad, <span class="kw">aes</span>(<span class="dt">fill =</span> indiceCalidad)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb232-2"><a href="mapas.html#cb232-2"></a><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">colour =</span> <span class="ot">NA</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb232-3"><a href="mapas.html#cb232-3"></a><span class="st">  </span><span class="kw">scale_fill_gradientn</span>(<span class="dt">colours =</span> <span class="kw">brewer.pal</span>(<span class="dt">n =</span> <span class="dv">5</span>, <span class="dt">name =</span> <span class="st">&quot;Reds&quot;</span>),</span>
+<span id="cb232-4"><a href="mapas.html#cb232-4"></a>                       <span class="dt">name =</span> <span class="st">&quot;Viviendas de calidad insuficiente (%)&quot;</span>,</span>
+<span id="cb232-5"><a href="mapas.html#cb232-5"></a>                       <span class="dt">guide =</span> <span class="kw">guide_colourbar</span>(</span>
+<span id="cb232-6"><a href="mapas.html#cb232-6"></a>                         <span class="dt">direction =</span> <span class="st">&quot;horizontal&quot;</span>,</span>
+<span id="cb232-7"><a href="mapas.html#cb232-7"></a>                         <span class="dt">barheight =</span> <span class="fl">0.8</span>,</span>
+<span id="cb232-8"><a href="mapas.html#cb232-8"></a>                         <span class="dt">barwidth =</span> <span class="dv">16</span>,</span>
+<span id="cb232-9"><a href="mapas.html#cb232-9"></a>                         <span class="dt">title.position =</span> <span class="st">&#39;top&#39;</span>,</span>
+<span id="cb232-10"><a href="mapas.html#cb232-10"></a>                         <span class="dt">title.hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb232-11"><a href="mapas.html#cb232-11"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-177-1.png" width="672" /></p>
+<p>¡Mucho mejor! Pero hay varias cosas que incluímos, vamos a explicarlo paso por paso. En primer lugar, ya no hay línea divisora entre los polígonos, <strong>recomiendo enfáticamente removerlos cuando las unidades son muchas, pequeñas y el mapa no es interactivo</strong>, esto lo hacemos mediante <strong>colour = NA</strong> dentro de <strong>geom_sf</strong>.</p>
+<p>Luego, dentro de el espacio donde definimos la paleta <strong>scale_fill_gradientn</strong> agregamos una colourbar, que lo que haces es modificar la leyenda dándole un mejor aspecto. Podemos elegir la dirección (en este caso, horizontal), debemos elegir tanto su largo como su ancho, elegir la posición del titulo y elegir su “justificación”, que es básicamente lo que hacemos en word eligiendo si queremos que el texto se “pegue” a la parte izquierda, este centrado o se “pegue” a la parte derecha. hjust = 0.5 lo deja centrado. Los tamaños en ggplot2 están representados en milimetros, suponiendo que en cada pulgada hay 72 puntos (72 PPI), vamos a volver a esto un poco más adelante.</p>
+<p>Noten algo más: guardamos nuestro gráfico en un objeto que se llama “mapa”. De ahora en más podemos ir modificando este objeto agregándole capas con <strong>+</strong> como estuvimos haciendo hasta ahora. Vamos a cambiar ese fondo gris que no queda bien:</p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="mapas.html#cb233-1"></a>mapa &lt;-<span class="st"> </span>mapa  <span class="op">+</span><span class="st"> </span><span class="kw">theme_void</span>()</span>
+<span id="cb233-2"><a href="mapas.html#cb233-2"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-178-1.png" width="672" /></p>
+<p>Como ggplot2 trabaja por capas, le asignamos un conjunto de formatos mediante la función <strong>theme_void</strong>. Los temas (themes) predefinidos son muy útiles ya que nos ahorran mucho código de formateo de la visualización. el paquete <strong>ggthemes</strong> contiene varios themes muy interesantes, como los del Wall Street Journal, Five Thirty Eight o Stata, más adelante vamos a probarlos. Probemos qué hubiera pasado con aplicando otro theme:</p>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="mapas.html#cb234-1"></a>mapaStata &lt;-<span class="st"> </span>mapa  <span class="op">+</span><span class="st"> </span><span class="kw">theme_stata</span>()</span>
+<span id="cb234-2"><a href="mapas.html#cb234-2"></a>mapaStata</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
+<p>Bien, ahora querríamos colocar la colourbar abajo, tal como hace el theme_stata(), y también remover las líneas de fondo. Estas modificaciones se pueden hacer dentro de la función <strong>theme()</strong>. Dentro de ella elegimos los objetos y los modificamos. Por ejemplo, en <strong>legend.position</strong> decimos dónde queremos la leyenda ,en este caso la queremos abajo del gráfico y por eso usamos “bottom”. Luego, tomamos la grilla de fondo “panel.grid.major” y a la línea le asignamos un color transparente. También seteamos algunos parámetros para el título (que esté centrado, que tenga tamaño 16 y que esté en negrita) y el título de nuestra leyenda.</p>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="mapas.html#cb235-1"></a>mapa &lt;-<span class="st"> </span>mapa <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb235-2"><a href="mapas.html#cb235-2"></a>                     <span class="dt">panel.grid.major=</span><span class="kw">element_line</span>(<span class="dt">colour=</span><span class="st">&quot;transparent&quot;</span>),</span>
+<span id="cb235-3"><a href="mapas.html#cb235-3"></a>                     <span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span>  <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="dv">16</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb235-4"><a href="mapas.html#cb235-4"></a>                     <span class="dt">legend.title =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span>  <span class="fl">0.5</span>, <span class="dt">size =</span> <span class="dv">12</span>))</span>
+<span id="cb235-5"><a href="mapas.html#cb235-5"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-180-1.png" width="672" /></p>
+<p>Solo nos queda agregar un título y una fuente:</p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="mapas.html#cb236-1"></a>mapa &lt;-<span class="st"> </span>mapa <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb236-2"><a href="mapas.html#cb236-2"></a>                    <span class="dt">caption =</span> <span class="st">&quot;Fuente: INDEC&quot;</span>)</span>
+<span id="cb236-3"><a href="mapas.html#cb236-3"></a>mapa</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
+<p>Ahora nuestro gráfico quedó mucho mejor. Pueden guardardo desde “Export”, aunque rápidamente van a darse cuenta, cuando vayan cambiando las dimensiones de los plots, que a medida que lo hacen más grande, el texto queda más chico. Además, solo pueden exportar el formato del tamaño del planel multiuso. Pero no se preocupen, hice una función que hace todo esto más fácil: van a poder elegir el ancho y alto en píxeles y después solo tienen que elegir cuánto quieren que se agrande el texto. Ejecuten el siguiente código:</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="mapas.html#cb237-1"></a><span class="co"># Source ejecuta código R de otros archivos</span></span>
+<span id="cb237-2"><a href="mapas.html#cb237-2"></a><span class="kw">source</span>(<span class="st">&quot;https://raw.githubusercontent.com/datalab-UTDT/datasets/master/auxiliares.R&quot;</span>)</span>
+<span id="cb237-3"><a href="mapas.html#cb237-3"></a><span class="kw">plot.save</span>(<span class="dt">plot =</span> mapa,</span>
+<span id="cb237-4"><a href="mapas.html#cb237-4"></a>          <span class="dt">width =</span> <span class="dv">500</span>,</span>
+<span id="cb237-5"><a href="mapas.html#cb237-5"></a>          <span class="dt">height =</span> <span class="dv">1000</span>,</span>
+<span id="cb237-6"><a href="mapas.html#cb237-6"></a>          <span class="dt">filename =</span><span class="st">&#39;mapa.png&#39;</span>,</span>
+<span id="cb237-7"><a href="mapas.html#cb237-7"></a>          <span class="dt">bg =</span> <span class="st">&quot;#f5f5f2&quot;</span>)</span>
+<span id="cb237-8"><a href="mapas.html#cb237-8"></a></span>
+<span id="cb237-9"><a href="mapas.html#cb237-9"></a><span class="kw">plot.save</span>(<span class="dt">plot =</span> mapa,</span>
+<span id="cb237-10"><a href="mapas.html#cb237-10"></a>          <span class="dt">width =</span> <span class="dv">1000</span>,</span>
+<span id="cb237-11"><a href="mapas.html#cb237-11"></a>          <span class="dt">height =</span> <span class="dv">2000</span>,</span>
+<span id="cb237-12"><a href="mapas.html#cb237-12"></a>          <span class="dt">text.expansion =</span> <span class="dv">2</span>,</span>
+<span id="cb237-13"><a href="mapas.html#cb237-13"></a>          <span class="dt">filename =</span><span class="st">&#39;mapaText2.png&#39;</span>,</span>
+<span id="cb237-14"><a href="mapas.html#cb237-14"></a>          <span class="dt">bg =</span> <span class="st">&quot;#f5f5f2&quot;</span>)</span></code></pre></div>
+<p>¿Qué patrón observan en el mapa? Por lo que vemos, el norte del país muestra los peores valores en nuestro indicador, especialmente en las provincias del noreste.</p>
+</div>
+<div id="tmap" class="section level3">
+<h3><span class="header-section-number">6.2.2</span> Tmap</h3>
+<p>Aun siendo muy útil para nuestros mapas, Gplo2 es mucho más útil para otro tipo de visualizaciones. Para hacer clorophets, una de las visualizaciones más típicas, el paquete más simple y que más utilizarán es <strong>tmap</strong>. Ya lo hemos usado en otras ocasiones, y veamos cómo podemos hacer lo que hicimos con ggplot2 de una manera más simple:</p>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="mapas.html#cb238-1"></a>tmapClorophet &lt;-<span class="st">  </span><span class="kw">tm_shape</span>(datosCalidad) <span class="op">+</span></span>
+<span id="cb238-2"><a href="mapas.html#cb238-2"></a><span class="st">                  </span><span class="kw">tm_polygons</span>(<span class="dt">border.col =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;indiceCalidad&quot;</span>,</span>
+<span id="cb238-3"><a href="mapas.html#cb238-3"></a>                              <span class="dt">palette=</span><span class="kw">brewer.pal</span>(<span class="dt">n=</span><span class="dv">5</span>,<span class="st">&quot;Reds&quot;</span>),</span>
+<span id="cb238-4"><a href="mapas.html#cb238-4"></a>                              <span class="dt">title =</span> <span class="st">&quot;Viviendas de </span><span class="ch">\n</span><span class="st">calidad </span><span class="ch">\n</span><span class="st">insuficiente&quot;</span>) <span class="op">+</span></span>
+<span id="cb238-5"><a href="mapas.html#cb238-5"></a><span class="st">                  </span><span class="kw">tm_layout</span>(<span class="dt">legend.format =</span> <span class="kw">list</span>(<span class="dt">text.separator =</span> <span class="st">&quot;-&quot;</span>),</span>
+<span id="cb238-6"><a href="mapas.html#cb238-6"></a>                            <span class="dt">main.title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb238-7"><a href="mapas.html#cb238-7"></a>                            <span class="dt">main.title.size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb238-8"><a href="mapas.html#cb238-8"></a>                            <span class="dt">frame =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb238-9"><a href="mapas.html#cb238-9"></a>tmapClorophet</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-183-1.png" width="672" /></p>
+<p>Como vemos, la sintaxis es relativamente similar a ggplot2. Primero debemos informar cuáles son los datos dentro de tm_shape (en este caso, datosCalidad). Luego indicamos qué queremos graficar: polígónos (tm_polygons). Al igual que en el anterior gráfico, no queremos que haya divisiones entre los polígonos así que lo pasamos a “transparent”. Elegimos el color por el cual queremos que rellene los polígonos con <strong>col</strong>, la paleta con <strong>palette</strong> y el título de la leyenda con <strong>title</strong>. Luego, con <strong>tm_layout()</strong> modificamos el aspecto de la leyenda, específicamente el separador entre las categorías (en lugar de “to”, que use “-”). Cambiamos el título y sacamos el frame que viene por default ¡Muy fácil!</p>
+<p>Todavía más, con estos mapas podemos discretizar rápidamente nuestros plots. Por default nos genera las 5 categorías que dividen a la variable (de 0 a 100). En lugar de eso, podemos mejorar esta aproximación al graficar en 4 categorías a los departamentos de tal manera que en cada una de estas categorías se acumule aproximadamente la misma cantidad de departamentos. Estos son los quintiles de una distribución y <strong>tmap</strong> nos hace el trabajo muy fácil.</p>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="mapas.html#cb239-1"></a>tmapClorophet &lt;-<span class="st">  </span><span class="kw">tm_shape</span>(datosCalidad) <span class="op">+</span></span>
+<span id="cb239-2"><a href="mapas.html#cb239-2"></a><span class="st">                  </span><span class="kw">tm_polygons</span>(<span class="dt">border.col =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;indiceCalidad&quot;</span>,</span>
+<span id="cb239-3"><a href="mapas.html#cb239-3"></a>                              <span class="dt">palette=</span><span class="kw">rev</span>(<span class="kw">brewer.pal</span>(<span class="dt">n=</span><span class="dv">4</span>,<span class="st">&quot;RdYlGn&quot;</span>)),</span>
+<span id="cb239-4"><a href="mapas.html#cb239-4"></a>                              <span class="dt">breaks =</span> <span class="kw">quantile</span>(datosCalidad<span class="op">$</span>indiceCalidad),</span>
+<span id="cb239-5"><a href="mapas.html#cb239-5"></a>                              <span class="dt">title =</span> <span class="st">&quot;Viviendas de </span><span class="ch">\n</span><span class="st">calidad </span><span class="ch">\n</span><span class="st">insuficiente&quot;</span>) <span class="op">+</span></span>
+<span id="cb239-6"><a href="mapas.html#cb239-6"></a><span class="st">                  </span><span class="kw">tm_layout</span>(<span class="dt">legend.format =</span> <span class="kw">list</span>(<span class="dt">text.separator =</span> <span class="st">&quot;-&quot;</span>),</span>
+<span id="cb239-7"><a href="mapas.html#cb239-7"></a>                            <span class="dt">main.title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb239-8"><a href="mapas.html#cb239-8"></a>                            <span class="dt">main.title.size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb239-9"><a href="mapas.html#cb239-9"></a>                            <span class="dt">frame =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb239-10"><a href="mapas.html#cb239-10"></a>tmapClorophet</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-184-1.png" width="672" /></p>
+<p>La clave fue el argumento breaks, donde indicamos dónde queremos que corte a la variable. <strong>quantile()</strong> corta en cuatro porciones a la variable índice de calidad, mientras que usamos otro tipo de paleta y, ademas, invertimos el orden usando rev().</p>
+<p>Vamos a mejorar nuestro gráfico utilizando simultáneamente los polígonos de las provincias de Argentina. Podrían repetir el procedimiento leyendo los shapefiles con el comando readOGR tal como hicimos con los departamentos. Sin embargo, para aprender a leer otro tipo de archivos donde se guardan datos espaciales, vamos a usar la función <strong>st_read</strong> y leer un archivo geojson:</p>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="mapas.html#cb240-1"></a>mapaProvincias &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://github.com/datalab-UTDT/datasets/raw/master/provincias.geojson&quot;</span>)</span>
+<span id="cb240-2"><a href="mapas.html#cb240-2"></a>mapaProvincias &lt;-<span class="st"> </span>mapaProvincias[<span class="op">-</span><span class="dv">24</span>,]</span></code></pre></div>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="mapas.html#cb241-1"></a>tmapClorophet &lt;-<span class="st">  </span><span class="kw">tm_shape</span>(datosCalidad) <span class="op">+</span></span>
+<span id="cb241-2"><a href="mapas.html#cb241-2"></a><span class="st">                  </span><span class="kw">tm_polygons</span>(<span class="dt">border.col =</span> <span class="st">&quot;transparent&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;indiceCalidad&quot;</span>,</span>
+<span id="cb241-3"><a href="mapas.html#cb241-3"></a>                              <span class="dt">palette=</span><span class="kw">rev</span>(<span class="kw">brewer.pal</span>(<span class="dt">n=</span><span class="dv">4</span>,<span class="st">&quot;RdYlGn&quot;</span>)),</span>
+<span id="cb241-4"><a href="mapas.html#cb241-4"></a>                              <span class="dt">breaks =</span> <span class="kw">quantile</span>(datosCalidad<span class="op">$</span>indiceCalidad),</span>
+<span id="cb241-5"><a href="mapas.html#cb241-5"></a>                              <span class="dt">title =</span> <span class="st">&quot;Viviendas de </span><span class="ch">\n</span><span class="st">calidad </span><span class="ch">\n</span><span class="st">insuficiente&quot;</span>) <span class="op">+</span></span>
+<span id="cb241-6"><a href="mapas.html#cb241-6"></a><span class="st">                  </span><span class="kw">tm_layout</span>(<span class="dt">legend.format =</span> <span class="kw">list</span>(<span class="dt">text.separator =</span> <span class="st">&quot;-&quot;</span>),</span>
+<span id="cb241-7"><a href="mapas.html#cb241-7"></a>                            <span class="dt">main.title =</span> <span class="st">&quot;Mapa de calidad de viviendas&quot;</span>,</span>
+<span id="cb241-8"><a href="mapas.html#cb241-8"></a>                            <span class="dt">main.title.size =</span> <span class="fl">0.8</span>, <span class="dt">main.title.position =</span> <span class="st">&#39;center&#39;</span>,</span>
+<span id="cb241-9"><a href="mapas.html#cb241-9"></a>                            <span class="dt">frame =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb241-10"><a href="mapas.html#cb241-10"></a><span class="st">                  </span><span class="kw">tm_shape</span>(mapaProvincias) <span class="op">+</span></span>
+<span id="cb241-11"><a href="mapas.html#cb241-11"></a><span class="st">                  </span><span class="kw">tm_borders</span>(<span class="dt">col =</span> <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb241-12"><a href="mapas.html#cb241-12"></a>tmapClorophet</span></code></pre></div>
+<p><img src="AnalisisEspacialEnR_files/figure-html/unnamed-chunk-186-1.png" width="672" /></p>
+<p>Ahora podemos ver como guardar un objeto tmap usando <strong>save_tmap</strong>. Tener en cuenta que el ancho y el alto en este caso tienen que multiplicarlo por 300 para conocer el tamaño en píxeles total (esto es porque tiene predefinido ppi=300). Por ejemplo, el archivo “tmapClorophet.png” debería tener 900px de ancho.</p>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="mapas.html#cb242-1"></a><span class="kw">save_tmap</span>(<span class="dt">tm =</span> tmapClorophet, <span class="dt">filename =</span> <span class="st">&quot;tmapClorophet.png&quot;</span>,<span class="dt">width =</span> <span class="dv">3</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="leaflet" class="section level2">
+<h2><span class="header-section-number">6.3</span> Leaflet</h2>
+<p>Hasta ahora hemos estado trabajando con gráficos estáticos. En muchas oportunidades son útiles, y cuando debemos hacer reportes o determinadas presentaciones son nuestra única opción. Sin embargo, los mapas interactivos nos permiten consultar los datos de una manera distinta y son una buena alternativa para compartir las visualizaciones. Vamos a ver un simple ejemplo de utilización de <strong>Leaflet</strong>, mostrando las mismas visualizaciones que estuvimos haciendo hasta el momento para los datos del censo.</p>
+<p>Todas las visualizaciones de leaflet deben comenzar con la función leaflet() y, a diferencia de ggplot2 y tmap, en leaflet usamos <strong>%&gt;%</strong> para ir agregando las capas. <strong>addTiles()</strong> plotea la “imagen” del mundo, si no usamos esa función solo veremos un output gris</p>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="mapas.html#cb243-1"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">addTiles</span>()</span></code></pre></div>
+<p>Ahora deberíamos indicar qué tipo de figura deseamos agregar. En nuestro caso, queremos agregar polígonos, por lo que usaremos la función <strong>addPolygons</strong></p>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="mapas.html#cb244-1"></a><span class="kw">leaflet</span>(datosCalidad) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb244-2"><a href="mapas.html#cb244-2"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb244-3"><a href="mapas.html#cb244-3"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data =</span> datosCalidad)</span></code></pre></div>
+<p>Debemos rellenarlos con los valores correspondientes al índice de deficiencia de viviendas que armamos anteriormente. Para eso tenemos que crear una paleta, como ya hicimos en ggplot2 y tmap. En Leaflet lo que tenemos que usar es la función <strong>colorBin</strong>. A ella le pasamos una paleta de RColorBrewer, en orden reverso para que vaya desde verde (valores más bajo) a rojo (valores más altos). Al mismo tiempo, seteamos a FALSE los bordes de los polígonos (stroke=FALSE) y la opacidad a 1 del relleno (fillOpacity=1) para que veamos correctamente los colores.</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="mapas.html#cb245-1"></a>pal &lt;-<span class="st"> </span><span class="kw">colorBin</span>(<span class="st">&quot;RdYlGn&quot;</span>, <span class="dt">reverse =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb245-2"><a href="mapas.html#cb245-2"></a>                <span class="dt">domain =</span> datosCalidad<span class="op">$</span>indiceCalidad,</span>
+<span id="cb245-3"><a href="mapas.html#cb245-3"></a>                <span class="dt">bins =</span> <span class="kw">quantile</span>(datosCalidad<span class="op">$</span>indiceCalidad))</span>
+<span id="cb245-4"><a href="mapas.html#cb245-4"></a></span>
+<span id="cb245-5"><a href="mapas.html#cb245-5"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb245-6"><a href="mapas.html#cb245-6"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb245-7"><a href="mapas.html#cb245-7"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data=</span>datosCalidad,</span>
+<span id="cb245-8"><a href="mapas.html#cb245-8"></a>              <span class="dt">stroke =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb245-9"><a href="mapas.html#cb245-9"></a>              <span class="dt">fillColor =</span> <span class="op">~</span><span class="kw">pal</span>(indiceCalidad),</span>
+<span id="cb245-10"><a href="mapas.html#cb245-10"></a>              <span class="dt">fillOpacity =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>Para terminar, vamos a agregar los labels, es decir lo que aparece cuando nos posicionamos sobre alguno de los polígonos. Esto lo hacemos con el arugmento <strong>label</strong> dentro de los polígonos. Al igual que <strong>fillColor</strong>, debemos pasarlo como fórmula, es decir usando el prefijo <strong>~</strong>, y luego usamos la función <strong>paste0</strong>, que como ya hemos visto en clases anteriores “pega” o colapsa los vectores. En este ejemplo queremos que diga el nombre del departamento, dos puntos, el valor del índice de calidad y luego el signo %. Además, agregamos el contorno de las provincias agregando otra capa de polígonos, pero sin relleno y solo con el contorno en blanco</p>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="mapas.html#cb246-1"></a><span class="kw">leaflet</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb246-2"><a href="mapas.html#cb246-2"></a><span class="st">  </span><span class="kw">addTiles</span>() <span class="op">%&gt;%</span></span>
+<span id="cb246-3"><a href="mapas.html#cb246-3"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data =</span> datosCalidad,</span>
+<span id="cb246-4"><a href="mapas.html#cb246-4"></a>              <span class="dt">stroke =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb246-5"><a href="mapas.html#cb246-5"></a>              <span class="dt">fillColor =</span> <span class="op">~</span><span class="kw">pal</span>(indiceCalidad),</span>
+<span id="cb246-6"><a href="mapas.html#cb246-6"></a>              <span class="dt">fillOpacity =</span> <span class="dv">1</span>,</span>
+<span id="cb246-7"><a href="mapas.html#cb246-7"></a>              <span class="dt">label =</span> <span class="op">~</span><span class="kw">paste0</span>(NOMDPTO,<span class="st">&quot;: &quot;</span>, indiceCalidad, <span class="st">&#39;%&#39;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb246-8"><a href="mapas.html#cb246-8"></a><span class="st">  </span><span class="kw">addPolygons</span>(<span class="dt">data=</span>mapaProvincias,</span>
+<span id="cb246-9"><a href="mapas.html#cb246-9"></a>              <span class="dt">color =</span> <span class="st">&#39;white&#39;</span>,</span>
+<span id="cb246-10"><a href="mapas.html#cb246-10"></a>              <span class="dt">weight =</span> <span class="dv">2</span>,</span>
+<span id="cb246-11"><a href="mapas.html#cb246-11"></a>              <span class="dt">fill =</span> <span class="ot">NA</span>)</span></code></pre></div>
+</div>
+<div id="ejercicios-2" class="section level2">
+<h2><span class="header-section-number">6.4</span> Ejercicios</h2>
+<p>En la carpeta de datos del censo todavía hay dos archivos csv que no usamos: los datos de hogares y de individuos. Usando nuestro dataset de viviendas, unan los hogares a las viviendas y, luego, los hogares a los individuos. Una vez que tengan el dataset con los individuos, y el departamento al que pertenecen, creen un mapa con <strong>tmap</strong>, tal como hicimos con el índice de vivienda, pero ahora con la edad promedio por departamento (tener en cuenta que la variable “años cumplidos” es la P03)</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="el-ritual-del-aprendizaje-automático-parte-2.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="making-polygons-comparable-again.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["AnalisisEspacialEnR.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
